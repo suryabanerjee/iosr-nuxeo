@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.project.sample.actions">
+
+	<extension target="org.nuxeo.ecm.platform.actions.ActionService"
+		point="filters">
+		<filter id="jbpm-process" append="true">
+			<rule grant="true">
+				<permission>Read</permission>
+				<type>Book</type>
+			</rule>
+		</filter>
+	</extension>
+
+	<extension target="org.nuxeo.ecm.platform.actions.ActionService"
+		point="actions">
+
+		<action id="tab_book_view" link="/incl/tabs/sample_book_view.xhtml"
+			enabled="true" label="Book" icon="/icons/file.gif" order="9">
+			<category>VIEW_ACTION_LIST</category>
+			<filter id="book_filter">
+				<rule grant="true">
+					<type>Book</type>
+				</rule>
+			</filter>
+		</action>
+
+		<action id="tab_folder_books_list" link="/incl/tabs/folder_books_view.xhtml"
+			enabled="true" label="Books" icon="/icons/file.gif" order="15">
+			<category>VIEW_ACTION_LIST</category>
+			<filter id="workspace_books_filter">
+				<rule grant="true">
+					<type>Folder</type>
+					<type>Workspace</type>
+				</rule>
+			</filter>
+		</action>
+		
+		
+		<action id="tab_folder_translation_config" link="/incl/tabs/translation_config_ui.xhtml"
+			enabled="true" label="translation.config.label" order="15">
+			<category>VIEW_ACTION_LIST</category>
+			<filter id="myFirstFilter">
+				<rule grant="true">
+					<type>Workspace</type>
+				</rule>
+			</filter>
+		</action>
+		
+		<action id="translation" link="#{translator.translate()}"
+		    enabled="true" label="Translate" icon="/icons/book.png" order="6">
+		  <category>SUBVIEW_UPPER_LIST</category>
+		  <filter id="moj_filtr">
+		    <rule grant="true">
+				<type>Workspace</type>
+		    </rule>
+		  </filter>
+		</action>
+
+	</extension>
+
+</component>
