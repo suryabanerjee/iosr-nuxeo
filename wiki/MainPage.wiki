@@ -16,3 +16,5 @@
  * dr inż. Dominik Radziszowski
 
 ----
+
+ * [wiki:Wstep wstęp projektowy.]
