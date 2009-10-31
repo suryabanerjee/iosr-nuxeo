@@ -6,10 +6,10 @@
   * *Tłumaczenia na wiele języków naraz* W oknie tłumaczenia, użytkownik może zaznaczyć wiele języków docelowych. W ten sposób uzyskamy tłumaczenie wybranych dokumentów na każdy z zaznaczonych języków. Przetłumaczone pliki automatycznie  otrzymają w nazwie przyrostek będący skrótem od języka na jaki został przetłumaczony ten plik.
   * *Synchroniczne tłumaczenie pliku (funkcja ‘podgląd’)* Po naciśnięciu na wybrany dokument, użytkownik wybiera z w panelu zarządzania dokumentem zakładkę ‘Podgląd’. Z lewej strony ekranu pojawia się przycisk ‘Przetłumacz’ oraz listy z których można wybrać język źródłowy i docelowy  – naciśnięcie przycisku spowoduje, iż obok oryginalnego tekstu pojawia się przetłumaczona treść. W przypadku gdy niedostępny jest podgląd pliku, niedostępna jest także możliwość jego synchronicznego tłumaczenia.  
   * *Przetłumaczone pliki posiadają odpowiednie własności ustalone na podstawie pliku oryginalnego i odpowiednich reguł* W systemie Nuxeo, każdy plik może być określony przez wiele istotnych własności– stąd przetłumaczone pliki otrzymają odpowiednie własności ustalone na podstawie następujących zasad:
-  # Własność „Created at” oraz “Last modified At” otrzymają datę ukończenia tłumaczenia pliku
-  # Własność „Language” otrzyma wartość stosowną dla języka tłumaczenia pliku
-  # Własność „Title” będzie taka jak nazwa przetłumaczonego pliku
-  # Reszta własności otrzyma taką samą wartość jak w pliku oryginalnym
+   # Własność „Created at” oraz “Last modified At” otrzymają datę ukończenia tłumaczenia pliku
+   # Własność „Language” otrzyma wartość stosowną dla języka tłumaczenia pliku
+   # Własność „Title” będzie taka jak nazwa przetłumaczonego pliku
+   # Reszta własności otrzyma taką samą wartość jak w pliku oryginalnym
   * *Przetłumaczone pliki posiadają relacje typu „tłumaczenie” wiążącą ją z oryginalnym dokumentem.* Taka relacja tworzona jest automatycznie w momencie przetłumaczenia dokumentu i  opiera się ona na standardowym mechanizmie powiązań plików oferowanym przez system Nuxeo i możemy ją zobaczyć w zakładce „Relations” w panelu zarządzania dokumentem.
   * *Zapamiętywanie i ułatwiony dostęp do ulubionych języków użytkownika* Użytkownik w ustawieniach osobistych (panel „Personal Workspace”) może wybrać zakładkę konfiguracji tłumaczeń. W zakładce tej można wybrać dla danego silnika translacji maksymalnie sześć ulubionych języków tłumaczeń. Dzięki temu, w menu podręcznym dotyczącym tłumaczenia dokumentu, będziemy mogli wybrać język docelowy spośród ulubionych.
   * *Widok przedstawiający status tłumaczonych dokumentów użytkownika* Użytkownik może zobaczyć listę plików zleconych do tłumaczenia wraz z aktualnym statusem tłumaczenia – jest ona dostępna w panelu dashboard  użytkownika.
@@ -21,8 +21,8 @@
   * *Tłumaczenie różnych formatów dokumentów*
   * *Ustawienie statusu „W tłumaczeniu” dla tłumaczonych plików oraz właściwości określającej postęp w procesie tłumaczenia.* Status „W tłumaczeniu” jest częścią mechanizmu „workflow” systemu Nuxeo i ustawiony jest automatycznie.
   * *Sygnalizacja niedostępności usług zewnętrznych oraz innych błędów* Użytkownik będzie informowany o dostępności usług tłumaczenia na wiele sposobów i na różnych etapach:
-  # *Przed zleceniem zadania tłumaczenia (zarówno w przypadku tłumaczenia synchronicznego i asynchronicznego)* odpowiednie przyciski bądź też pola menu kontekstowego - w przypadku niedostępności usługi - będą oznaczone jako nieaktywne poprzez ich wyszarzenie.
-  # *Dla tłumaczenia asynchronicznego – sygnalizacja problemów z wysyłaniem treści do tłumaczenia* Wyświetlane będzie okno ze stosownym komunikatem opisującym problem. Użytkownik ma możliwość określenia czasu timeout dla danego silnika translacji w zakładce konfiguracji tłumaczenia.
+   # *Przed zleceniem zadania tłumaczenia (zarówno w przypadku tłumaczenia synchronicznego i asynchronicznego)* odpowiednie przyciski bądź też pola menu kontekstowego - w przypadku niedostępności usługi - będą oznaczone jako nieaktywne poprzez ich wyszarzenie.
+   # *Dla tłumaczenia asynchronicznego – sygnalizacja problemów z wysyłaniem treści do tłumaczenia* Wyświetlane będzie okno ze stosownym komunikatem opisującym problem. Użytkownik ma możliwość określenia czasu timeout dla danego silnika translacji w zakładce konfiguracji tłumaczenia.
 
 = Wymagania niefunkcjonalne  =
 
