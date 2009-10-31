@@ -1,14 +1,16 @@
-#summary One-sentence summary of this page.
+#summary strona tytułowa projektu.
 
 = Integracja usługi google translator z systemem CMS Nuxeo. =
 
 
-Zespół autorski:
-* Maria Szymczak
-* Bartłomiej Czopyk
-* Tomasz Handzlik
-* Tomasz Lewicki
 
-Prowadzący:
+==Zespół autorski:==
+
+# Maria Szymczak
+# Bartłomiej Czopyk
+# Tomasz Handzlik
+# Tomasz Lewicki
+
+==Prowadzący:==
 
 dr inż. Dominik Radziszowski
