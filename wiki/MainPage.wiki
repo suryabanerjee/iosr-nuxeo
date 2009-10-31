@@ -17,4 +17,4 @@
 
 ----
 
- * [wiki:Wstep wstęp projektowy.]
+ * [wiki:Wstep wstęp.]
