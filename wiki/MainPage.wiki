@@ -19,3 +19,5 @@
 
  * [http://code.google.com/p/iosr-nuxeo/wiki/Wstep wstęp.]
  * [http://code.google.com/p/iosr-nuxeo/wiki/Wymagania wymagania.]
+ * [http://code.google.com/p/iosr-nuxeo/wiki/Interfejs interfejs.]
+ * [http://code.google.com/p/iosr-nuxeo/wiki/Slownik roboczy słownik pojęć.]
