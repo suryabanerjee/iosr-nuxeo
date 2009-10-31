@@ -1,0 +1,68 @@
+#summary Sformułowanie zadania projektowego
+
+= Obszar i przedmiot projektowania =
+
+== Opis dziedziny problemu ==
+
+Zadaniem projektowym jest integracja usługi google translator z systemem CMS Nuxeo. Do zadań docelowego systemu należy tłumaczenie jednego lub więcej plików zgodnie z wybranymi ustawieniami użytkownika. Możliwa jest obsługa więcej niż jednego języka naraz oraz plików o różnych formatach. Planowana jest niezależność systemu od silnika tłumaczenia.
+
+== Zakres systemu ==
+
+System będzie warstwą pośredniczącą między CMS Nuxeo a danym silnikiem tłumaczenia. Zakres systemu obejmuje:
+* Tłumaczenie asynchroniczne *
+opcja pozwalająca na asynchroniczne wysłanie danego pliku (lub plików) do tłumaczenia i oznaczenia jego statusu jako pliku w trakcie tłumaczenia. Rezultat operacji jest zapisywany jako wskazany wcześniej, osobny plik. Obsługa tego rodzaju tłumaczenia jest wymagana wobec wszystkich wspieranych silników.
+* Tłumaczenie synchroniczne *
+opcja pozwala na szybkie wygenerowanie podglądu danego pliku w wybranym języku. Ten rodzaj tłumaczenia nie jest obsługiwany przez wszystkie silniki.
+* Tłumaczenie do wielu języków naraz *
+użytkownik może zażądać tłumaczeń pliku w kilku językach. Opcja wspierana tylko w czasie tłumaczenia asynchronicznego. Tłumaczenie w każdym z języków generuje osobny plik wynikowy.
+* Obsługę różnych silników tłumaczenia *
+system docelowo jest niezależny od silnika (domyślny to google translator). Administrator może dodać dowolnie wiele silników, a użytkownik do tłumaczenia wybrać dowolny z nich.
+* Obsługę plików w różnych formatach *
+tłumaczenie obejmuje pliki w różnych formatach, nie tylko tekstowym. Obsługiwane są m.in.pliki .pdf i .doc.
+
+== Kontekst systemu ==
+
+=== Silnik tłumaczenia (domyslnie: google translator) ===
+
+wymagana obsługa co najmniej 2 języków i akceptowalny czas zwrócenia rezultatu;
+
+=== CMS Nuxeo ===
+
+  # WPROWADZENIE DO NUXEO
+Nuxeo jest open-sourceową platformą do rozwijania systemów klasy CMS
+oparta o J2EE. Zapewnia szkielet systemu zarządzania treścią, definiuje podstawowe
+widoki i funkcjonalności CMS (pliki, fora), zapewnia kontrolę dostępu (autentykacja,
+autoryzacja), definiuje model danych i metadanych, implementuje środowisko do
+wdrażania dedykowanych rozszerzeń platformy (extension points), komponenty
+wspomagające integrację (serwisy wewnętrzne), silnik wyszukiwania, obsługę
+zdarzeń, zarządzanie cyklem życia i wiele innych.
+
+  # ARCHITEKTURA
+Nuxeo opiera się na architekturze komponentowej, skierowanej na standardy
+(modele programowania: J2EE, OSGi; usługi sieciowe: SOAP; definiowanie treści:
+XML Schemas). Z racji pewnych wad architektury J2EE (brak mechanizmów rozszerzania
+modelu komponentów, mechanizmów deklarowania zależności), Nuxeo definiuje
+warstwę środowiska uruchomieniowego (runtime layer), której zadaniem jest
+wyeliminowanie tych problemów.
+Warstwa ta między innymi definiuje mechanizm extension points,
+najciekawsze z punktu widzenia developerów. Komponenty podlegające temu
+mechanizmowi, mogą być aktywowane, bądź dezaktywowane przez zewnętrzną
+konfigurację. Poprzez dodawane zasoby, podobnie do pluginów, można modyfikować
+wygląd oraz zachowanie serwisu. Zasobem takim zazwyczaj jest XML, może być
+ponadto kod javy (POJO, Seam), xhtml (JSF), jpg, bundle zasobów, itd. Dodawane
+zasoby, zwane kontrybucjami, mogą nadpisywać konfigurację komponentów
+wystawiających extension points.
+Na warstwie środowiska uruchomieniowego bazuje Nuxeo Core,
+udostępniające serwisy wewnętrzne platformy, min: usługi repozytorium,
+wersjonowania, bezpieczeństwa, zarządzania cyklem życia, obsługi zdarzeń.
+Ostatnią warstwą jest warstwa prezentacji, podobno w funkcjonalności do
+odpowiedniej warstwy klasycznych systemów klasy Enterprise. Wyświetla ona
+zawartość treści, możliwe opcje oraz definiuje nawigację między widokami.
+
+  # TECHNOLOGIE PLATFORMY
+Nuxeo domyślnie dostarczane jest z serwerem aplikacji JBoss. Implementacja
+opiera się o framework Seam z rozbudowaną warstwą prezentacji JSF (własne
+biblioteki tagów) wzbogaconą przez Facelets oraz (od najnowszej wersji 5.2)
+RichFaces. Ponadto wykorzystywany jest ajax4jsf. Nuxeo domyślnie korzysta z
+implementacji warstwy persystencji opartej o bazę danych Hipersonic, dostarczana
+wraz z serwerem JBoss.
