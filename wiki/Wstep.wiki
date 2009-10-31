@@ -9,15 +9,15 @@ Zadaniem projektowym jest integracja usługi google translator z systemem CMS Nu
 == Zakres systemu ==
 
 System będzie warstwą pośredniczącą między CMS Nuxeo a danym silnikiem tłumaczenia. Zakres systemu obejmuje:
-* Tłumaczenie asynchroniczne *
+  * *Tłumaczenie asynchroniczne*
 opcja pozwalająca na asynchroniczne wysłanie danego pliku (lub plików) do tłumaczenia i oznaczenia jego statusu jako pliku w trakcie tłumaczenia. Rezultat operacji jest zapisywany jako wskazany wcześniej, osobny plik. Obsługa tego rodzaju tłumaczenia jest wymagana wobec wszystkich wspieranych silników.
-* Tłumaczenie synchroniczne *
+  * *Tłumaczenie synchroniczne *
 opcja pozwala na szybkie wygenerowanie podglądu danego pliku w wybranym języku. Ten rodzaj tłumaczenia nie jest obsługiwany przez wszystkie silniki.
-* Tłumaczenie do wielu języków naraz *
+  * *Tłumaczenie do wielu języków naraz *
 użytkownik może zażądać tłumaczeń pliku w kilku językach. Opcja wspierana tylko w czasie tłumaczenia asynchronicznego. Tłumaczenie w każdym z języków generuje osobny plik wynikowy.
-* Obsługę różnych silników tłumaczenia *
+  * *Obsługę różnych silników tłumaczenia *
 system docelowo jest niezależny od silnika (domyślny to google translator). Administrator może dodać dowolnie wiele silników, a użytkownik do tłumaczenia wybrać dowolny z nich.
-* Obsługę plików w różnych formatach *
+  * *Obsługę plików w różnych formatach *
 tłumaczenie obejmuje pliki w różnych formatach, nie tylko tekstowym. Obsługiwane są m.in.pliki .pdf i .doc.
 
 == Kontekst systemu ==
