@@ -1,14 +1,14 @@
 #summary One-sentence summary of this page.
 
-= Introduction =
+= Integracja usługi google translator z systemem CMS Nuxeo. =
 
-Integracja usługi google translator z systemem CMS Nuxeo.
-
-
-= Details =
 
 Zespół autorski:
 * Maria Szymczak
 * Bartłomiej Czopyk
 * Tomasz Handzlik
 * Tomasz Lewicki
+
+Prowadzący:
+
+dr inż. Dominik Radziszowski
