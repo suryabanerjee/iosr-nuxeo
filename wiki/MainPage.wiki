@@ -6,11 +6,13 @@
 
 ==Zespół autorski:==
 
-# Maria Szymczak
-# Bartłomiej Czopyk
-# Tomasz Handzlik
-# Tomasz Lewicki
+ * Maria Szymczak
+ * Bartłomiej Czopyk
+ * Tomasz Handzlik
+ * Tomasz Lewicki
 
 ==Prowadzący:==
 
-dr inż. Dominik Radziszowski
+ * dr inż. Dominik Radziszowski
+
+----
