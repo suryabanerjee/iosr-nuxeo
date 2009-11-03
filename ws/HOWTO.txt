@@ -1,0 +1,45 @@
+From the Hello directory: mvn clean install
+
+From the Hello directory, run mvn eclipse:clean eclipse:eclipse. This command is configured within the Hello/pom.xml file (<plugins/> section) to download the source code for dependencies.
+Next, within the Eclipse IDE, Choose File->New->Java Project, Create Project From Existing Source, and select the Hello folder. Alternative: If you plan on debugging this particular project within Eclipse, it is better to directly import (File Menu->Import->Existing Projects Into Workspace) the client and service-war projects separately into Eclipse instead of creating a new project from the Hello root. The IDE's code tracing features can identify source libraries much more easily that way.
+Also, if you haven't already for earlier Mavenized projects you will need to set the M2_REPO classpath variable. This allows Eclipse to use the source JARs in the Maven repository for syntax checking and code-tracing/debugging.
+
+Build and deploy the WAR file on Tomcat. If you haven't worked with Tomcat before, here are some basic instructions for installing and configuring this servlet container. The Tomcat user's guide and mailing list can provide more help if needed.
+Download the latest release version of Tomcat and extract the zip or tar.gz file into a new directory.
+Have an environment variable $CATALINA_HOME point to your expanded Tomcat application directory, e.g. for Linux (in your ~/.bashrc file): export CATALINA_HOME=/usr/myapps/tomcat-6.x.x 
+In the CATALINA_HOME/conf/tomcat-users.xml file, create a user with a role of manager or give the "tomcat" user (which should already be in the file) the manager role. 
+<tomcat-users>
+  ...other entries...
+  <role rolename="manager"/>
+  <user username="tomcat" password="????" roles="tomcat,manager"/>
+</tomcat-users>
+
+Start tomcat from a terminal window: {prompt}% $CATALINA_HOME/bin/startup.sh
+Before proceeding further, confirm that you can log into the manager webapp at http://localhost:8080/manager/html using the username and password of the manager account.
+
+For Maven to be able to deploy and undeploy webapps on Tomcat, you'll need to add a server entry to your $MAVEN_HOME/conf/settings.xml file. Add the username and password for the manager account as follows:
+
+<servers>
+   ...
+   <server>
+         <id>myTomcat</id>
+         <username>tomcatuser</username>
+         <password>password</password>
+   </server>
+</servers>
+
+
+The service-war's pom.xml uses value of the "id" element above to indicate the app server it will be deploying to.
+
+Next, to deploy the web service onto Tomcat, navigate to the Hello/service-war directory and enter mvn clean install tomcat:deploy. This single command string does all of the following:
+Deletes the service-war/target output folder if it already exists (same as mvn clean alone) 
+Recreates the folder and generates and compiles the Java classes into it (mvn package) 
+Creates a WAR file for the web service provider and JAR file for the JAX-WS artifacts (mvn package) 
+Installs the JAR and WAR into your local Maven repository (mvn install) 
+Deploys the WAR file onto Tomcat. (mvn tomcat:deploy of the Maven Tomcat plugin) 
+
+To undeploy later, simply use mvn tomcat:undeploy.
+
+After deployment, make sure you can access the web service's wsdl at http://localhost:8080/hello/services/hello?wsdl before proceeding further. If the browser reports an error message instead, check the output from Tomcat's terminal window and/or server logs (in $CATALINA_HOME/logs) for troubleshooting clues.
+
+Run the client code from eclipse or navigate to the client subdirectory of your project and enter mvn clean install exec:exec
