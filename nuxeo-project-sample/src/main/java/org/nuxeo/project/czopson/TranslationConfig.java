@@ -2,7 +2,6 @@ package org.nuxeo.project.czopson;
 
 import java.util.Comparator;
 import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -11,7 +10,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.contexts.Contexts;

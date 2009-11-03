@@ -12,7 +12,6 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.faces.FacesMessages;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import org.nuxeo.ecm.platform.ui.web.api.WebActions;
 import org.nuxeo.ecm.webapp.documentsLists.DocumentsListsManager;
@@ -21,7 +20,7 @@ import org.nuxeo.ecm.webapp.pagination.ResultsProvidersCache;
 
 @Scope(ScopeType.CONVERSATION)
 @Name("translator")
-public class TranslatorBean implements Translator, Serializable {
+public class TranslatorBean implements Serializable, Translator {
 
     private static final long serialVersionUID = 1L;
 

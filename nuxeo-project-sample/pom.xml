@@ -143,9 +143,9 @@
     </dependencies>
   </dependencyManagement>
 
-  <scm>
-    <connection>scm:svn:http://svn.nuxeo.org/nuxeo/org.nuxeo.project.sample/trunk</connection>
-    <developerConnection>scm:svn:https://svn.nuxeo.org/nuxeo/org.nuxeo.project.sample/trunk</developerConnection>
-    <url>http://svn.nuxeo.org/trac/nuxeo/browser/org.nuxeo.project.sample/trunk</url>
-  </scm>
+<!--  <scm>-->
+<!--    <connection>scm:svn:http://svn.nuxeo.org/nuxeo/org.nuxeo.project.sample/trunk</connection>-->
+<!--    <developerConnection>scm:svn:https://svn.nuxeo.org/nuxeo/org.nuxeo.project.sample/trunk</developerConnection>-->
+<!--    <url>http://svn.nuxeo.org/trac/nuxeo/browser/org.nuxeo.project.sample/trunk</url>-->
+<!--  </scm>-->
 </project>
