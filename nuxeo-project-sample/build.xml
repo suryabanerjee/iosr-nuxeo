@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<project name="nuxeo-project-sample" default="deploy" basedir=".">
+<project name="nuxeo-iosr-plugin" default="deploy" basedir=".">
 
   <!-- Create a build.properties file from build.properties.sample
        if you wish to override the JBoss paths -->
   <property file="build.properties" />
 
   <!-- This should be the same than the one in the pom.xml -->
-  <property name="name" value="nuxeo-project-sample" />
+  <property name="name" value="pl.edu.agh.iosr" />
 
   <property name="jboss.dir" value="/opt/jboss" />
 
