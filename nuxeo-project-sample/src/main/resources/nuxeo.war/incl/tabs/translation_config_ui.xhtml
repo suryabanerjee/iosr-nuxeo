@@ -8,28 +8,73 @@
 
 <h:form>
     
-    <h:panelGrid columns="3" styleClass="dataInput"
+    <h:outputLabel value="#{translation['ws.title']}"/>
+    
+    <h:dataTable value="#{configurationBean.remoteWSs}" var="ws" width="90%">
+    
+    	<h:column>
+    		<f:facet name="header">
+    			<h:outputText value="#{translation['ws.name']}"/>
+    		</f:facet>
+    		<h:outputText value="#{ws.name}"/>
+    	</h:column>
+    
+    	<h:column>
+    		<f:facet name="header">
+    			<h:outputText value="#{translation['ws.endpoint']}"/>
+    		</f:facet>
+    		<h:outputText value="#{ws.endpoint}"/>
+    	</h:column>
+    	
+    	<h:column>
+    		<f:facet name="header">
+    			<h:outputText value="#{translation['ws.description']}"/>
+    		</f:facet>
+    		<h:outputText value="#{ws.description}"/>
+    	</h:column>
+    	
+    	<h:column>
+			<h:commandButton value="#{translation['ws.delete']}"
+				 actionListener="#{configurationBean.deleteWS}">
+				<f:setPropertyActionListener 
+				target="#{configurationBean.name}" value="#{ws.name}"/>
+				<f:setPropertyActionListener 
+				target="#{configurationBean.endpoint}" value="#{ws.endpoint}"/>
+			</h:commandButton>
+    	</h:column>
+    </h:dataTable>
+    
+    <h:messages style="color: red"/>
+    <br/><br/>
+    
+</h:form>
+<h:form>
+
+	<h:outputLabel value="#{translation['ws.add.new']}"/>
+
+	<h:panelGrid columns="3" styleClass="dataInput"
       columnClasses="labelColumn, fieldColumn, fieldColumn">
     
-	   	<h:outputLabel value="#{translation['translate.from']}" />
-		<h:selectOneMenu id="translateFrom" value="#{translationConfig.langFrom}">
-			<f:selectItems value="#{translationConfig.langOptions}"/>
-		</h:selectOneMenu>
-		<h:message for="translateFrom" styleClass="errorMessage" />
+	   	<h:outputLabel value="#{translation['ws.add.name']}" />
+	   	<h:inputText id="name" value="#{configurationBean.name}" required="true"/>
+		<h:message for="name" styleClass="errorMessage" />
 			
-			
-      	<h:outputLabel value="#{translation['translate.to']}" />
-		<h:selectOneMenu id="translateTo" value="#{translationConfig.langTo}">
-			<f:selectItems value="#{translationConfig.langOptions}"/>
-		</h:selectOneMenu>
-		<h:message for="translateTo" styleClass="errorMessage" />
+      	<h:outputLabel value="#{translation['ws.add.endpoint']}" />
+      	<h:inputText id="endpoint" value="#{configurationBean.endpoint}" required="true"/>
+		<h:message for="endpoint" styleClass="errorMessage" />
 
+      	<h:outputLabel value="#{translation['ws.add.description']}" />
+      	<h:inputText id="description" value="#{configurationBean.description}"/>
+		<h:message for="description" styleClass="errorMessage" />
+		
 	</h:panelGrid>
-	<h:messages styleClass="errorMessage" />
-	<br/>
+
+	<h:commandButton 
+		value="#{translation[ws.add.register]}"
+		action="#{configurationBean.addNewWS}"/>
 	
-	<h:commandButton value="#{translation['submit.translation.config']}" action="#{translationConfig.submit}"/>
-    
+	<h:messages style="color: red" styleClass="errorMessage"/>
+
 </h:form>
 
 </div>

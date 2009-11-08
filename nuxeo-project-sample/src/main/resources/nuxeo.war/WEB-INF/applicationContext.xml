@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-	<bean name="dupek" class="pl.edu.agh.iosr.view.SpringStub">
-		<property name="suffix" value=" koncowa"/>
-	</bean>
+  xsi:schemaLocation="http://www.springframework.org/schema/beans 
+  			http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"> 
+ 	<bean id="configurationStorage" 
+ 			class="pl.edu.agh.iosr.controller.ConfigurationStorage">
+ 	</bean>
+ 	
+ 	<bean id="translationMediator" 
+ 			class="pl.edu.agh.iosr.controller.TranslationMediator">
+ 			<property name="configurationStorage" ref="configurationStorage"/>
+ 	</bean>
+ 	
 </beans>

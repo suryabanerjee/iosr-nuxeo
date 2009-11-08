@@ -15,8 +15,8 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.contexts.Contexts;
 
 @Scope(ScopeType.SESSION)
-@Name("translationConfig")
-public class TranslationConfig {
+@Name("translationEdition")
+public class TranslationEdition {
 	
 	private String langFrom, langTo;
 	private SelectItem[] langOptions;

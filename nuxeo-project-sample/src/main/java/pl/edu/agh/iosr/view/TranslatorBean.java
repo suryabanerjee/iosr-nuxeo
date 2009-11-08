@@ -47,13 +47,9 @@ public class TranslatorBean implements Serializable, Translator {
     @In(create=true)
     protected transient DocumentsListsManager documentsListsManager;
     
-    /* tutaj integracja ze springiem */
-    @In("#{dupek}")
-    protected SpringStub ss; 
-    
     /* wstrzyknieta konfiguracja tlumaczenia, przez Seam */
-    @In("#{translationConfig}")
-    protected TranslationConfig translationConfig;
+    @In("#{translationEdition}")
+    protected TranslationEdition translationConfig;
     
     /**
      * Prawdziwe tlumaczenie.
