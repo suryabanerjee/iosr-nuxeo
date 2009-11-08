@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2010 (http://www.altova.com) by Tomek (Home) -->
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns="http://example.org/wsdl/Translator.wsdl" name="Translator" targetNamespace="http://example.org/wsdl/Translator.wsdl">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 	xmlns:h="http://www.example.org/schema/Hello" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns="http://example.org/wsdl/Translator.wsdl" name="Translator" targetNamespace="http://example.org/wsdl/Translator.wsdl">
 	<wsdl:types>
+
 		<xs:schema targetNamespace="http://example.org/wsdl/Translator.wsdl" elementFormDefault="qualified"/>
 	</wsdl:types>
 	<wsdl:message name="TranslateRequest">

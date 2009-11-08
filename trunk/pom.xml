@@ -48,7 +48,7 @@
       <profile>
          <id>CXF</id>
          <activation>
-            <activeByDefault>false</activeByDefault>
+            <activeByDefault>true</activeByDefault>
          </activation>
          <properties>
             <cxf.version>2.2.2</cxf.version>
