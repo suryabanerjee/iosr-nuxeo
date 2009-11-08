@@ -1,4 +1,4 @@
-package org.nuxeo.project.czopson;
+package pl.edu.agh.iosr.view;
 
 import java.io.Serializable;
 import java.util.List;
