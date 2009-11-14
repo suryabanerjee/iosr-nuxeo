@@ -1,26 +1,46 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
    <modelVersion>4.0.0</modelVersion>
    <groupId>pl.edu.agh.iosr.nuxeo.translator</groupId>
-   <artifactId>NuxeoTranslator</artifactId>
+   <artifactId>nuxeo-translator</artifactId>
    <version>1.0-SNAPSHOT</version>
    <name>Nuxeo Translator</name>
    <packaging>pom</packaging>
 
-   <dependencies>
-      <dependency>
-         <groupId>junit</groupId>
-         <artifactId>junit</artifactId>
-         <version>4.4</version>
-         <scope>test</scope>
-      </dependency>
-   </dependencies>
+   <dependencyManagement>
+	   <dependencies>
+	      <dependency>
+	         <groupId>junit</groupId>
+	         <artifactId>junit</artifactId>
+	         <version>4.4</version>
+	         <scope>test</scope>
+	      </dependency>
+          <dependency>
+             <groupId>org.apache.cxf</groupId>
+             <artifactId>cxf-rt-frontend-jaxws</artifactId>
+             <version>2.2.2</version>
+          </dependency>
+          <dependency>
+             <groupId>org.apache.cxf</groupId>
+             <artifactId>cxf-rt-transports-http</artifactId>
+             <version>2.2.2</version>
+          </dependency>
+		  
+		  <dependency>
+             <groupId>pl.edu.agh.iosr.nuxeo.wsdl.translator</groupId>
+             <artifactId>cxf-translator-ws</artifactId>
+			 <version>1.0-SNAPSHOT</version>
+             <!--type>jar</type-->
+          </dependency>
+	   </dependencies>
+   </dependencyManagement>
 
    <modules>
-      <module>cxf-translator-ws</module>
-   </modules>
+    <module>cxf-translator-ws</module>
+    <module>cxf-googletranslator-ws</module>
+	<module>translator-client</module>
+  </modules>
    
     <build>
       <plugins>
@@ -43,29 +63,5 @@
          </plugin>
       </plugins>
    </build>
-
-   <profiles>
-      <profile>
-         <id>CXF</id>
-         <activation>
-            <activeByDefault>true</activeByDefault>
-         </activation>
-         <properties>
-            <cxf.version>2.2.2</cxf.version>
-         </properties>
-         <dependencies>
-            <dependency>
-               <groupId>org.apache.cxf</groupId>
-               <artifactId>cxf-rt-frontend-jaxws</artifactId>
-               <version>${cxf.version}</version>
-            </dependency>
-            <dependency>
-               <groupId>org.apache.cxf</groupId>
-               <artifactId>cxf-rt-transports-http</artifactId>
-               <version>${cxf.version}</version>
-            </dependency>
-         </dependencies>
-      </profile>
-   </profiles>
 
 </project>
