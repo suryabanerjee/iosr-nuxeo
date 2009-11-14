@@ -7,7 +7,9 @@ Bundle-Vendor: AGH
 Provide-Package: pl.edu.agh.iosr.bundles,
  pl.edu.agh.iosr.controller,
  pl.edu.agh.iosr.view,
- pl.edu.agh.iosr.ws
+ pl.edu.agh.iosr.ws,
+ pl.edu.agh.iosr.model,
+ pl.edu.agh.iosr.util
 Require-Bundle: org.nuxeo.runtime,
  org.nuxeo.ecm.core.api,
  org.nuxeo.ecm.core,

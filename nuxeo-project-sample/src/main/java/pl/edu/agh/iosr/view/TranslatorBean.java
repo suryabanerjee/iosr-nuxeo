@@ -18,9 +18,12 @@ import org.nuxeo.ecm.webapp.documentsLists.DocumentsListsManager;
 import org.nuxeo.ecm.webapp.helpers.ResourcesAccessor;
 import org.nuxeo.ecm.webapp.pagination.ResultsProvidersCache;
 
+/**
+ * To nic nie robi, smiec zostal po starych wersjach
+ * */
 @Scope(ScopeType.CONVERSATION)
 @Name("translator")
-public class TranslatorBean implements Serializable, Translator {
+public class TranslatorBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -47,10 +50,6 @@ public class TranslatorBean implements Serializable, Translator {
     @In(create=true)
     protected transient DocumentsListsManager documentsListsManager;
     
-    /* wstrzyknieta konfiguracja tlumaczenia, przez Seam */
-    @In("#{translationEdition}")
-    protected TranslationEdition translationConfig;
-    
     /**
      * Prawdziwe tlumaczenie.
      * Na razie loguje to co mialoby sie stac :].
@@ -74,10 +73,12 @@ public class TranslatorBean implements Serializable, Translator {
 			}
 		}
 		
+		/*
 		if (translationConfig != null) {
 			report += "from " + translationConfig.getLangFrom()
 			+ " to " + translationConfig.getLangTo() + ".";
 		}
+		*/
 		
 		log.info(report);
 		return "#";

@@ -4,8 +4,8 @@
 	<extension target="org.nuxeo.ecm.platform.actions.ActionService"
 		point="actions">
 
-		<action id="tab_folder_translation_edition" link="/incl/tabs/translation_edition_ui.xhtml"
-			enabled="true" label="translation.edition.label" order="15">
+		<action id="tab_folder_translation_edition" link="/incl/tabs/translation.jsp"
+			enabled="true" label="Translation" order="15">
 			<category>VIEW_ACTION_LIST</category>
 			<filter id="myFirstFilter">
 				<rule grant="true">
@@ -14,8 +14,8 @@
 			</filter>
 		</action>
 		
-		<action id="tab_folder_translation_config" link="/incl/tabs/translation_config_ui.xhtml"
-			enabled="true" label="translation.config.label" order="17">
+		<action id="tab_folder_translation_config" link="/incl/tabs/config.jsp"
+			enabled="true" label="Translation Administration" order="17">
 			<category>VIEW_ACTION_LIST</category>
 			<filter id="myFirstFilter">
 				<rule grant="true">
@@ -24,16 +24,6 @@
 			</filter>
 		</action>
 		
-		<action id="translation" link="#{translator.translate()}"
-		    enabled="true" label="Translate" icon="/icons/book.png" order="6">
-		  <category>SUBVIEW_UPPER_LIST</category>
-		  <filter id="moj_filtr">
-		    <rule grant="true">
-				<type>Workspace</type>
-		    </rule>
-		  </filter>
-		</action>
-
 	</extension>
 
 </component>

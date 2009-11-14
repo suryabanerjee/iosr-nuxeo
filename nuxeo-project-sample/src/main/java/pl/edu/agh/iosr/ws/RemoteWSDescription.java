@@ -1,12 +1,19 @@
-package pl.edu.agh.iosr.controller;
+package pl.edu.agh.iosr.ws;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import pl.edu.agh.iosr.model.LangPair;
+
 
 /**
- * Zawiera informacje niezbêdne do wywo³ania zdalnego WSa
- * jak ktoœ bêdzie wiedzia³ co dok³adnie, to jazda
+ * Zawiera informacje niezbï¿½dne do wywoï¿½ania zdalnego WSa
+ * jak ktoï¿½ bï¿½dzie wiedziaï¿½ co dokï¿½adnie, to jazda
  * */
 public class RemoteWSDescription {
 
 	private String name, endpoint, description;
+	private List<LangPair> supportedTranslation = new ArrayList<LangPair>(); 
 	
 	public RemoteWSDescription() {
 		super();
@@ -16,6 +23,13 @@ public class RemoteWSDescription {
 		super();
 		this.name = name;
 		this.endpoint = endpoint;
+	}
+
+	public RemoteWSDescription(String name, String endpoint, String description) {
+		super();
+		this.name = name;
+		this.endpoint = endpoint;
+		this.description = description;
 	}
 
 	public String getName() {
@@ -41,5 +55,9 @@ public class RemoteWSDescription {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
+	public List<LangPair> getSupportedTranslation() {
+		return supportedTranslation;
+	}
+
 }
