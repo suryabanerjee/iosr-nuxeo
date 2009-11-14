@@ -8,7 +8,7 @@
   <name>cxf-translator-war Maven Webapp</name>
   <url>http://maven.apache.org</url>
   
-	  <scm>
+		<scm>
 		<connection>scm:svn:https://iosr-nuxeo.googlecode.com/svn/reportingtest</connection>
 		<developerConnection>scm:svn:https://iosr-nuxeo.googlecode.com/svn/reportingtest</developerConnection>
 		<url>https://iosr-nuxeo.googlecode.com/svn</url>
