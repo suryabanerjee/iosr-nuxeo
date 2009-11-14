@@ -7,6 +7,13 @@
   <version>1.0-SNAPSHOT</version>
   <name>cxf-translator-war Maven Webapp</name>
   <url>http://maven.apache.org</url>
+  
+	  <scm>
+		<connection>scm:svn:https://iosr-nuxeo.googlecode.com/svn/reportingtest</connection>
+		<developerConnection>scm:svn:https://iosr-nuxeo.googlecode.com/svn/reportingtest</developerConnection>
+		<url>https://iosr-nuxeo.googlecode.com/svn</url>
+	  </scm>
+  
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -18,4 +25,7 @@
   <build>
     <finalName>cxf-translator-war</finalName>
   </build>
+  
+  
+  
 </project>
