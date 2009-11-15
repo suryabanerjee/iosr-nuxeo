@@ -39,6 +39,7 @@
    <modules>
     <module>cxf-translator-ws</module>
     <module>cxf-googletranslator-ws</module>
+	<module>cxf-other-ws</module>
 	<module>translator-client</module>
   </modules>
    
