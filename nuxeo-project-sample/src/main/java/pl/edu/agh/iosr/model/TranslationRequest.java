@@ -30,13 +30,13 @@ public class TranslationRequest {
 		 * Gdyby na przykład miały miejsce jakieś przykre synchroniczne wywołania
 		 * persystencja, pliki, to może się okazać, że zamówienie czeka
 		 * */
-		SEND,
+		SENT,
 		
 		/**
 		 * Nietrudno się domyśleć
 		 * Zamówienie w tym stanie powinno być już utrwalone
 		 * */
-		UNDER_REALISATION,
+		UNDER_PROCESSING,
 		
 		/**
 		 * Jeszcze łatwiej się domyśleć

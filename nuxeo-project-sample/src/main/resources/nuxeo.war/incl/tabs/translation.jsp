@@ -6,8 +6,6 @@
 	xmlns:nxd="http://nuxeo.org/nxweb/document"
 	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax">
 	
-<link rel="stylesheet" href="./css/timesheet.css" type="text/css"/>
-
 <h:form>
 	
 	<div id="div4">
@@ -49,7 +47,7 @@
 	
 		<h:selectOneMenu value="#{editionBean.wsName}">
 			<f:selectItems value="#{editionBean.availableServices}"/>
-			<a4j:support event="onchange" reRender="langFrom,description1"
+			<a4j:support event="onselect" reRender="langFrom, langTo, description1"
 					 bypassUpdates="false" ajaxSingle="true"/>
 		</h:selectOneMenu>
 
@@ -57,7 +55,7 @@
 
 		<h:selectOneMenu id="langFrom" value="#{editionBean.langFrom}" style="width: 50px">
 			<f:selectItems value="#{editionBean.langsFrom}"/>
-			<a4j:support event="onchange" reRender="langTo"
+			<a4j:support event="onselect" reRender="langTo"
 					 bypassUpdates="false" ajaxSingle="true"/>
 		</h:selectOneMenu>
 

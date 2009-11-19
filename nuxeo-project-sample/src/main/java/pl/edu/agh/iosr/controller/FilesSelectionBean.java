@@ -8,11 +8,15 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.platform.filemanager.api.FileManager;
+import org.nuxeo.ecm.webapp.contentbrowser.DocumentActionsBean;
 import org.nuxeo.ecm.webapp.documentsLists.DocumentsListsManager;
 
 import static pl.edu.agh.iosr.util.IosrLogger.log;
@@ -27,22 +31,43 @@ import static pl.edu.agh.iosr.util.IosrLogger.log;
 @Name("filesSelectionBean")
 public class FilesSelectionBean {
 	
-	@In(create=true)
-    protected transient DocumentsListsManager documentsListsManager;
+	@In
+    protected DocumentsListsManager documentsListsManager;
+
+    @In
+    protected CoreSession coreSession;
 
 	private List<EnrichedFile> files = new LinkedList<EnrichedFile>();
 	
-	@PostConstruct
+	@Create
 	public void init() {
+		
 		if (documentsListsManager == null) {
 			log(this.getClass(), "Failed to inject documentsListsManager.\n");
 		}
 		else {
-			List<DocumentModel> documents = documentsListsManager.getWorkingList();
+			documentsListsManager.initListManager();
+			List<DocumentModel> documents = documentsListsManager.
+						getWorkingList(DocumentsListsManager.DEFAULT_WORKING_LIST);
+			
 			for (DocumentModel dm : documents) {
 				files.add(new EnrichedFile(dm));
 			}
-			log(this.getClass(), "FilesSelectionBean successfully initialized.\n");
+			
+			log(this.getClass(), "FilesSelectionBean successfully initialized." +
+					" Found " + documents.size() + " files.\n");
+			
+			
+			try {
+				DocumentModel dm = coreSession.getRootDocument();
+				
+				log(this.getClass(), "Root document name: " + dm.getName());
+				log(this.getClass(), "Root document title: " + dm.getTitle());
+				log(this.getClass(), "Root document type: " + dm.getDocumentType());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

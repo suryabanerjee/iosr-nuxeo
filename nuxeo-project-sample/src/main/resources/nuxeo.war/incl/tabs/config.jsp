@@ -1,3 +1,4 @@
+
 <div xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
@@ -6,7 +7,7 @@
 	xmlns:nxd="http://nuxeo.org/nxweb/document"
 	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax">
 	
-<link rel="stylesheet" href="./css/timesheet.css" type="text/css"/>
+<link rel="stylesheet" href="../css/timesheet.css" type="text/css"/>
 
 <h:form>
 	
@@ -65,7 +66,9 @@
     </h:dataTable>
     
 </div>
+</h:form>
 
+<h:form>
 <div id="div2">
 
 		<h:dataTable id="langTable2" border="1" styleClass="table1"
@@ -117,7 +120,9 @@
 		</h:panelGrid>
 
 </div>
+</h:form>
 
+<h:form>
 <div id="div3">
 		
 		<h:outputLabel value="#{translation['ws.add.new']}"/>
