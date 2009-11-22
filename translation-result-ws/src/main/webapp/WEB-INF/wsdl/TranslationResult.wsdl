@@ -20,6 +20,7 @@
 			</xsd:simpleType>
 			
 			<xsd:simpleType name="FileHandler">
+				<xsd:restriction base="xsd:string" />
 			</xsd:simpleType>
 
         </xsd:schema>
