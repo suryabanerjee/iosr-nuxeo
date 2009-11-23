@@ -66,3 +66,19 @@ biblioteki tagów) wzbogaconą przez Facelets oraz (od najnowszej wersji 5.2)
 RichFaces. Ponadto wykorzystywany jest ajax4jsf. Nuxeo domyślnie korzysta z
 implementacji warstwy persystencji opartej o bazę danych Hipersonic, dostarczana
 wraz z serwerem JBoss.
+
+=== Kodery / dekodery tekstu do tłumaczenia – standard Xliff ===
+
+  # IDEA
+Xliff - XML Localization Interchange File Format to specjalny format plików oparty na XML. Został stworzony, aby ułatwić ekstrakcję tekstu, który ma zostać przetłumaczony. Translator może skupić się na samym tekście, nie biorąc pod uwagę jego formatowania. Co najważniejsze, użycie takiego standardu stwarza uniwersalne narzędzie do obsługi różnych formatów plików. Używamy biblioteki file2xliff4j, której główną zaletą jest szeroka gama obsługiwanych rodzajów plików (xml, html, txt, pliki open office'owe oraz microsoftowe).
+
+  # TŁUMACZENIE
+Proces tłumaczenia za pomocą formatu xliff wygląda następująco:
+  # Ekstrakcja tekstu do tłumaczenia z oryginalnego pliku;
+  # Konwersja pliku do formatu xliff;
+  # Wysłanie pliku xliff do tłumaczenia;
+  # Pobranie przetłumaczonego tekstu ze zwrotnego pliku i zmapowanie go w odpowiednie miejsce do oryginalnego dokumentu;
+
+Oryginalny plik, oprócz tekstu, zawiera także znaczniki dotyczące formatowania tekstu (np. <b> w pliku html). Wszystkie te nietłumaczone detale dotyczące formatowania i wyglądu tekstu zapisane zostaną w specjalnym pliku 'skeleton', gdzie tłumaczone zdania zostają zastąpione specjalnymi znacznikami: '%%%n%%%' (gdzie 'n' to kolejny numer fragmentu tekstu - będzie to ważne przy mapowaniu przetłumaczonego tekstu z powrotem do pliku). Każdy fragment tłumaczonego tekstu natomiast znajdzie się w pliku xliff pomiędzy tagami 'trans-unit'. Tagi te posiadają również atrybuty id (oznaczające odpowiednie miejsce do późniejszego wstawienia w pliku skeleton) oraz zagnieżdżone tagi 'source' z atrybutem 'xml:lang' (oznaczającymi język, w którym napisany jest tekst). Cały mechanizm nie jest skomplikowany, problemem jest tylko implementacja odpowiednich filtrów, co w przypadku plików xml czy html jest dość proste, może natomiast rodzić problemy przy gorzej udokumentowanych formatach (np. windowsowych). 
+
+W trakcie tłumaczenia w tagach 'trans-unit' zostają zagnieżdżone tagi 'alt-trans' zawierające przetłumaczone odpowiednie kawałki tekstu. Ten właśnie przetłumaczony tekst zostanie następnie zmapowany z plikiem skeleton, dając w rezultacie poprawnie sformatowany plik.
