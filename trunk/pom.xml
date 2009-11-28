@@ -54,7 +54,6 @@
 	<module>translator-client</module>
 	<module>translation-result-ws</module>
 	<module>result-client</module>
-	<module>translation-result-ws</module>
   </modules>
    
     <build>
