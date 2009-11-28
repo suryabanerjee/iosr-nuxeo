@@ -10,7 +10,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   
-   <artifactId>result-client</artifactId>
+   <artifactId>client</artifactId>
    <name>Client for translation-result-ws</name>
    <packaging>jar</packaging>
 
