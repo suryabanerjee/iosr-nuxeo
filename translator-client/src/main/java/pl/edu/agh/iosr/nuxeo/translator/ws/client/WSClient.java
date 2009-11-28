@@ -1,24 +1,33 @@
 package pl.edu.agh.iosr.nuxeo.translator.ws.client;
 
-import pl.edu.agh.iosr.nuxeo.wsdl.translator.TranslatorPortType;
-import pl.edu.agh.iosr.nuxeo.wsdl.translator.*;
-import pl.edu.agh.iosr.nuxeo.schema.translator.TranslateRequestWrapper;
+
+import java.io.File;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+
+import pl.edu.agh.iosr.nuxeo.schema.translationresult.FileResultRequestWrapper;
+import pl.edu.agh.iosr.nuxeo.wsdl.translationresult.TranslationResultPortType;
+import pl.edu.agh.iosr.nuxeo.wsdl.translationresult.TranslationResultService;
 
 public class WSClient {
 	public static void main (String[] args){
-        GoogleTranslatorService service = new GoogleTranslatorService();
-        TranslatorPortType port = service.getTranslatorPort();
-
-        translate(port, "text to translate");
+        TranslationResultService service = new TranslationResultService();
+        TranslationResultPortType port = service.getTranslationResultPort();
+        
+        File file = new File("testfile.txt");
+        sendFile(port,file);
     } 
     
-    public static void translate(TranslatorPortType port, String content) {
-    	String resp = null;
-
-    	TranslateRequestWrapper parameters = new TranslateRequestWrapper();
-    	parameters.setContent(content);
-    	resp = port.translate(parameters);
+    public static void sendFile(TranslationResultPortType port, File file) {
     	
-        System.out.println("The response is: " + resp);
+    	DataHandler dh = new DataHandler(new FileDataSource(file));
+    	
+    	FileResultRequestWrapper fileResult = new FileResultRequestWrapper();
+    	fileResult.setFile(dh);
+    	fileResult.setTranslationRequestID("123ABC");
+    	
+    	port.sendFileResult(fileResult);
+    	
     }
 }

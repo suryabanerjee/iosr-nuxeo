@@ -35,6 +35,15 @@
 			 <version>1.0-SNAPSHOT</version>
              <!--type>jar</type-->
           </dependency>
+		  
+		  <dependency>
+             <groupId>pl.edu.agh.iosr.nuxeo.ws.result</groupId>
+             <artifactId>translation-result-ws</artifactId>
+			 <version>1.0-SNAPSHOT</version>
+			 <classifier>jaxws</classifier>
+             <type>jar</type>
+          </dependency>
+		  
 	   </dependencies>
    </dependencyManagement>
 
@@ -43,6 +52,8 @@
     <module>cxf-googletranslator-ws</module>
 	<module>cxf-other-ws</module>
 	<module>translator-client</module>
+	<module>translation-result-ws</module>
+	<module>result-client</module>
 	<module>translation-result-ws</module>
   </modules>
    

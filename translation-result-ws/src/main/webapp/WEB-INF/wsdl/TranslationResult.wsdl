@@ -3,12 +3,14 @@
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns:translate="http://agh.edu.pl/iosr/nuxeo/schema/TranslationResult"
+	xmlns:translation="http://agh.edu.pl/iosr/nuxeo/schema/TranslationResult"
 	xmlns:tns="http://agh.edu.pl/iosr/nuxeo/wsdl/TranslationResult.wsdl"
 	targetNamespace="http://agh.edu.pl/iosr/nuxeo/wsdl/TranslationResult.wsdl">
 
    <wsdl:types>
-        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://agh.edu.pl/iosr/nuxeo/schema/TranslationResult">
+        <xsd:schema targetNamespace="http://agh.edu.pl/iosr/nuxeo/schema/TranslationResult"
+        			xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
+        			
 			<xsd:simpleType name="TranslationStatus">
 				<xsd:restriction base="xsd:string">
 					<xsd:enumeration value="NOT_STARTED"/>
@@ -19,36 +21,57 @@
 				</xsd:restriction>
 			</xsd:simpleType>
 			
-			<xsd:simpleType name="FileHandler">
-				<xsd:restriction base="xsd:string" />
-			</xsd:simpleType>
+			<xsd:element name="StringResultRequestWrapper">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="translationRequestID" type="xsd:string" />
+						<xsd:element name="text" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<xsd:element name="FileResultRequestWrapper">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="translationRequestID" type="xsd:string" />
+						<xsd:element name="file" type="xsd:base64Binary" 
+									 xmime:expectedContentTypes="application/octet-stream"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>			
+			
+			<xsd:element name="StatusRequestWrapper">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="translationRequestID" type="xsd:string" />
+						<xsd:element name="status" type="translation:TranslationStatus" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
 
         </xsd:schema>
     </wsdl:types>	
 
-   <wsdl:message name="sendStringResultRequest">
-        <wsdl:part name="translationRequestID" type="xsd:string" />
-        <wsdl:part name="text" type="xsd:string" />
-   </wsdl:message>
+    <wsdl:message name="sendStringResultRequest">
+        <wsdl:part name="parameters" element="translation:StringResultRequestWrapper" />
+    </wsdl:message>
 	<wsdl:message name="sendStringResultResponse">
 		<wsdl:part name="parameter" type="xsd:string" />
 	</wsdl:message>
-
-	<wsdl:message name="sendStatusRequest">
-		<wsdl:part name="translationRequestID" type="xsd:string" />
-		<wsdl:part name="status" type="translate:TranslationStatus" />
-	</wsdl:message>
-	<wsdl:message name="sendStatusResponse">
-		<wsdl:part name="parameter" type="xsd:string" />
-	</wsdl:message>
-
-    <wsdl:message name="sendFileResultRequest">
-    	<wsdl:part name="translationRequestID" type="xsd:string" />
-    	<wsdl:part name="file" type="translate:FileHandler" />
+	
+	<wsdl:message name="sendFileResultRequest">
+        <wsdl:part name="parameters" element="translation:FileResultRequestWrapper" />
     </wsdl:message>
     <wsdl:message name="sendFileResultResponse">
     	<wsdl:part name="parameter" type="xsd:string" />
     </wsdl:message>
+
+	<wsdl:message name="sendStatusRequest">
+        <wsdl:part name="parameters" element="translation:StatusRequestWrapper" />
+	</wsdl:message>
+	<wsdl:message name="sendStatusResponse">
+		<wsdl:part name="parameter" type="xsd:string" />
+	</wsdl:message>
     	
     	
     <wsdl:portType name="TranslationResultPortType">
