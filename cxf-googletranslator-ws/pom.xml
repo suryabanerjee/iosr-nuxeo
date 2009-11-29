@@ -17,6 +17,11 @@
   
   <dependencies>
     <dependency>
+	   <groupId>com.google.api.translate</groupId>
+	   <artifactId>google-api-translate</artifactId>
+	   <version>0.91</version>
+    </dependency>	
+	<dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
@@ -32,6 +37,14 @@
        <groupId>pl.edu.agh.iosr.nuxeo.wsdl.translator</groupId>
        <artifactId>cxf-translator-ws</artifactId>
      </dependency>
+     <dependency>
+       <groupId>pl.edu.agh.iosr.nuxeo.ws.result</groupId>
+       <artifactId>cxf-translation-result-ws</artifactId>
+       <classifier>jaxws</classifier>
+     </dependency>
+     
+     
+     
   </dependencies>
   
   <build>
