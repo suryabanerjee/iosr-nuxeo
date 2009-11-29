@@ -50,7 +50,6 @@
    <modules>
     <module>cxf-translator-ws</module>
     <module>cxf-googletranslator-ws</module>
-	<module>cxf-other-ws</module>
 	<module>translator-client</module>
 	<module>cxf-translation-result-ws</module>
 	<module>result-client</module>
@@ -146,42 +145,75 @@
            <reportSets>
              <reportSet>
                <reports>
-                 <report>mailing-list</report>
+      <!--           <report>dependencies</report>
+				 <report>dependency-convergence</report>
+				 <report>dependency-management</report> !-->
+				 <report>index</report>
+				 <report>issue-tracking</report>
+				 <report>plugin-management</report>
+				 <report>project-team</report>
+				 <report>scm</report>
+				 <report>summary</report>
              </reports>
            </reportSet>
-         </reportSets>
+		</reportSets>
          </plugin>
-	
+	  <!-- 
      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-			 <configuration>
-          <aggregate>true</aggregate>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.3</version>
-		 <configuration>
-          <aggregate>true</aggregate>
-        </configuration>
-      </plugin>
+     <artifactId>maven-surefire-plugin</artifactId>
+			<configuration>
+				<aggregate>true</aggregate>
+			</configuration>
+		</plugin>			!-->
+		<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>jxr-maven-plugin</artifactId>
+			<configuration>
+				<aggregate>true</aggregate>
+			</configuration>
+		</plugin>      
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-checkstyle-plugin</artifactId>
+			<version>2.3</version>
+			<configuration>
+				<aggregate>true</aggregate>
+			</configuration>
+		</plugin>
 	  
 	  <plugin>
-
         <groupId>org.codehaus.mojo</groupId>
-
         <artifactId>cobertura-maven-plugin</artifactId>
-
         <version>2.0</version>
 		<configuration>
           <aggregate>true</aggregate>
         </configuration>
+	  </plugin>
+	  
+	  <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-pmd-plugin</artifactId>
+         <configuration>
+            <targetjdk>1.6</targetjdk>
+            <rulesets>
+               <ruleset>/rulesets/basic.xml</ruleset>
+               <ruleset>/rulesets/controversial.xml</ruleset>
+            </rulesets>
+            <format>xml</format>
+            <linkXref>true</linkXref>
+            <sourceEncoding>utf-8</sourceEncoding>
 
+
+            <minimumTokens>100</minimumTokens>
+         </configuration>
       </plugin>
 
-
+	  
     </plugins>
+	
+	
+	
+	
   </reporting>
   
    <distributionManagement>

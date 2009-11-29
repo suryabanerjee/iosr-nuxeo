@@ -56,8 +56,8 @@ public class WSClient {
 	public static void main (String[] args){
 		WSClient wsClient=new WSClient(new GoogleTranslatorService());
 
-        wsClient.translate("text to translate");
-        wsClient.detect("text to translate");
+        wsClient.translate("Welcome");
+     /*   wsClient.detect("text to translate");
         wsClient.getSupportedOperations("text to translate");
         wsClient.getSupportedTranslations("text to translate");
         wsClient.getSupportedDetections("text to translate");
@@ -66,7 +66,7 @@ public class WSClient {
         wsClient.getSupportedFileTypes("text to translate");
         wsClient.getSupportedQualities("text to translate");
         wsClient.ping("text to translate");
-        
+       */ 
         
     } 
     
@@ -79,7 +79,7 @@ public class WSClient {
     	
     	
     	scs.setSourceType(SourceType.STRING);
-    	scs.setText("Welcome");
+    	scs.setText(content);
       	translationRequest.setContentSource(scs);
     	translationRequest.setTranslationRequestID("1xcv2312dac32312dasd");
     	translationRequest.setSourceLanguage(Locale.ENGLISH.toString());
