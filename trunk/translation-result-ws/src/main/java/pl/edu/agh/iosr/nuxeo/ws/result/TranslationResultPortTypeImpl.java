@@ -49,26 +49,6 @@ public class TranslationResultPortTypeImpl implements TranslationResultPortType{
 			e.printStackTrace();
 		}
 		
-		/*DataHandler dh = parameters.getFile();
-		try {
-			InputStream is = dh.getInputStream();
-			
-			File file = new File("newfile.txt");
-		    if(!file.exists()){
-		    	System.out.println("writing...");
-		    	file.createNewFile();
-  				DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-				int c;
-				while((c = is.read()) != -1) {
-					out.writeByte(c);
-				}
-				out.close();
-		    }
-			
-		} catch (IOException e) {
-	    	System.out.println("exception :(");
-			e.printStackTrace();
-		}*/
 		return null;
 	}
 
