@@ -1,0 +1,16 @@
+<projectDescription>
+  <name>client</name>
+  <comment>Nuxeo Translator - plugin for Nuxeo ECM which provides the
+   functionality of documents translation.</comment>
+  <projects>
+    <project>cxf-translator-ws</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>
