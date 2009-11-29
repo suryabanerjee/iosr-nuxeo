@@ -17,7 +17,7 @@
    <dependencies>
 	<dependency>
        <groupId>pl.edu.agh.iosr.nuxeo.ws.result</groupId>
-       <artifactId>translation-result-ws</artifactId>
+       <artifactId>cxf-translation-result-ws</artifactId>
        <classifier>jaxws</classifier>
        <!--version>1.0-SNAPSHOT</version-->
        <!--type>jar</type-->       
