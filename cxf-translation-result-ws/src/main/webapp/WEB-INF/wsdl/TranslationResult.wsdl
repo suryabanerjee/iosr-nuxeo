@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="TranslationResult"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:translation="http://agh.edu.pl/iosr/nuxeo/schema/TranslationResult"
+	xmlns:tns="http://agh.edu.pl/iosr/nuxeo/wsdl/TranslationResult.wsdl"
+	targetNamespace="http://agh.edu.pl/iosr/nuxeo/wsdl/TranslationResult.wsdl">
+
+   <wsdl:types>
+        <xsd:schema targetNamespace="http://agh.edu.pl/iosr/nuxeo/schema/TranslationResult"
+        			xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
+        			
+			<xsd:simpleType name="TranslationStatus">
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="NOT_STARTED"/>
+					<xsd:enumeration value="BEGINNING"/>
+					<xsd:enumeration value="MIDDLE"/>
+					<xsd:enumeration value="ADVANCED"/>
+					<xsd:enumeration value="FINISHED"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+			
+			<xsd:element name="StringResultRequestWrapper">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="translationRequestID" type="xsd:string" />
+						<xsd:element name="text" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<xsd:element name="FileResultRequestWrapper">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="translationRequestID" type="xsd:string" />
+						<xsd:element name="file" type="xsd:base64Binary" 
+									 xmime:expectedContentTypes="application/octet-stream"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>			
+			
+			<xsd:element name="StatusRequestWrapper">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="translationRequestID" type="xsd:string" />
+						<xsd:element name="status" type="translation:TranslationStatus" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+        </xsd:schema>
+    </wsdl:types>	
+
+    <wsdl:message name="sendStringResultRequest">
+        <wsdl:part name="parameters" element="translation:StringResultRequestWrapper" />
+    </wsdl:message>
+	<wsdl:message name="sendStringResultResponse">
+		<wsdl:part name="parameter" type="xsd:string" />
+	</wsdl:message>
+	
+	<wsdl:message name="sendFileResultRequest">
+        <wsdl:part name="parameters" element="translation:FileResultRequestWrapper" />
+    </wsdl:message>
+    <wsdl:message name="sendFileResultResponse">
+    	<wsdl:part name="parameter" type="xsd:string" />
+    </wsdl:message>
+
+	<wsdl:message name="sendStatusRequest">
+        <wsdl:part name="parameters" element="translation:StatusRequestWrapper" />
+	</wsdl:message>
+	<wsdl:message name="sendStatusResponse">
+		<wsdl:part name="parameter" type="xsd:string" />
+	</wsdl:message>
+    	
+    	
+    <wsdl:portType name="TranslationResultPortType">
+		<wsdl:operation name="sendStringResult">
+			<wsdl:input message="tns:sendStringResultRequest" />
+			<wsdl:output message="tns:sendStringResultResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="sendFileResult">
+			<wsdl:input message="tns:sendFileResultRequest" />
+			<wsdl:output message="tns:sendFileResultResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="sendStatus">
+            <wsdl:input message="tns:sendStatusRequest" />
+            <wsdl:output message="tns:sendStatusResponse" />
+		</wsdl:operation>
+	</wsdl:portType>
+	
+	<wsdl:binding name="TranslationResultBinding" type="tns:TranslationResultPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="sendStringResult">
+          <soap:operation soapAction=""/>
+          <wsdl:input><soap:body use="literal"/></wsdl:input>
+          <wsdl:output><soap:body use="literal"/></wsdl:output>
+        </wsdl:operation>
+       	<wsdl:operation name="sendFileResult">
+          <soap:operation soapAction=""/>
+          <wsdl:input><soap:body use="literal"/></wsdl:input>
+          <wsdl:output><soap:body use="literal"/></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendStatus">
+          <soap:operation soapAction=""/>
+          <wsdl:input><soap:body use="literal"/></wsdl:input>
+          <wsdl:output><soap:body use="literal"/></wsdl:output>
+        </wsdl:operation>
+	</wsdl:binding>
+	
+	<wsdl:service name="TranslationResultService">
+		<wsdl:port name="TranslationResultPort" binding="tns:TranslationResultBinding">
+			<soap:address location="http://localhost:8080/translation-result-ws/services/result"/>
+		</wsdl:port>
+	</wsdl:service>
+	
+</wsdl:definitions>
