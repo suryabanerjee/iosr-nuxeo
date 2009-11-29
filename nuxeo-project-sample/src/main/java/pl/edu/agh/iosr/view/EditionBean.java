@@ -1,5 +1,6 @@
 package pl.edu.agh.iosr.view;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +38,12 @@ import pl.edu.agh.iosr.ws.RemoteWSDescription;
  * */
 @Scope(ScopeType.CONVERSATION)
 @Name("editionBean")
-public class EditionBean {
+public class EditionBean implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5218857682596144169L;
 
 	@In("#{mediator}")
 	private Mediator mediator;

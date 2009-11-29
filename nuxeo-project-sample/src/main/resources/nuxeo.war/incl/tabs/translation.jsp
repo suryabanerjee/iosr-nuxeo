@@ -8,7 +8,11 @@
 	
 <h:form>
 	
-	<div id="div4">
+	<div id="div4" style="	width: 40%;
+		text-align: center;
+		background: #CCFF33;
+		margin: 10px;
+		position: relative;">
 	<h:outputText value="#{translation['translate.filesList']}"/>
 	<h:dataTable border="1" value="#{editionBean.filesSelectionBean.files}" var="file"
 	styleClass="table1"
@@ -39,7 +43,12 @@
 	</h:dataTable>
 	</div>
 
-	<div id="div5">
+	<div id="div5" style="background: #FFFF99;
+		margin: 10px;
+		position: relative;
+		width: 350px;
+		display: block;
+		padding: 10px;">
 	<h:outputText value="#{translation['translate.chooseOptions']}"/>
 	<h:panelGrid border="0" columns="2">
 	
@@ -73,7 +82,12 @@
 
 		</h:panelGrid>
 		
-		<div id="div6">
+		<div id="div6" style="	background: #FFFFFF;
+			margin: 10px;
+			width: 250px;
+			heigth: 50px;
+			border-style: dotted;
+			border-width: 1px;">
 		<h:outputLabel value="#{translation['translate.service.description']}"/>
 		<h:outputText id="description1" 
 		value="#{editionBean.remoteWSDescription.description}"/>
@@ -81,7 +95,11 @@
 		
 	</div>
 	
-	<div id="div7">
+	<div id="div7" style="	background: #FFFF99;
+			margin: 10px;
+			position: relative;
+			width: 350px;
+			display: block;">
 		<h:messages layout="table"/>
 		<h:outputText value="#{editionBean.report}" rendered="#{editionBean.hasReport}"/>
 	</div>

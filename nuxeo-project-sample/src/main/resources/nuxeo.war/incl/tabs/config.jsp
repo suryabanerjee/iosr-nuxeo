@@ -11,12 +11,18 @@
 
 <h:form>
 	
-	<div id="div1">
+	<div id="div1" style="padding: 10px;
+	width: 90%;
+	text-align: center;
+	height: 40%;
+	background: #CCFF00;
+	margin: 10px;">
 	
     <h:outputLabel value="#{translation['ws.title']}"/>
     
     <h:dataTable value="#{configurationBean.remoteWSs}" var="ws" 
-    	border="1" styleClass="table1"
+    	border="1" styleClass="table1" style="width: 100%;
+	background: #99FFFF;"
     	rowClasses="table1rowEven table1rowOdd">
     
     	<h:column>
@@ -69,7 +75,13 @@
 </h:form>
 
 <h:form>
-<div id="div2">
+<div id="div2" style="margin: 10px;
+	padding: 10px;
+	width: 250px;
+	text-align: center;
+	background: #FFCC33;
+	position: relative;
+	float: left;">
 
 		<h:dataTable id="langTable2" border="1" styleClass="table1"
     	rowClasses="table1rowEven table1rowOdd" 
@@ -123,7 +135,13 @@
 </h:form>
 
 <h:form>
-<div id="div3">
+<div id="div3" style="margin: 10px;
+	padding: 10px;
+	width: 40%;
+	text-align: center;
+	background: #CCFFFF;
+	margin-left: 30px;
+	float: left;">
 		
 		<h:outputLabel value="#{translation['ws.add.new']}"/>
 	

@@ -3,20 +3,17 @@ package pl.edu.agh.iosr.controller;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.persistence.EntityManager;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.nuxeo.ecm.core.api.ClientException;
-import org.nuxeo.ecm.core.api.CoreSession;
+import org.jboss.seam.persistence.PersistenceProvider;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.platform.filemanager.api.FileManager;
-import org.nuxeo.ecm.webapp.contentbrowser.DocumentActionsBean;
 import org.nuxeo.ecm.webapp.documentsLists.DocumentsListsManager;
 
 import static pl.edu.agh.iosr.util.IosrLogger.log;
@@ -27,21 +24,25 @@ import static pl.edu.agh.iosr.util.IosrLogger.log;
  * Teoretycznie wykonuje pewne funkcje warstwy prezentacji: validacje,
  * ale w tym pakiecie pasuje lepiej
  * */
-@Scope(ScopeType.CONVERSATION)
+@Scope(ScopeType.SESSION)
 @Name("filesSelectionBean")
 public class FilesSelectionBean {
 	
-	@In
+	@In(create=true)
     protected DocumentsListsManager documentsListsManager;
 
-    @In
-    protected CoreSession coreSession;
-
-	private List<EnrichedFile> files = new LinkedList<EnrichedFile>();
+	/*
+	@In(create=true)
+	protected EntityManager entityManager;
+	*/
+	
+    private List<EnrichedFile> files = new LinkedList<EnrichedFile>();
 	
 	@Create
 	public void init() {
-		
+	
+		/* sprawdzenie czy udało sie wstrzyknąć documentManagera i to takiego
+		 * jakiego chcemy */
 		if (documentsListsManager == null) {
 			log(this.getClass(), "Failed to inject documentsListsManager.\n");
 		}
@@ -56,19 +57,19 @@ public class FilesSelectionBean {
 			
 			log(this.getClass(), "FilesSelectionBean successfully initialized." +
 					" Found " + documents.size() + " files.\n");
-			
-			
-			try {
-				DocumentModel dm = coreSession.getRootDocument();
-				
-				log(this.getClass(), "Root document name: " + dm.getName());
-				log(this.getClass(), "Root document title: " + dm.getTitle());
-				log(this.getClass(), "Root document type: " + dm.getDocumentType());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
+		
+		/* sprawdzenie czy udało się wstrzyknąć persistanceContext */
+		
+		/*
+		if (entityManager == null) {
+			log(this.getClass(), "Failed to inject persistanceContext.");
+		}
+		else {
+			log(this.getClass(), "PersistanceContext seems injected properly.");
+			log(this.getClass(), entityManager.toString());
+		}
+		*/
 	}
 	
 	public List<EnrichedFile> getFiles() {

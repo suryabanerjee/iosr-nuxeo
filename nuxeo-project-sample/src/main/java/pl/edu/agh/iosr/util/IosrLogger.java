@@ -26,10 +26,16 @@ public class IosrLogger {
 	
 	public static Level DEFAULT_IOSR_LOGGING_LEVEL = Level.WARNING;
 	
+	/**
+	 * Loguje z domyślnym poziomem logowania
+	 * */
 	public static void log (Class<?> c, String s) {
 		log(c, s, DEFAULT_IOSR_LOGGING_LEVEL);
 	}
 	
+	/**
+	 * Loguje z zadanym poziomem logowania
+	 * */
 	public static void log (Class<?> c, String s, Level level) {
 		if (!loggersCache.containsKey(c)) {
 			loggersCache.put(c, Logger.getLogger(c.getName()));
