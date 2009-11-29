@@ -26,7 +26,7 @@ public class TranslationResultPortTypeImpl implements TranslationResultPortType{
 
 	@Override
 	public String sendStringResult(StringResultRequestWrapper parameters) {
-		// TODO Auto-generated method stub
+		System.out.println("<< TranslationResultWS >>" + parameters.getTranslationRequestID() + ": " + parameters.getText());
 		return null;
 	}
 
