@@ -1,13 +1,9 @@
 #summary webservice'y.
 
- # = Opis =
+= 1. Opis =
 
-Add your content here.
+= 2. Objaśnienie interfejsów =
 
+= 3. Wykorzystywane typy danych =
 
-= Details =
-
-  # Opis
-  # Objaśnienie interfejsów
-  # Wykorzystywane typy danych
-  # Dostęp do webservice'u tłumaczącego
+= 4. Dostęp do webservice'u tłumaczącego =
