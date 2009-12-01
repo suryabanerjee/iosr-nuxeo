@@ -29,18 +29,18 @@ public class IosrLogger {
 	/**
 	 * Loguje z domyślnym poziomem logowania
 	 * */
-	public static void log (Class<?> c, String s) {
-		log(c, s, DEFAULT_IOSR_LOGGING_LEVEL);
+	public static void log (Class<?> c, Object o) {
+		log(c, o.toString(), DEFAULT_IOSR_LOGGING_LEVEL);
 	}
 	
 	/**
 	 * Loguje z zadanym poziomem logowania
 	 * */
-	public static void log (Class<?> c, String s, Level level) {
+	public static void log (Class<?> c, Object o, Level level) {
 		if (!loggersCache.containsKey(c)) {
 			loggersCache.put(c, Logger.getLogger(c.getName()));
 		}
-		loggersCache.get(c).log(DEFAULT_IOSR_LOGGING_LEVEL, s);		
+		loggersCache.get(c).log(DEFAULT_IOSR_LOGGING_LEVEL, o.toString());		
 	}
 	
 }

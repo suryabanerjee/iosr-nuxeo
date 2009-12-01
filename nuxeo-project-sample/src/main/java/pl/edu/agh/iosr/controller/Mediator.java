@@ -1,6 +1,7 @@
 package pl.edu.agh.iosr.controller;
 
-import pl.edu.agh.iosr.model.TranslationRequest;
+import pl.edu.agh.iosr.conversion.XliffConverter;
+import pl.edu.agh.iosr.model.TranslationOrder;
 
 import static pl.edu.agh.iosr.util.IosrLogger.log;
 
@@ -11,25 +12,22 @@ import static pl.edu.agh.iosr.util.IosrLogger.log;
  * Poniewaz se springiem jest kupa problemow prawdopodobnie
  * wszystko co mozliwe napiszemy w Seamie (to potem tez),
  * narazie to jest Spring, patrz ApplicationContext.xml
+ * 
+ * <br>
+ * 1.12.2009
+ * Trzeba będzie przemyśleć konieczność implementowania
+ * wszystkich interfejsów, narazie daję wolną rękę
+ * 
+ * @author czopson
  * */
 public class Mediator {
 	
-	private ConfigurationStorage configurationStorage;
-
-	public ConfigurationStorage getConfigurationStorage() {
-		return configurationStorage;
-	}
-
-	public void setConfigurationStorage(ConfigurationStorage configurationStorage) {
-		this.configurationStorage = configurationStorage;
-	}
-	
+	private XliffConverter xliffConverter;
 	
 	/**
 	 * Kolejkuje zamówienie
-	 * jeszcze nie wiadomo gdzie ani co z nimi robi, ale jest tu!
 	 * */
-	public void enqueuRequest(TranslationRequest request) {
+	public void enqueuRequest(TranslationOrder request) {
 		log(this.getClass(), "Złożono zamówienie na przekład:\n" + request.toString());
 	}
 	

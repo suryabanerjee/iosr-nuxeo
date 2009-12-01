@@ -1,5 +1,6 @@
 package pl.edu.agh.iosr.view;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -16,7 +17,7 @@ import org.jboss.seam.annotations.Scope;
 
 import pl.edu.agh.iosr.controller.ConfigurationStorage;
 import pl.edu.agh.iosr.model.LangPair;
-import pl.edu.agh.iosr.ws.RemoteWSDescription;
+import pl.edu.agh.iosr.model.TranslationService;
 
 /**
  * backing bean dla widoku osoby administruj�cej
@@ -32,7 +33,7 @@ public class ConfigurationBean {
 
 	private String description = "", endpoint = "", name = "";
 	
-	public List<RemoteWSDescription> getRemoteWSs() {
+	public List<TranslationService> getRemoteWSs() {
 		return configurationStorage.getRemoteWSs();
 	}
 	
@@ -42,7 +43,7 @@ public class ConfigurationBean {
 	public String addNewWS() {
 		
 		// troche walidacji nie zaszkodzi
-		for (RemoteWSDescription r : configurationStorage.getRemoteWSs()) {
+		for (TranslationService r : configurationStorage.getRemoteWSs()) {
 			if (name.equals(r.getName())) {
 				FacesContext.getCurrentInstance().
 					addMessage(null, new FacesMessage("Cannot duplicate WS."));
@@ -50,7 +51,7 @@ public class ConfigurationBean {
 			}
 		}
 		
-		RemoteWSDescription r = new RemoteWSDescription();
+		TranslationService r = new TranslationService();
 		r.setDescription(description);
 		r.setEndpoint(endpoint);
 		r.setName(name);
@@ -65,8 +66,8 @@ public class ConfigurationBean {
 	 * ustawiaja wartosc name i endpoint
 	 * */
 	public String deleteWS() {
-		RemoteWSDescription rwds = null;
-		for (RemoteWSDescription r : configurationStorage.getRemoteWSs()) {
+		TranslationService rwds = null;
+		for (TranslationService r : configurationStorage.getRemoteWSs()) {
 			if (r.getName().equals(name) && r.getEndpoint().equals(endpoint)) {
 				rwds = r;
 				break;
@@ -110,8 +111,8 @@ public class ConfigurationBean {
 		this.configurationStorage = configurationStorage;
 	}
 
-	public RemoteWSDescription getSelectedWS() {
-		for (RemoteWSDescription r : configurationStorage.getRemoteWSs()) {
+	public TranslationService getSelectedWS() {
+		for (TranslationService r : configurationStorage.getRemoteWSs()) {
 			if (r.getName().equals(name)) {
 				return r;
 			}
@@ -140,7 +141,7 @@ public class ConfigurationBean {
 	 * */
 	public String deletePair() {
 		int i = -1;
-		for (LangPair lp : getSelectedWS().getSupportedTranslation()) {
+		for (LangPair lp : getSelectedWS().getSupportedLangPairs()) {
 			++i;
 			if (lp.getFrom().equals(toDeletePairLangFrom) &&
 				lp.getTo().equals(toDeletePairLangTo)) {
@@ -149,8 +150,8 @@ public class ConfigurationBean {
 		}
 		System.out.println("removing: " + toDeletePairLangFrom + "-" + 
 					toDeletePairLangTo + " which is " + i + "th");
-		if (i >= 0 && i < getSelectedWS().getSupportedTranslation().size()) {
-			getSelectedWS().getSupportedTranslation().remove(i);
+		if (i >= 0 && i < getSelectedWS().getSupportedLangPairs().size()) {
+			getSelectedWS().getSupportedLangPairs().remove(i);
 		}
 		return "";
 	}
@@ -204,7 +205,7 @@ public class ConfigurationBean {
 			return "";
 		}
 		
-		List<LangPair> ll = getSelectedWS().getSupportedTranslation();
+		Collection<LangPair> ll = getSelectedWS().getSupportedLangPairs();
 		for (LangPair lp : ll) {
 			if (lp.getFrom().equals(newLangFrom) &&
 				lp.getTo().equals(newLangTo)) {
@@ -214,7 +215,7 @@ public class ConfigurationBean {
 			}
 		}
 		
-		getSelectedWS().getSupportedTranslation().
+		getSelectedWS().getSupportedLangPairs().
 			add(new LangPair(newLangFrom, newLangTo));
 
 		return "";

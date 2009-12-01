@@ -18,10 +18,13 @@
 	styleClass="table1"
     	rowClasses="table1rowEven table1rowOdd">
 		<h:column id="column1">
-				<h:selectBooleanCheckbox value="#{file.selected}">
-					<a4j:support event="onclick" reRender="output3"
-					 ajaxSingle="true"/>
-				</h:selectBooleanCheckbox>
+			<a4j:region renderRegionOnly="false">
+					<h:selectBooleanCheckbox value="#{file.selected}">
+						<a4j:support event="onclick" reRender="output3"
+						 ajaxSingle="true"/>
+					</h:selectBooleanCheckbox>
+			</a4j:region>
+			
 			<f:facet name="header">
 				<h:outputText value="#{translation['translate.filesList.select']}"/>
 			</f:facet>
@@ -49,39 +52,48 @@
 		width: 350px;
 		display: block;
 		padding: 10px;">
-	<h:outputText value="#{translation['translate.chooseOptions']}"/>
-	<h:panelGrid border="0" columns="2">
-	
-		<h:outputLabel value="#{translation['translate.service']}"/>
-	
-		<h:selectOneMenu value="#{editionBean.wsName}">
-			<f:selectItems value="#{editionBean.availableServices}"/>
-			<a4j:support event="onselect" reRender="langFrom, langTo, description1"
-					 bypassUpdates="false" ajaxSingle="true"/>
-		</h:selectOneMenu>
 
-		<h:outputLabel value="#{translation['translate.from']}"/>
-
-		<h:selectOneMenu id="langFrom" value="#{editionBean.langFrom}" style="width: 50px">
-			<f:selectItems value="#{editionBean.langsFrom}"/>
-			<a4j:support event="onselect" reRender="langTo"
-					 bypassUpdates="false" ajaxSingle="true"/>
-		</h:selectOneMenu>
-
-		<h:outputLabel value="#{translation['translate.to']}"/>
+		<h:outputText value="#{translation['translate.chooseOptions']}"/>
+		<h:panelGrid border="0" columns="2">
 		
-		<h:selectOneMenu id="langTo" value="#{editionBean.langTo}" style="width: 50px">
-			<f:selectItems value="#{editionBean.langsTo}"/>
-		</h:selectOneMenu>
+			<h:outputLabel value="#{translation['translate.service']}"/>
 		
-		<h:inputHidden/>
+			<a4j:region renderRegionOnly="false">
+				<h:selectOneMenu value="#{editionBean.wsName}">
+					<f:selectItems value="#{editionBean.availableServices}"/>
+					<a4j:support event="onselect" reRender="langFrom, langTo, description1"
+							 ajaxSingle="true"/>
+				</h:selectOneMenu>
+			</a4j:region>
+		
+			<h:outputLabel value="#{translation['translate.from']}"/>
+	
+			<a4j:region id="langFrom" renderRegionOnly="false">	
+				<h:selectOneMenu value="#{editionBean.langFrom}" style="width: 50px">
+					<f:selectItems value="#{editionBean.langsFrom}"/>
+					<a4j:support event="onselect" reRender="langTo"
+							 ajaxSingle="true"/>
+				</h:selectOneMenu>
+			</a4j:region>
+		
+			<h:outputLabel value="#{translation['translate.to']}"/>
 			
-		<h:commandButton value="#{translation['submit.translation']}" 
-		actionListener="#{editionBean.validationListener}"
-		action="#{editionBean.buildTranslationRequest}"/>
+			<a4j:region id="langTo" renderRegionOnly="false">	
+			
+				<h:selectOneMenu value="#{editionBean.langTo}" style="width: 50px">
+					<f:selectItems value="#{editionBean.langsTo}"/>
+				</h:selectOneMenu>
+			
+			</a4j:region>
+				
+			<h:inputHidden/>
+				
+			<h:commandButton value="#{translation['submit.translation']}" 
+			actionListener="#{editionBean.validationListener}"
+			action="#{editionBean.buildTranslationRequest}"/>
+	
+			</h:panelGrid>
 
-		</h:panelGrid>
-		
 		<div id="div6" style="	background: #FFFFFF;
 			margin: 10px;
 			width: 250px;
@@ -89,8 +101,10 @@
 			border-style: dotted;
 			border-width: 1px;">
 		<h:outputLabel value="#{translation['translate.service.description']}"/>
-		<h:outputText id="description1" 
-		value="#{editionBean.remoteWSDescription.description}"/>
+		
+		<a4j:region id="description1" renderRegionOnly="false">	
+			<h:outputText value="#{editionBean.remoteWSDescription.description}"/>
+		</a4j:region>
 		</div>
 		
 	</div>

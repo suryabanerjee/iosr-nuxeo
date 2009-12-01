@@ -5,18 +5,16 @@ import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.persistence.EntityManager;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.persistence.PersistenceProvider;
+import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.webapp.documentsLists.DocumentsListsManager;
-
-import static pl.edu.agh.iosr.util.IosrLogger.log;
+import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.runtime.api.Framework;
 
 /**
  * Pobiera liste plików z workspace'a
@@ -28,48 +26,37 @@ import static pl.edu.agh.iosr.util.IosrLogger.log;
 @Name("filesSelectionBean")
 public class FilesSelectionBean {
 	
-	@In(create=true)
-    protected DocumentsListsManager documentsListsManager;
-
-	/*
-	@In(create=true)
-	protected EntityManager entityManager;
-	*/
+	@In(create = true, required = false)
+    protected transient CoreSession coreSession;
 	
     private List<EnrichedFile> files = new LinkedList<EnrichedFile>();
 	
 	@Create
 	public void init() {
-	
-		/* sprawdzenie czy udało sie wstrzyknąć documentManagera i to takiego
-		 * jakiego chcemy */
-		if (documentsListsManager == null) {
-			log(this.getClass(), "Failed to inject documentsListsManager.\n");
+		
+		try {
+			if (coreSession == null)
+			coreSession = Framework.getService(CoreSession.class);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		else {
-			documentsListsManager.initListManager();
-			List<DocumentModel> documents = documentsListsManager.
-						getWorkingList(DocumentsListsManager.DEFAULT_WORKING_LIST);
-			
-			for (DocumentModel dm : documents) {
-				files.add(new EnrichedFile(dm));
+		
+		if (coreSession != null) {
+			try {
+				DocumentModelList dml = coreSession.query("SELECT * FROM Document");
+				for (DocumentModel dm : dml) {
+					if (dm.isDownloadable()) {
+						files.add(new EnrichedFile(dm));
+					}
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
-			log(this.getClass(), "FilesSelectionBean successfully initialized." +
-					" Found " + documents.size() + " files.\n");
 		}
 		
-		/* sprawdzenie czy udało się wstrzyknąć persistanceContext */
 		
-		/*
-		if (entityManager == null) {
-			log(this.getClass(), "Failed to inject persistanceContext.");
-		}
-		else {
-			log(this.getClass(), "PersistanceContext seems injected properly.");
-			log(this.getClass(), entityManager.toString());
-		}
-		*/
 	}
 	
 	public List<EnrichedFile> getFiles() {
@@ -113,11 +100,4 @@ public class FilesSelectionBean {
 		
 	}
 
-	public DocumentsListsManager getDocumentsListsManager() {
-		return documentsListsManager;
-	}
-
-	public void setDocumentsListsManager(DocumentsListsManager documentsListsManager) {
-		this.documentsListsManager = documentsListsManager;
-	}
 }

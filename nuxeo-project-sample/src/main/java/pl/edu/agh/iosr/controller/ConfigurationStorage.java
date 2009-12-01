@@ -8,58 +8,54 @@ import javax.annotation.PostConstruct;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.springframework.stereotype.Repository;
 
 import pl.edu.agh.iosr.model.LangPair;
-import pl.edu.agh.iosr.ws.RemoteWSDescription;
+import pl.edu.agh.iosr.model.TranslationService;
 
 
 /**
- * klasa przechowuje konfigurację dostępnych serwisów
- * 
- * po zapoznaniu z mechanizmami persystencji nuxeo trzeba bedzie to utwalać
+ * na potrzeby testów GUI
  * */
 @Name("configurationStorage")
 @Scope(ScopeType.APPLICATION)
 public class ConfigurationStorage {
 
-	private List<RemoteWSDescription> remoteWSs = 
-		new LinkedList<RemoteWSDescription>();
+	private List<TranslationService> remoteWSs = 
+		new LinkedList<TranslationService>();
 
 	@PostConstruct
 	public void init() {
-		RemoteWSDescription wsd = new RemoteWSDescription("WebService1", "com.google", "słabe tłumaczenie googla");
-		wsd.getSupportedTranslation().add(new LangPair("PL", "ENG"));
-		wsd.getSupportedTranslation().add(new LangPair("ENG", "PL"));
+		TranslationService wsd = new TranslationService();
+		wsd.getSupportedLangPairs().add(new LangPair("PL", "ENG"));
+		wsd.getSupportedLangPairs().add(new LangPair("ENG", "PL"));
+		wsd.setDescription("tlumaczneie 1");
+		wsd.setEndpoint("http://www.goooooogle.com");
+		wsd.setName("Google");
 		remoteWSs.add(wsd);
 		
-		wsd = new RemoteWSDescription("SuperTlumaczenia", "com.super.tlumaczenia", "super tłumaczenie");
-		wsd.getSupportedTranslation().add(new LangPair("PL", "ES"));
-		wsd.getSupportedTranslation().add(new LangPair("ES", "RU"));
-		wsd.getSupportedTranslation().add(new LangPair("RU", "JP"));
+		wsd = new TranslationService();
+		wsd.getSupportedLangPairs().add(new LangPair("PL", "ES"));
+		wsd.getSupportedLangPairs().add(new LangPair("ES", "RU"));
+		wsd.getSupportedLangPairs().add(new LangPair("RU", "JP"));
+		wsd.setDescription("tlumaczneie czopyka");
+		wsd.setEndpoint("http://www.czopyk.pl");
+		wsd.setName("Czopsonopolis");
 		remoteWSs.add(wsd);
 		
-		wsd = new RemoteWSDescription("SuperTlumaczeniadsa", "com", "super tł");
-		wsd.getSupportedTranslation().add(new LangPair("PL", "ES"));
-		wsd.getSupportedTranslation().add(new LangPair("ES", "RU"));
-		wsd.getSupportedTranslation().add(new LangPair("RU", "JP"));
-		wsd.getSupportedTranslation().add(new LangPair("KT", "KO"));
-		wsd.getSupportedTranslation().add(new LangPair("WW", "DP"));
-		wsd.getSupportedTranslation().add(new LangPair("JSF", "IR"));
-		remoteWSs.add(wsd);
-		
-		
-		wsd = new RemoteWSDescription("Tlumaczenia", "tlumaczenia", " tłumaczenie");
-		wsd.getSupportedTranslation().add(new LangPair("PL", "ES"));
-		wsd.getSupportedTranslation().add(new LangPair("ES", "RU"));
-		wsd.getSupportedTranslation().add(new LangPair("RU", "JP"));
-		wsd.getSupportedTranslation().add(new LangPair("RU", "KO"));
-		wsd.getSupportedTranslation().add(new LangPair("RU", "DP"));
-		wsd.getSupportedTranslation().add(new LangPair("RU", "IR"));
+		wsd = new TranslationService();
+		wsd.getSupportedLangPairs().add(new LangPair("PL", "ES"));
+		wsd.getSupportedLangPairs().add(new LangPair("ES", "RU"));
+		wsd.getSupportedLangPairs().add(new LangPair("RU", "JP"));
+		wsd.getSupportedLangPairs().add(new LangPair("KT", "KO"));
+		wsd.getSupportedLangPairs().add(new LangPair("WW", "DP"));
+		wsd.getSupportedLangPairs().add(new LangPair("JSF", "IR"));
+		wsd.setDescription("tlumaczneie 3");
+		wsd.setEndpoint("http://www.onet.com/tr.wsdl?");
+		wsd.setName("Onet");
 		remoteWSs.add(wsd);
 	}
 
-	public List<RemoteWSDescription> getRemoteWSs() {
+	public List<TranslationService> getRemoteWSs() {
 		return remoteWSs;
 	}
 	

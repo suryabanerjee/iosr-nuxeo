@@ -3,7 +3,7 @@ package pl.edu.agh.iosr.controller;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
 /**
- * Potrzebna przy wyborze zbioru plikow do zamowienia
+ * Potrzebna przy wyborze zbioru plikow do zamowienia (GUI)
  * 
  * Wrapper dla dokumentow, przechowuje informacje pod jaka nazwa
  * ma zaistniec przetlumaczny dokument oraz czy zostal zaznaczony do

@@ -1,8 +1,8 @@
 package pl.edu.agh.iosr.view;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -16,16 +16,14 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.webapp.documentsLists.DocumentsListsManager;
 
 import pl.edu.agh.iosr.controller.ConfigurationStorage;
 import pl.edu.agh.iosr.controller.EnrichedFile;
 import pl.edu.agh.iosr.controller.FilesSelectionBean;
 import pl.edu.agh.iosr.controller.Mediator;
 import pl.edu.agh.iosr.model.LangPair;
-import pl.edu.agh.iosr.model.TranslationRequest;
-import pl.edu.agh.iosr.ws.RemoteWSDescription;
+import pl.edu.agh.iosr.model.TranslationOrder;
+import pl.edu.agh.iosr.model.TranslationService;
 
 /**
  * Backing bean dla widoku wyboru tłumaczenia
@@ -54,19 +52,19 @@ public class EditionBean implements Serializable {
 	@In(create=true)
 	private ConfigurationStorage configurationStorage;
 	
-	private RemoteWSDescription remoteWSDescription;
+	private TranslationService translationService;
 	private String langTo, langFrom;
 	
 	@PostConstruct
 	public void init() {
 		if (configurationStorage != null && configurationStorage.getRemoteWSs() != null) {
-			remoteWSDescription = configurationStorage.getRemoteWSs().get(0);
+			translationService = configurationStorage.getRemoteWSs().get(0);
 			
-			List<LangPair> list = remoteWSDescription.getSupportedTranslation();
+			Collection<LangPair> list = translationService.getSupportedLangPairs();
 			
 			if (list != null && list.size() > 0) {
-				langFrom = list.get(0).getFrom();
-				langTo = list.get(0).getTo();
+				langFrom = list.iterator().next().getFrom();
+				langTo = list.iterator().next().getTo();
 			}
 		}		
 	}
@@ -75,10 +73,10 @@ public class EditionBean implements Serializable {
 	 * Pobiera liste zarejestrowanych serwisow tlumaczacych
 	 * */
 	public SelectItem[] getAvailableServices() {
-		List<RemoteWSDescription> wss = configurationStorage.getRemoteWSs();
+		List<TranslationService> wss = configurationStorage.getRemoteWSs();
 		SelectItem[] items = new SelectItem[wss.size()];
 		int i = 0;
-		for (RemoteWSDescription rd : wss) {
+		for (TranslationService rd : wss) {
 			items[i++] = new SelectItem(rd.getName(), rd.getName());
 		}
 		return items;
@@ -90,11 +88,11 @@ public class EditionBean implements Serializable {
 	 * mozna tlumaczyc
 	 * */
 	public SelectItem[] getLangsFrom() {
-		if (remoteWSDescription == null) {
+		if (translationService == null) {
 			return new SelectItem[0];
 		}
 		
-		List<LangPair> langPairs = remoteWSDescription.getSupportedTranslation();
+		Collection<LangPair> langPairs = translationService.getSupportedLangPairs();
 		
 		Set<String> froms = new HashSet<String>();
 		
@@ -116,11 +114,11 @@ public class EditionBean implements Serializable {
 	 * zwraca liste jezyka na ktore moze nastapic przeklad
 	 * */
 	public SelectItem[] getLangsTo() {
-		if (remoteWSDescription == null || langFrom == null) {
+		if (translationService == null || langFrom == null) {
 			return new SelectItem[0];
 		}
 		
-		List<LangPair> langPairs = remoteWSDescription.getSupportedTranslation();
+		Collection<LangPair> langPairs = translationService.getSupportedLangPairs();
 		
 		Set<String> froms = new HashSet<String>();
 		
@@ -142,9 +140,9 @@ public class EditionBean implements Serializable {
 	 * Potrzebne do usuwania wsow
 	 * */
 	public void setWsName(String wsName) {
-		for (RemoteWSDescription rd : configurationStorage.getRemoteWSs()) {
+		for (TranslationService rd : configurationStorage.getRemoteWSs()) {
 			if (rd.getName().equals(wsName)) {
-				remoteWSDescription = rd;
+				translationService = rd;
 				break;
 			}
 		}
@@ -194,27 +192,19 @@ public class EditionBean implements Serializable {
 	 * */
 	public String buildTranslationRequest() {
 		
-		TranslationRequest translationRequest = new TranslationRequest();
-		
-		translationRequest.setAuthor(FacesContext.getCurrentInstance().
-				getExternalContext().getUserPrincipal().getName());
+		TranslationOrder translationOrder;
 		
 		for (EnrichedFile ef : filesSelectionBean.getFiles()) {
 			if (ef.getSelected()) {
-				translationRequest.getDocuments().add(ef.clone());
+				translationOrder = new TranslationOrder(
+						ef.getDocumentModel().getRef(),
+						new LangPair(langFrom, langTo), 
+						ef.getTargetName(), 
+						"", 
+						translationService.getWsId());
+				mediator.enqueuRequest(translationOrder);
 			}
-		}
-		
-		if (translationRequest.getDocuments().size() == 0) {
-			FacesContext.getCurrentInstance().addMessage("", 
-					new FacesMessage("Select at least one document."));
-			return "#";
-		}
-		
-		translationRequest.setLangPair(new LangPair(langFrom, langTo));
-		
-		// TODO zweryfikować poprawność budowy requestu
-		mediator.enqueuRequest(translationRequest);
+		}	
 		
 		return "#";
 	}
@@ -227,8 +217,8 @@ public class EditionBean implements Serializable {
 		this.configurationStorage = configurationStorage;
 	}
 
-	public RemoteWSDescription getRemoteWSDescription() {
-		return remoteWSDescription;
+	public TranslationService getTranslationService() {
+		return translationService;
 	}
 	
 	// raporty ze zleconych tłumaczeń
