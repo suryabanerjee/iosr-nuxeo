@@ -4,7 +4,7 @@ public class XliffConverter extends AsynchronousConverter{
 
 	@Override
 	public void proceed(ConversionTask conversionTask) {
-		// TODO Auto-generated method stub	
+		// TODO TUTAJ MARYSIA SADZI MECHANIZM KONWERSJI	
 	}
 	
 }

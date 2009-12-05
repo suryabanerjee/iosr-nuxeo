@@ -23,6 +23,8 @@ public class TranslationService {
 	
 	private Collection<String> supportedQualities;
 	
+	private Collection<String> supportedDocumentTypes;
+	
 	private String name, description;
 
 	public String getName() {
@@ -68,5 +70,12 @@ public class TranslationService {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
+	public Collection<String> getSupportedDocumentTypes() {
+		return supportedDocumentTypes;
+	}
+
+	public void setSupportedDocumentTypes(Collection<String> supportedDocumentTypes) {
+		this.supportedDocumentTypes = supportedDocumentTypes;
+	}
 }
