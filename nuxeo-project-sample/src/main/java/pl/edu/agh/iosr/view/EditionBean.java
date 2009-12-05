@@ -1,15 +1,14 @@
 package pl.edu.agh.iosr.view;
 
+import static pl.edu.agh.iosr.util.IosrLogger.log;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 
-import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
@@ -26,7 +25,6 @@ import pl.edu.agh.iosr.controller.Mediator;
 import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
-import static pl.edu.agh.iosr.util.IosrLogger.log;
 
 /**
  * Backing bean dla widoku wyboru tłumaczenia
@@ -56,19 +54,24 @@ public class EditionBean implements Serializable {
 	private ConfigurationStorage configurationStorage;
 	
 	private TranslationServiceDescription translationServiceDescription;
-	private String langTo, langFrom;
+	private String langTo, langFrom, quality;
+	private boolean languageDetection = false;
 	
 	@Create
 	public void init() {
-		if (configurationStorage != null && configurationStorage.getRemoteWSs() != null) {
-			translationServiceDescription = configurationStorage.getRemoteWSs().get(0);
-			
-			Collection<LangPair> list = translationServiceDescription.getSupportedLangPairs();
-			
-			if (list != null && list.size() > 0) {
-				langFrom = list.iterator().next().getFrom();
-				langTo = list.iterator().next().getTo();
+		try {
+			if (configurationStorage != null && configurationStorage.getRemoteWSs() != null) {
+				translationServiceDescription = configurationStorage.getRemoteWSs().get(0);
+				
+				Collection<LangPair> list = translationServiceDescription.getSupportedLangPairs();
+				
+				if (list != null && list.size() > 0) {
+					langFrom = list.iterator().next().getFrom();
+					langTo = list.iterator().next().getTo();
+				}
 			}
+		} catch (Exception e) {
+			log(this.getClass(), e.getMessage());
 		}		
 	}
 	
@@ -140,6 +143,26 @@ public class EditionBean implements Serializable {
 	}
 
 
+	/**
+	 * Po wybraniu serwisu, pobiera dla niego liste wspieranych
+	 * jakosci przekladu
+	 * */
+	public SelectItem[] getQualities() {
+		if (translationServiceDescription == null) {
+			return new SelectItem[0];
+		}
+				
+		SelectItem[] items = new SelectItem[translationServiceDescription.getSupportedQualities().size()];
+		Iterator<String> iterator = translationServiceDescription.getSupportedQualities().iterator();
+		int i = 0;
+		while (iterator.hasNext()) {
+			String s = iterator.next();
+			items[i++] = new SelectItem(s, s);
+		}
+		return items;				
+	}
+
+	
 	public void setWsName(String wsName) {
 		for (TranslationServiceDescription rd : configurationStorage.getRemoteWSs()) {
 			log(this.getClass(), "trying to compare: " + rd.getName() + " vs " + wsName);
@@ -151,6 +174,7 @@ public class EditionBean implements Serializable {
 		}
 		log(this.getClass(), "failed to find suitable translationServiceDescription!");
 	}
+
 	
 	public String getWsName() {
 		return "";
@@ -162,6 +186,14 @@ public class EditionBean implements Serializable {
 
 	public String getLangFrom() {
 		return langFrom;
+	}
+
+	public boolean isLanguageDetection() {
+		return languageDetection;
+	}
+
+	public void setLanguageDetection(boolean languageDetection) {
+		this.languageDetection = languageDetection;
 	}
 
 	public void setLangFrom(String langFrom) {
@@ -205,7 +237,8 @@ public class EditionBean implements Serializable {
 						new LangPair(langFrom, langTo), 
 						ef.getTargetName(), 
 						"", 
-						translationServiceDescription.getWsId());
+						translationServiceDescription.getWsId(),
+						languageDetection);
 				mediator.enqueuRequest(translationOrder);
 			}
 		}	
@@ -244,5 +277,14 @@ public class EditionBean implements Serializable {
 	public void setMediator(Mediator mediator) {
 		this.mediator = mediator;
 	}
+
+	public String getQuality() {
+		return quality;
+	}
+
+	public void setQuality(String quality) {
+		this.quality = quality;
+	}
+	
 	
 }

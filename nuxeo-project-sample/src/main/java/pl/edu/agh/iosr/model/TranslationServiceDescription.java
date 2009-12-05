@@ -19,6 +19,7 @@ public class TranslationServiceDescription {
 	 * nietrudno się domyśleć
 	 * */
 	private String endpoint;
+	private boolean languageDetection = false;
 	
 	private Collection<LangPair> supportedLangPairs = new LinkedList<LangPair>();
 	
@@ -79,4 +80,13 @@ public class TranslationServiceDescription {
 	public void setSupportedDocumentTypes(Collection<String> supportedDocumentTypes) {
 		this.supportedDocumentTypes = supportedDocumentTypes;
 	}
+
+	public boolean isLanguageDetection() {
+		return languageDetection;
+	}
+
+	public void setLanguageDetection(boolean languageDetection) {
+		this.languageDetection = languageDetection;
+	}
+	
 }

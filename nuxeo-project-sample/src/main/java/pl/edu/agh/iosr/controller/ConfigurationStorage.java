@@ -31,6 +31,8 @@ public class ConfigurationStorage {
 		wsd.setDescription("tlumaczneie 1");
 		wsd.setEndpoint("http://www.goooooogle.com");
 		wsd.setName("Google");
+		wsd.getSupportedQualities().add("very good");
+		wsd.getSupportedQualities().add("very very good");
 		remoteWSs.add(wsd);
 		
 		wsd = new TranslationServiceDescription();
@@ -40,6 +42,8 @@ public class ConfigurationStorage {
 		wsd.setDescription("tlumaczneie czopyka");
 		wsd.setEndpoint("http://www.czopyk.pl");
 		wsd.setName("Czopsonopolis");
+		wsd.getSupportedQualities().add("poor");
+		wsd.getSupportedQualities().add("very very poor, but free");
 		remoteWSs.add(wsd);
 		
 		wsd = new TranslationServiceDescription();
@@ -52,6 +56,7 @@ public class ConfigurationStorage {
 		wsd.setDescription("tlumaczneie 3");
 		wsd.setEndpoint("http://www.onet.com/tr.wsdl?");
 		wsd.setName("Onet");
+		wsd.setLanguageDetection(true);
 		remoteWSs.add(wsd);
 	}
 

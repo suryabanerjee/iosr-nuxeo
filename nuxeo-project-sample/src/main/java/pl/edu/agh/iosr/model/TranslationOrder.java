@@ -103,6 +103,11 @@ public class TranslationOrder {
 	private String message;
 	
 	/**
+	 * Detekcja języka
+	 * */
+	private final boolean languageDetection;
+	
+	/**
 	 * daty, kiedy co się stało,
 	 * 
 	 * można odczytać tylko poprzez toString
@@ -130,13 +135,15 @@ public class TranslationOrder {
 
 	// konstruktor
 	public TranslationOrder(DocumentRef sourceDocument, LangPair langPair,
-			String destinationDocumentName, String quality, Long wsId) {
+			String destinationDocumentName, String quality, Long wsId,
+			boolean languageDetection) {
 		super();
 		this.sourceDocument = sourceDocument;
 		this.langPair = langPair;
 		this.destinationDocumentName = destinationDocumentName;
 		this.quality = quality;
 		this.wsId = wsId;
+		this.languageDetection = languageDetection;
 		timeStamps[0] = new Date();
 	}
 
@@ -244,6 +251,12 @@ public class TranslationOrder {
 
 	public String getMessage() {
 		return message;
+	}
+	
+
+
+	public boolean isLanguageDetection() {
+		return languageDetection;
 	}
 
 

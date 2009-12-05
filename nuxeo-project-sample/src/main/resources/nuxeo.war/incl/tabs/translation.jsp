@@ -40,9 +40,7 @@
 		</h:column>
 	</h:dataTable></div>
 
-</h:form> 
-
-<h:form>
+</h:form> <h:form>
 	<a4j:region>
 		<div id="div5"
 			style="background: #FFFF99; margin: 10px; position: relative; width: 350px; display: block; padding: 10px;">
@@ -54,28 +52,51 @@
 
 			<nxh:selectOneMenu value="#{editionBean.wsName}">
 				<f:selectItems value="#{editionBean.availableServices}" />
-				<a4j:support event="onchange" reRender="langFrom,langTo,description1"
-					bypassUpdates="false" ajaxSingle="true"/>
+				<a4j:support event="onchange"
+				 	reRender="detection,langFrom,langTo,description,quality"
+					bypassUpdates="false" ajaxSingle="true" />
 			</nxh:selectOneMenu>
+
+
+			<h:outputLabel value="#{translation['translate.detection']}" />
+
+			<a4j:outputPanel id="detection">
+				<nxh:selectBooleanCheckbox value="#{editionBean.languageDetection}"
+					disabled="#{!editionBean.translationServiceDescription.languageDetection}">
+					<a4j:support event="onchange" reRender="langTo,langFrom"
+						bypassUpdates="false" ajaxSingle="true" />
+				</nxh:selectBooleanCheckbox>
+			</a4j:outputPanel>
+
 
 			<h:outputLabel value="#{translation['translate.from']}" />
 
 			<a4j:outputPanel id="langFrom">
-			<nxh:selectOneMenu value="#{editionBean.langFrom}"
-				style="width: 50px">
-				<f:selectItems value="#{editionBean.langsFrom}" />
-				<a4j:support event="onchange" reRender="langTo"
-					bypassUpdates="false" ajaxSingle="true"/>
-			</nxh:selectOneMenu>
+				<nxh:selectOneMenu value="#{editionBean.langFrom}"
+					style="width: 150px"
+					disabled="#{editionBean.languageDetection}">
+					<f:selectItems value="#{editionBean.langsFrom}" />
+					<a4j:support event="onchange" reRender="langTo"
+						bypassUpdates="false" ajaxSingle="true" />
+				</nxh:selectOneMenu>
 			</a4j:outputPanel>
 
 			<h:outputLabel value="#{translation['translate.to']}" />
 
 			<a4j:outputPanel id="langTo">
-			<h:selectOneMenu value="#{editionBean.langTo}"
-				style="width: 50px">
-				<f:selectItems value="#{editionBean.langsTo}" />
-			</h:selectOneMenu>
+				<nxh:selectOneMenu value="#{editionBean.langTo}" 
+				style="width: 150px"
+				disabled="#{editionBean.languageDetection}">
+					<f:selectItems value="#{editionBean.langsTo}" />
+				</nxh:selectOneMenu>
+			</a4j:outputPanel>
+
+			<h:outputLabel value="#{translation['translate.quality']}" />
+
+			<a4j:outputPanel id="quality">
+				<nxh:selectOneMenu value="#{editionBean.quality}" style="width: 150px">
+					<f:selectItems value="#{editionBean.qualities}" />
+				</nxh:selectOneMenu>
 			</a4j:outputPanel>
 
 			<h:inputHidden />
@@ -90,11 +111,10 @@
 			style="background: #FFFFFF; margin: 10px; width: 250px; heigth: 50px; border-style: dotted; border-width: 1px;">
 		<h:outputLabel value="#{translation['translate.service.description']}" />
 
-		<a4j:outputPanel id="description1">
-		<h:outputText id="description11111"
-			value="#{editionBean.translationServiceDescription.description}" />
-		</a4j:outputPanel>
-		</div>
+		<a4j:outputPanel id="description">
+			<h:outputText
+				value="#{editionBean.translationServiceDescription.description}" />
+		</a4j:outputPanel></div>
 
 		</div>
 
