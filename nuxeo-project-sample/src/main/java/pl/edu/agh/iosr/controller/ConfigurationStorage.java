@@ -10,7 +10,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
 import pl.edu.agh.iosr.model.LangPair;
-import pl.edu.agh.iosr.model.TranslationService;
+import pl.edu.agh.iosr.model.TranslationServiceDescription;
 
 
 /**
@@ -20,12 +20,12 @@ import pl.edu.agh.iosr.model.TranslationService;
 @Scope(ScopeType.APPLICATION)
 public class ConfigurationStorage {
 
-	private List<TranslationService> remoteWSs = 
-		new LinkedList<TranslationService>();
+	private List<TranslationServiceDescription> remoteWSs = 
+		new LinkedList<TranslationServiceDescription>();
 
 	@PostConstruct
 	public void init() {
-		TranslationService wsd = new TranslationService();
+		TranslationServiceDescription wsd = new TranslationServiceDescription();
 		wsd.getSupportedLangPairs().add(new LangPair("PL", "ENG"));
 		wsd.getSupportedLangPairs().add(new LangPair("ENG", "PL"));
 		wsd.setDescription("tlumaczneie 1");
@@ -33,7 +33,7 @@ public class ConfigurationStorage {
 		wsd.setName("Google");
 		remoteWSs.add(wsd);
 		
-		wsd = new TranslationService();
+		wsd = new TranslationServiceDescription();
 		wsd.getSupportedLangPairs().add(new LangPair("PL", "ES"));
 		wsd.getSupportedLangPairs().add(new LangPair("ES", "RU"));
 		wsd.getSupportedLangPairs().add(new LangPair("RU", "JP"));
@@ -42,7 +42,7 @@ public class ConfigurationStorage {
 		wsd.setName("Czopsonopolis");
 		remoteWSs.add(wsd);
 		
-		wsd = new TranslationService();
+		wsd = new TranslationServiceDescription();
 		wsd.getSupportedLangPairs().add(new LangPair("PL", "ES"));
 		wsd.getSupportedLangPairs().add(new LangPair("ES", "RU"));
 		wsd.getSupportedLangPairs().add(new LangPair("RU", "JP"));
@@ -55,7 +55,7 @@ public class ConfigurationStorage {
 		remoteWSs.add(wsd);
 	}
 
-	public List<TranslationService> getRemoteWSs() {
+	public List<TranslationServiceDescription> getRemoteWSs() {
 		return remoteWSs;
 	}
 	

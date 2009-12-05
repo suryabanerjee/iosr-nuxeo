@@ -2,7 +2,7 @@ package pl.edu.agh.iosr.services;
 
 import java.util.Collection;
 
-import pl.edu.agh.iosr.model.TranslationService;
+import pl.edu.agh.iosr.model.TranslationServiceDescription;
 
 /**
  * Podobna historia jak z TranslationOrderService, koniecznie patrz komentarz
@@ -13,12 +13,12 @@ public interface TranslationServicesConfigService {
 	/**
 	 * Lista wszystkich
 	 * */
-	public Collection<TranslationService> getTranslationServices();
+	public Collection<TranslationServiceDescription> getTranslationServices();
 	
 	/**
 	 * aktualizacja informacji o serwisie
 	 * */
-	public void saveOrUpdateTranslationService(TranslationService translationService);
+	public void saveOrUpdateTranslationService(TranslationServiceDescription translationService);
 	
 	/**
 	 * wiadomo

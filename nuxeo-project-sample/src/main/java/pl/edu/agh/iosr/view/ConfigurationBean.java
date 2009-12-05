@@ -17,7 +17,7 @@ import org.jboss.seam.annotations.Scope;
 
 import pl.edu.agh.iosr.controller.ConfigurationStorage;
 import pl.edu.agh.iosr.model.LangPair;
-import pl.edu.agh.iosr.model.TranslationService;
+import pl.edu.agh.iosr.model.TranslationServiceDescription;
 
 /**
  * backing bean dla widoku osoby administruj�cej
@@ -33,7 +33,7 @@ public class ConfigurationBean {
 
 	private String description = "", endpoint = "", name = "";
 	
-	public List<TranslationService> getRemoteWSs() {
+	public List<TranslationServiceDescription> getRemoteWSs() {
 		return configurationStorage.getRemoteWSs();
 	}
 	
@@ -43,7 +43,7 @@ public class ConfigurationBean {
 	public String addNewWS() {
 		
 		// troche walidacji nie zaszkodzi
-		for (TranslationService r : configurationStorage.getRemoteWSs()) {
+		for (TranslationServiceDescription r : configurationStorage.getRemoteWSs()) {
 			if (name.equals(r.getName())) {
 				FacesContext.getCurrentInstance().
 					addMessage(null, new FacesMessage("Cannot duplicate WS."));
@@ -51,7 +51,7 @@ public class ConfigurationBean {
 			}
 		}
 		
-		TranslationService r = new TranslationService();
+		TranslationServiceDescription r = new TranslationServiceDescription();
 		r.setDescription(description);
 		r.setEndpoint(endpoint);
 		r.setName(name);
@@ -66,8 +66,8 @@ public class ConfigurationBean {
 	 * ustawiaja wartosc name i endpoint
 	 * */
 	public String deleteWS() {
-		TranslationService rwds = null;
-		for (TranslationService r : configurationStorage.getRemoteWSs()) {
+		TranslationServiceDescription rwds = null;
+		for (TranslationServiceDescription r : configurationStorage.getRemoteWSs()) {
 			if (r.getName().equals(name) && r.getEndpoint().equals(endpoint)) {
 				rwds = r;
 				break;
@@ -111,8 +111,8 @@ public class ConfigurationBean {
 		this.configurationStorage = configurationStorage;
 	}
 
-	public TranslationService getSelectedWS() {
-		for (TranslationService r : configurationStorage.getRemoteWSs()) {
+	public TranslationServiceDescription getSelectedWS() {
+		for (TranslationServiceDescription r : configurationStorage.getRemoteWSs()) {
 			if (r.getName().equals(name)) {
 				return r;
 			}

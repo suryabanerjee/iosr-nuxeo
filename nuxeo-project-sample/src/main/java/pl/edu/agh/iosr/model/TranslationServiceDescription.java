@@ -1,13 +1,14 @@
 package pl.edu.agh.iosr.model;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 import pl.edu.agh.iosr.util.IosrRandomGenerator;
 
 /**
  * Opisuje konfigurację pojedynczego serwisu tłumaczącego
  * */
-public class TranslationService {
+public class TranslationServiceDescription {
 
 	/**
 	 * id web serwisu
@@ -19,11 +20,11 @@ public class TranslationService {
 	 * */
 	private String endpoint;
 	
-	private Collection<LangPair> supportedLangPairs;
+	private Collection<LangPair> supportedLangPairs = new LinkedList<LangPair>();
 	
-	private Collection<String> supportedQualities;
+	private Collection<String> supportedQualities = new LinkedList<String>();
 	
-	private Collection<String> supportedDocumentTypes;
+	private Collection<String> supportedDocumentTypes = new LinkedList<String>();
 	
 	private String name, description;
 
