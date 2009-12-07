@@ -40,7 +40,7 @@ abstract public class AsynchronousConverter implements Runnable {
 	private final ReentrantLock synchronizator = new ReentrantLock(true);
 	private final Condition condition = synchronizator.newCondition();
 
-	private enum SupportedTasks {
+	protected enum SupportedTasks {
 		CONVERT, RECONVERT
 	}
 
@@ -108,7 +108,6 @@ abstract public class AsynchronousConverter implements Runnable {
 		return ct;
 	}
 
-	@Override
 	public void run() {
 		while (activity) {
 			try {
