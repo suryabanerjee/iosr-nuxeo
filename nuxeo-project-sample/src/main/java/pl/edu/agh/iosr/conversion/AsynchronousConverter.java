@@ -8,10 +8,8 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 
-import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Destroy;
-import org.jboss.seam.annotations.Scope;
 
 import pl.edu.agh.iosr.model.TranslationOrder;
 
@@ -26,7 +24,6 @@ import pl.edu.agh.iosr.model.TranslationOrder;
  * @Copyright Piotr Pomykała
  * */
 
-@Scope(ScopeType.APPLICATION)
 abstract public class AsynchronousConverter implements Runnable {
 
 	protected Queue<ConversionTask> tasks = new LinkedList<ConversionTask>();

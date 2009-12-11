@@ -11,7 +11,8 @@ Provide-Package: pl.edu.agh.iosr.bundles,
  pl.edu.agh.iosr.model,
  pl.edu.agh.iosr.util,
  pl.edu.agh.iosr.conversion,
- pl.edu.agh.iosr.exceptions
+ pl.edu.agh.iosr.exceptions,
+ pl.edu.agh.iosr.ejbtest
 Require-Bundle: org.nuxeo.runtime,
  org.nuxeo.ecm.core.api,
  org.nuxeo.ecm.core,
