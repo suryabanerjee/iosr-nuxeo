@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 1
+Bundle-Name: IOSR Project
+Bundle-SymbolicName: pl.edu.agh.iosr;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Vendor: AGH
+Provide-Package: pl.edu.agh.iosr.bundles,
+ pl.edu.agh.iosr.controller,
+ pl.edu.agh.iosr.view,
+ pl.edu.agh.iosr.ws,
+ pl.edu.agh.iosr.model,
+ pl.edu.agh.iosr.util,
+ pl.edu.agh.iosr.conversion,
+ pl.edu.agh.iosr.exceptions,
+ pl.edu.agh.iosr.ejbtest
+Require-Bundle: org.nuxeo.runtime,
+ org.nuxeo.ecm.core.api,
+ org.nuxeo.ecm.core,
+ org.nuxeo.ecm.webapp.core
+Nuxeo-Component: OSGI-INF/actions-contrib.xml
