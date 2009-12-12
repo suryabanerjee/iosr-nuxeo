@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+      <groupId>pl.edu.agh.iosr</groupId>
+      <artifactId>nuxeo-plugin</artifactId>
+      <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>pl.edu.agh.iosr</groupId>
+  <artifactId>nuxeo-translation-plugin-core</artifactId>
+  <name>Core of plugin for Nuxeo</name>
+
+  <dependencies>
+	<dependency>
+		<groupId>pl.edu.agh.iosr</groupId>
+		<artifactId>file2xliff4j</artifactId>
+	</dependency>
+  
+    <dependency>
+      <groupId>org.nuxeo.ecm.core</groupId>
+      <artifactId>nuxeo-core</artifactId>
+    </dependency>
+	
+    <dependency>
+      <groupId>org.nuxeo.ecm.core</groupId>
+      <artifactId>nuxeo-core-event</artifactId>
+    </dependency>
+	
+    <dependency>
+      <groupId>org.nuxeo.ecm.platform</groupId>
+      <artifactId>nuxeo-platform-webapp-core</artifactId>
+    </dependency>
+	
+    <dependency>
+      <groupId>org.nuxeo.ecm.platform</groupId>
+      <artifactId>nuxeo-platform-jbpm-core</artifactId>
+    </dependency>
+	
+    <dependency>
+      <groupId>org.nuxeo.ecm.platform</groupId>
+      <artifactId>nuxeo-platform-jbpm-web</artifactId>
+    </dependency>
+	
+    <dependency>
+      <groupId>org.nuxeo.ecm.platform</groupId>
+      <artifactId>nuxeo-platform-filemanager-core</artifactId>
+    </dependency>
+	
+    <dependency>
+      <groupId>javax.ejb</groupId>
+      <artifactId>ejb</artifactId>
+      <scope>provided</scope>
+    </dependency>
+	
+    <dependency>
+      <groupId>javax.faces</groupId>
+      <artifactId>jsf-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+	
+    <dependency>
+      <groupId>org.jboss.seam</groupId>
+      <artifactId>jboss-seam</artifactId>
+      <scope>provided</scope>
+    </dependency>
+	
+    <dependency>
+      <groupId>jboss</groupId>
+      <artifactId>jboss-annotations-ejb3</artifactId>
+      <scope>provided</scope>
+    </dependency>
+	
+    <dependency>
+      <groupId>jboss</groupId>
+      <artifactId>jboss-j2ee</artifactId>
+      <scope>provided</scope>
+    </dependency>
+	
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>3.0.0.ga</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Scope test -->
+    <dependency>
+      <groupId>org.nuxeo.ecm.core</groupId>
+      <artifactId>nuxeo-core-jcr-connector-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.nuxeo.runtime</groupId>
+      <artifactId>nuxeo-runtime-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.nuxeo.runtime</groupId>
+      <artifactId>nuxeo-runtime-osgi</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.nuxeo.ecm.core</groupId>
+      <artifactId>nuxeo-core-jcr-connector</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.nuxeo.ecm.core</groupId>
+      <artifactId>nuxeo-core-jcr-connector-test</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.springframework</groupId>
+    	<artifactId>spring</artifactId>
+    </dependency>
+  </dependencies>
+
+  
+  <build>
+	<plugins>
+		<plugin>
+			<artifactId>maven-antrun-plugin</artifactId>
+			<executions>
+				<execution>
+					<id>copy-libs</id>
+					<phase>process-resources</phase>
+					<configuration>
+						<tasks>
+							<copy todir="${project.build.directory}/classes/">
+								<fileset dir="src/main/lib"/>
+							</copy>
+						</tasks>
+					</configuration>
+					<goals>
+						<goal>run</goal>
+					</goals>
+				</execution>
+				
+				<execution>
+					<id>deploy</id>
+					<phase>install</phase>
+					<configuration>
+						<tasks>
+							<copy file="target/nuxeo-translation-plugin-core-1.0-SNAPSHOT.jar" todir="${nuxeo.plugin.dir}" />
+						</tasks>
+					</configuration>
+					<goals>
+						<goal>run</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
+	</plugins>
+  </build>
+<!--  <scm>-->
+<!--    <connection>scm:svn:http://svn.nuxeo.org/nuxeo/org.nuxeo.project.sample/trunk</connection>-->
+<!--    <developerConnection>scm:svn:https://svn.nuxeo.org/nuxeo/org.nuxeo.project.sample/trunk</developerConnection>-->
+<!--    <url>http://svn.nuxeo.org/trac/nuxeo/browser/org.nuxeo.project.sample/trunk</url>-->
+<!--  </scm>-->
+</project>

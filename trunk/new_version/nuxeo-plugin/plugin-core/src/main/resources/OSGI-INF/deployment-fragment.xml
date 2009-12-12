@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<fragment>
+
+  <extension target="application#MODULE">
+    <module>
+      <java>${bundle.fileName}</java>
+    </module>
+  </extension>
+
+  <extension target="faces-config#APPLICATION">
+    	<variable-resolver>
+        	org.springframework.web.jsf.DelegatingVariableResolver
+    	</variable-resolver>
+    	<variable-resolver>
+        	org.springframework.web.jsf.WebApplicationContextVariableResolver
+    	</variable-resolver>
+    	<resource-bundle>
+			<base-name>pl.edu.agh.iosr.bundles.translation</base-name>
+			<var>translation</var>
+		</resource-bundle>
+  </extension>
+
+  <extension target="web#CONTEXT-PARAM">
+    <context-param>
+      <param-name>org.jboss.seam.core.init.debug</param-name>
+      <param-value>true</param-value>
+    </context-param>
+  </extension>
+
+  <extension target="web#LISTENER">
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+  </extension>
+	
+  <install>
+
+    <!-- Unzip the war template -->
+    <unzip from="${bundle.fileName}" to="/">
+      <include>nuxeo.war/**</include>
+    </unzip>
+
+  </install>
+
+</fragment>
