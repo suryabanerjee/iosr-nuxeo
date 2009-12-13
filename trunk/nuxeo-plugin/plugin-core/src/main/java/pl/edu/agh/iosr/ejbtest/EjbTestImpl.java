@@ -11,7 +11,6 @@ import org.jboss.seam.annotations.Scope;
 @Stateless
 public class EjbTestImpl implements EjbTest {
 
-	@Override
 	public String getString() {
 		return "udalo sie!";
 	}

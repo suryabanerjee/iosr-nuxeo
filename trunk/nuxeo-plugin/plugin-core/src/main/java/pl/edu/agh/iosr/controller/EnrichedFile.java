@@ -50,4 +50,7 @@ public class EnrichedFile {
 		ef.setTargetName(targetName);
 		return ef;
 	}
+	public String getName() {
+		return documentModel != null ? documentModel.getName() : null;
+	}
 }
