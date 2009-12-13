@@ -10,12 +10,24 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 
-import file2xliff4j.ConversionException;
-import file2xliff4j.ConversionMode;
-import file2xliff4j.Converter;
-import file2xliff4j.ConverterFactory;
-import file2xliff4j.FileType;
+import org.nuxeo.ecm.core.api.PathRef;
+
+import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.TranslationOrder;
+import pl.edu.agh.xliffhandler.converter.Converter;
+import pl.edu.agh.xliffhandler.converter.ConverterFactory;
+import pl.edu.agh.xliffhandler.exceptions.ConversionException;
+import pl.edu.agh.xliffhandler.utils.ConversionMode;
+import pl.edu.agh.xliffhandler.utils.FileType;
+
+/**
+ * Implementacja AsynchronousConvertera wykorzystuj¹ca bibliotekê file2xliff4j
+ * <br>
+ *  
+ * 
+ * @author Maria Szymczak
+ * 
+ * */
 
 public class XliffConverter extends AsynchronousConverter{
 	
@@ -23,31 +35,22 @@ public class XliffConverter extends AsynchronousConverter{
 	private Converter converter = null;
 
 	public XliffConverter() {
-		super();
-		formats.put("xls", FileType.EXCEL);
         formats.put("html", FileType.HTML);
         formats.put("properties", FileType.JAVA_PROPERTIES);
-        formats.put("mif", FileType.MIF);
         formats.put("doc", FileType.MSOFFICEDOC);
-        formats.put("odp", FileType.ODP);
-        formats.put("ods", FileType.ODS);
         formats.put("odt", FileType.ODT);
         formats.put("pdf", FileType.PDF);
         formats.put("txt", FileType.PLAINTEXT);
-        formats.put("po", FileType.PO);
-        formats.put("ppt", FileType.PPT);
         formats.put("rtf", FileType.RTF);
-        formats.put("winrc", FileType.WINRC);
         formats.put("word", FileType.WORD);
         formats.put("xlf", FileType.XLIFF);
         formats.put("xml", FileType.XML);
-        formats.put("xuldtd", FileType.XULDTD);
 	}
 	
 	@Override
 	public void proceed(ConversionTask conversionTask) {
 		
-		if(conversionTask.task.equals(SupportedTasks.CONVERT)) 
+		if(conversionTask.task == SupportedTasks.CONVERT) 
 			convertFile(conversionTask.translationOrder);
 		else
 			reConvertFile(conversionTask.translationOrder);
@@ -55,11 +58,14 @@ public class XliffConverter extends AsynchronousConverter{
 	
 	private void convertFile(TranslationOrder translationOrder) {
 		log(this.getClass(), "Converting file: " + translationOrder.getSourceDocument());
-		File file = new File(translationOrder.getSourceDocument().reference().toString());
+		File file = new File(translationOrder.getSourceDocument().toString());
+		log(this.getClass(), "FILE: " + file.getAbsolutePath());
+		log(this.getClass(), "FILE: " + file.getParent());
 		String format = file.getName();
 		format = format.substring(format.lastIndexOf(".") + 1);
-		Locale locale = new Locale(translationOrder.getLangPair().getTo(), 
-				translationOrder.getLangPair().getTo().toUpperCase());
+		Locale locale = new Locale(translationOrder.getLangPair().getFrom(), 
+				translationOrder.getLangPair().getFrom().toUpperCase());
+		System.out.println("to: " + locale);
 		StringWriter sw = new StringWriter();
 		try {
 			converter = ConverterFactory
@@ -78,8 +84,9 @@ public class XliffConverter extends AsynchronousConverter{
 		File file = new File(translationOrder.getSourceDocument().reference().toString());
 		String format = file.getName();
 		format = format.substring(format.lastIndexOf(".") + 1);
-		Locale locale = new Locale(translationOrder.getLangPair().getFrom(), 
-				translationOrder.getLangPair().getFrom().toUpperCase());
+		Locale locale = new Locale(translationOrder.getLangPair().getTo(), 
+				translationOrder.getLangPair().getTo().toUpperCase());
+		System.out.println("from: " + locale);
 		try {
 			converter = ConverterFactory
 				.createConverter(formats.get("xlf"), formats.get(format));
@@ -89,6 +96,18 @@ public class XliffConverter extends AsynchronousConverter{
 		} catch (ConversionException e) {
 			log(this.getClass(), e.getMessage(), Level.SEVERE);
 		}
+	}
+	
+	// method only for testing purposes
+	public static void main(String[] args) {
+		
+		XliffConverter xliff = new XliffConverter();
+		xliff.init();
+		TranslationOrder to = new TranslationOrder(new PathRef("E:\\Dokumenty\\STUDIA\\IOSR\\projekt\\trunk\\nuxeo-plugin\\plugin-core\\mary.txt"), new LangPair("pl", "en"), 
+				"dest.xlf", "1", new Long(1), false);
+		xliff.convert(to);
+		xliff.reConvert(to);
+		
 	}
 	
 }
