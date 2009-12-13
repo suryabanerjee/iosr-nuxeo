@@ -16,7 +16,7 @@
   <dependencies>
 	<dependency>
 		<groupId>pl.edu.agh.iosr</groupId>
-		<artifactId>file2xliff4j</artifactId>
+		<artifactId>pl.edu.agh.xliffhandler</artifactId>
 	</dependency>
   
     <dependency>
