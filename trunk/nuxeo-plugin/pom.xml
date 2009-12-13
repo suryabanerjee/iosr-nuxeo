@@ -99,8 +99,8 @@
 		  
 		  <dependency>
 			<groupId>pl.edu.agh.iosr</groupId>
-			<artifactId>file2xliff4j</artifactId>
-			<version>20070711</version>
+			<artifactId>pl.edu.agh.xliffhandler</artifactId>
+			<version>1.0</version>
 			<!--scope>system</scope>
 			<systemPath>${basedir}/src/main/lib/file2xliff4j-20070711.jar</systemPath-->
 		  </dependency>
@@ -109,7 +109,7 @@
   </dependencyManagement>
   
   <properties>
-	<jboss.dir>C:/DevTools/NuxeoDM-5.3/NuxeoServer</jboss.dir>
+	<jboss.dir>E:/Programy/Nuxeo/NuxeoServer</jboss.dir>
 	<nuxeo.plugin.dir>${jboss.dir}/server/default/deploy/nuxeo.ear/plugins</nuxeo.plugin.dir>
   </properties>
 
