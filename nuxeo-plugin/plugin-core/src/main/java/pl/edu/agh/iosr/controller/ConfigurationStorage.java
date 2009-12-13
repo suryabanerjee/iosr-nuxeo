@@ -3,9 +3,8 @@ package pl.edu.agh.iosr.controller;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
@@ -23,7 +22,7 @@ public class ConfigurationStorage {
 	private List<TranslationServiceDescription> remoteWSs = 
 		new LinkedList<TranslationServiceDescription>();
 
-	@PostConstruct
+	@Create
 	public void init() {
 		TranslationServiceDescription wsd = new TranslationServiceDescription();
 		wsd.getSupportedLangPairs().add(new LangPair("PL", "ENG"));

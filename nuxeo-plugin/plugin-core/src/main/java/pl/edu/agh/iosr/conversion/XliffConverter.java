@@ -23,6 +23,7 @@ public class XliffConverter extends AsynchronousConverter{
 	private Converter converter = null;
 
 	public XliffConverter() {
+		super();
 		formats.put("xls", FileType.EXCEL);
         formats.put("html", FileType.HTML);
         formats.put("properties", FileType.JAVA_PROPERTIES);
@@ -46,7 +47,7 @@ public class XliffConverter extends AsynchronousConverter{
 	@Override
 	public void proceed(ConversionTask conversionTask) {
 		
-		if(conversionTask.task == SupportedTasks.CONVERT) 
+		if(conversionTask.task.equals(SupportedTasks.CONVERT)) 
 			convertFile(conversionTask.translationOrder);
 		else
 			reConvertFile(conversionTask.translationOrder);

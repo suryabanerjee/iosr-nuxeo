@@ -6,17 +6,20 @@
 	xmlns:nxd="http://nuxeo.org/nxweb/document"
 	xmlns:nxh="http://nuxeo.org/nxweb/html"
 	xmlns:nxdir="http://nuxeo.org/nxdirectory"
-	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"><h:form>
+	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax">
+	
+	<h:form>
 
+<a4j:region>
 	<div id="div4"
 		style="width: 40%; text-align: center; background: #CCFF33; margin: 10px; position: relative;">
 	<h:outputText value="#{translation['translate.filesList']}" /> <h:dataTable
 		border="1" value="#{editionBean.filesSelectionBean.files}" var="file"
 		styleClass="table1" rowClasses="table1rowEven table1rowOdd">
 		<h:column id="column1">
-			<h:selectBooleanCheckbox value="#{file.selected}">
-				<a4j:support event="onclick" reRender="output3" ajaxSingle="true" />
-			</h:selectBooleanCheckbox>
+			<nxh:selectBooleanCheckbox value="#{file.selected}">
+				<a4j:support event="onchange" reRender="output3" ajaxSingle="true" bypassUpdates="false" />
+			</nxh:selectBooleanCheckbox>
 
 			<f:facet name="header">
 				<h:outputText value="#{translation['translate.filesList.select']}" />
@@ -33,14 +36,15 @@
 				<h:outputText
 					value="#{translation['translate.filesList.targetName']}" />
 			</f:facet>
-			<h:panelGroup id="output3">
-				<h:inputText style="border: 0px" value="#{file.targetName}"
+			<a4j:outputPanel id="output3">
+				<nxh:inputText value="#{file.targetName}"
 					rendered="#{file.selected}" required="#{file.selected}" />
-			</h:panelGroup>
+			</a4j:outputPanel>
 		</h:column>
 	</h:dataTable></div>
+</a4j:region>
 
-</h:form> <h:form>
+
 	<a4j:region>
 		<div id="div5"
 			style="background: #FFFF99; margin: 10px; position: relative; width: 350px; display: block; padding: 10px;">
