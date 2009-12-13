@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="build" name="xliffhandler">
+		
+	<tstamp>
+		<format pattern="yyMMdd_hhmmss" property="DSTAMP"/>
+	</tstamp>
+	<echo message="Build number: ${DSTAMP}"/>
+	<description>Builds XliffHandler for pl.edu.agh.iosr</description>
+	
+	<property name="deploy-path" value="../nuxeo-plugin/plugin-core/src/main/lib"/>
+	<property name="output-path" value="${basedir}/bin"/>
+	<property name="manifest-path" value="${basedir}/META-INF"/>
+	<property name="jar-path" value="${basedir}/jar"/>
+	<property name="src-path" value="${basedir}/src"/>
+	<property name="lib-path" value="${basedir}/lib"/>
+	<property name="version" value="-1.0"/>
+	<property name="jar-name" value="pl.edu.agh.xliffhandler${version}.jar"/>
+	
+	<path id="classpath.base">
+	</path>
+	
+	<path id="test.classpath">
+    	<pathelement location="${output-path}"/>
+    	<fileset dir="${lib-path}" includes="*.jar"/>
+    	<pathelement path="${java.class.path}/"/>
+    	<path refid="classpath.base"/>
+  	</path>
+		
+	<target depends="make-jar, deploy" description="Deploys jar in pl.edu.agh.iosr" name="build"/>
+	
+	<target description="Can be used to remove most of the generated stuff" name="clean">
+		<echo message="Cleaning old build stuff from ${basedir}"/>
+		<echo message="Cleaning old build stuff from ${output-path}"/>
+		<delete includeemptydirs="true" quiet="true">
+			<fileset dir="${output-path}"/>
+			<fileset dir="${jar-path}"/>
+		</delete>
+	</target>
+	
+	<target name="prepare-dir">
+		<mkdir dir="${jar-path}"/>	
+		<mkdir dir="${jar-path}/lib"/>
+		<mkdir dir="${output-path}"/>
+	</target>
+	
+	<target depends="clean,prepare-dir" name="compile">
+		<javac debug="on" destdir="${output-path}" srcdir="${src-path}" verbose="${TALK}">
+      		<classpath refid="test.classpath"/>
+    	</javac>
+	</target>
+	
+	<target depends="compile" name="make-jar">
+		<copy todir="${jar-path}/lib">
+			<fileset dir="${lib-path}" includes="**/*" />
+		</copy>
+		<jar destfile="${jar-path}/${jar-name}" manifest="${manifest-path}/manifest.MF">
+			<fileset dir="${output-path}" includes="**/*.class" />
+			<fileset dir="${jar-path}" includes="**/*"/>
+		</jar>
+	</target>
+	
+	<target depends="make-jar" name="deploy">
+		<copy file="${jar-path}/${jar-name}" todir="${deploy-path}"/>
+	</target>
+	
+</project>

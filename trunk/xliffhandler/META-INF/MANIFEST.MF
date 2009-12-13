@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.1
+Bundle-SymbolicName: pl.edu.agh.xliffhandler;singleton:=true
+Export-Package: pl.edu.agh.xliffhandler.converter, pl.edu.agh.xliffhandler.utils, pl.edu.agh.xliffhandler.exceptions
