@@ -15,6 +15,10 @@ public interface TranslationServicesConfigService {
 	 * */
 	public Collection<TranslationServiceDescription> getTranslationServices();
 	
+	
+	public TranslationServiceDescription getTranslationService(Long wsId);
+	
+	
 	/**
 	 * aktualizacja informacji o serwisie
 	 * */
@@ -24,4 +28,8 @@ public interface TranslationServicesConfigService {
 	 * wiadomo
 	 * */
 	public void delete(Long id);
+	
+	
+	
+	
 }

@@ -3,6 +3,7 @@ package pl.edu.agh.iosr.services;
 import java.util.Collection;
 
 import pl.edu.agh.iosr.exceptions.DataInconsistencyException;
+import pl.edu.agh.iosr.exceptions.OrderDoesNotExistException;
 import pl.edu.agh.iosr.model.TranslationOrder;
 
 /**
@@ -25,7 +26,7 @@ public interface TranslationOrderService {
 	/**
 	 * Nietrudno zgadnąć
 	 * */
-	TranslationOrder getTranslationOrder(Long id);
+	TranslationOrder getTranslationOrder(Long id) throws OrderDoesNotExistException;
 	
 	/**
 	 * wiadomo - patrz komentarz do interfejsu!!!

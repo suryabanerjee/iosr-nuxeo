@@ -229,9 +229,12 @@ public class EditionBean implements Serializable {
 	public String buildTranslationRequest() {
 		
 		TranslationOrder translationOrder;
-		
+		log(this.getClass(), "buildTranslationRequest called!");
 		for (EnrichedFile ef : filesSelectionBean.getFiles()) {
+			log(this.getClass(), "file found!");
 			if (ef.getSelected()) {
+				log(this.getClass(), "file added!");
+				
 				translationOrder = new TranslationOrder(
 						ef.getDocumentModel().getRef(),
 						new LangPair(langFrom, langTo), 
@@ -242,6 +245,7 @@ public class EditionBean implements Serializable {
 				mediator.enqueuRequest(translationOrder);
 			}
 		}	
+		log(this.getClass(), "end of buildTranslationRequest!");
 		
 		return "#";
 	}
