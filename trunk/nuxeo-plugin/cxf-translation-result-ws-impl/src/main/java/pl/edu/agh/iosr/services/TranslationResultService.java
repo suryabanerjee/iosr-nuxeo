@@ -8,5 +8,5 @@ public interface TranslationResultService{
 
 	public String sendStatus(StatusRequestWrapper parameters);
 	public String sendStringResult(StringResultRequestWrapper parameters);
-	//public String sendFileResult(FileResultRequestWrapper parameters);
+	public String sendFileResult(FileResultRequestWrapper parameters);
 }

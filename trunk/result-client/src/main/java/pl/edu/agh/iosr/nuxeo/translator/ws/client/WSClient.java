@@ -19,7 +19,7 @@ public class WSClient {
         //File file = new File("testfile.txt");
         //sendFile(port,file);
         System.out.println("Result: " + port.sendStatus(new StatusRequestWrapper()));
-    } 
+    }
     
     public static void sendFile(TranslationResultPortType port, File file) {
     	
