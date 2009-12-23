@@ -17,6 +17,7 @@
   
   <modules>
 	<module>cxf-translation-result-ws</module>
+	<module>cxf-translation-result-ws-impl</module>
 	<module>plugin-core</module>
   </modules>
 
@@ -109,7 +110,7 @@
   </dependencyManagement>
   
   <properties>
-	<jboss.dir>E:/Programy/Nuxeo/NuxeoServer</jboss.dir>
+	<jboss.dir>C:/DevTools/NuxeoDM-5.3/NuxeoServer</jboss.dir>
 	<nuxeo.plugin.dir>${jboss.dir}/server/default/deploy/nuxeo.ear/plugins</nuxeo.plugin.dir>
   </properties>
 
