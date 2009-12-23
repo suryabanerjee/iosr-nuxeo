@@ -85,6 +85,12 @@
       <version>3.0.0.ga</version>
       <scope>provided</scope>
     </dependency>
+	
+     <dependency>
+       <groupId>pl.edu.agh.iosr.ws</groupId>
+       <artifactId>cxf-translation-result-ws</artifactId>
+       <classifier>jaxws</classifier>
+     </dependency>
 
     <!-- Scope test -->
     <dependency>
