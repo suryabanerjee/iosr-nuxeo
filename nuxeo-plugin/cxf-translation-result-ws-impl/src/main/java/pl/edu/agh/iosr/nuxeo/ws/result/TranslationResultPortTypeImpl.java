@@ -33,7 +33,7 @@ public class TranslationResultPortTypeImpl implements TranslationResultPortType{
 
 			InitialContext ic = new InitialContext(p);
 
-			Object o = ic.lookup("nuxeo/Mediator/local");
+			Object o = ic.lookup("nuxeo/translationResultServiceImpl/local");
 
 			if (o != null) {
 
