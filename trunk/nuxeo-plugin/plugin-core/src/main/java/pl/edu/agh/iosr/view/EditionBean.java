@@ -169,7 +169,7 @@ public class EditionBean implements Serializable {
 			if (rd.getName().equals(wsName)) {
 				translationServiceDescription = rd;
 				log(this.getClass(), "translationSeviceDescription set to: " + rd);
-				break;
+				return;
 			}
 		}
 		log(this.getClass(), "failed to find suitable translationServiceDescription!");

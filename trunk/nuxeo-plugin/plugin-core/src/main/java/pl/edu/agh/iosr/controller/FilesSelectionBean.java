@@ -1,5 +1,7 @@
 package pl.edu.agh.iosr.controller;
 
+import static pl.edu.agh.iosr.util.IosrLogger.log;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -12,18 +14,11 @@ import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.faces.FacesMessages;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
-import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
-import org.nuxeo.ecm.platform.ui.web.api.WebActions;
-import org.nuxeo.ecm.webapp.documentsLists.DocumentsListsManager;
-import org.nuxeo.ecm.webapp.helpers.ResourcesAccessor;
-import org.nuxeo.ecm.webapp.pagination.ResultsProvidersCache;
-import org.nuxeo.runtime.api.Framework;
 
-import static pl.edu.agh.iosr.util.IosrLogger.log;
+import pl.edu.agh.iosr.persistence.CoreSessionProxy;
 
 /**
  * Pobiera liste plików z workspace'a
@@ -31,51 +26,26 @@ import static pl.edu.agh.iosr.util.IosrLogger.log;
  * Teoretycznie wykonuje pewne funkcje warstwy prezentacji: validacje, ale w tym
  * pakiecie pasuje lepiej
  * */
-@Scope(ScopeType.EVENT)
+@Scope(ScopeType.CONVERSATION)
 @Name("filesSelectionBean")
 public class FilesSelectionBean {
 
     @In(create = true)
-    protected transient NavigationContext navigationContext;
-
-    @In(create = true)
-    protected transient WebActions webActions;
-
-    @In(create = true)
-    protected transient FacesMessages facesMessages;
-
-    @In(create = true)
-    protected transient ResourcesAccessor resourcesAccessor;
-
-    @In(required = true)
-    protected transient ResultsProvidersCache resultsProvidersCache;
+    private CoreSessionProxy coreSessionProxy;
 	
-	@In(create = true, required = false)
-	protected transient CoreSession coreSession;
-	
-	@In(create=true)
-	protected transient DocumentsListsManager documentsListsManager;
-	 
-
+    private CoreSession coreSession;
+    
 	private List<EnrichedFile> files = new LinkedList<EnrichedFile>();
 
 	@Create
 	public void init() {
 
-		try {
-			if (coreSession == null) {
-				//coreSession = Framework.getService(CoreSession.class);
-				coreSession = navigationContext.getOrCreateDocumentManager();
-				log(this.getClass(), "Core session injected by Framework",
-						Level.WARNING);
-			}
+		coreSession = coreSessionProxy.getCoreSession();
 
+		if (coreSession == null) {
+			log(this.getClass(), "coreSession is null");
 		}
-		catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
+		
 		if (coreSession != null) {
 			try {
 				DocumentModelList dml = coreSession
@@ -89,18 +59,9 @@ public class FilesSelectionBean {
 				}
 			}
 			catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
-		if (documentsListsManager != null) {
-			for (DocumentModel dm : documentsListsManager.getWorkingList(DocumentsListsManager.DEFAULT_WORKING_LIST)) {
-				files.add(new EnrichedFile(dm));
-				log(this.getClass(), "coreService added: " + dm, Level.INFO);
-			}
-		}
-
 	}
 
 	public List<EnrichedFile> getFiles() {

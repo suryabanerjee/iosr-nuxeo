@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
 import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
+import pl.edu.agh.iosr.persistence.CoreSessionProxy;
 
 
 /**
@@ -22,6 +24,9 @@ public class ConfigurationStorage {
 	private List<TranslationServiceDescription> remoteWSs = 
 		new LinkedList<TranslationServiceDescription>();
 
+	@In(create=true)
+	CoreSessionProxy coreSessionProxy;
+	
 	@Create
 	public void init() {
 		TranslationServiceDescription wsd = new TranslationServiceDescription();
@@ -57,6 +62,8 @@ public class ConfigurationStorage {
 		wsd.setName("Onet");
 		wsd.setLanguageDetection(true);
 		remoteWSs.add(wsd);
+		
+		coreSessionProxy.getCoreSession();
 	}
 
 	public List<TranslationServiceDescription> getRemoteWSs() {
