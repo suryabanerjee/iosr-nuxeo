@@ -6,43 +6,48 @@
 	xmlns:nxd="http://nuxeo.org/nxweb/document"
 	xmlns:nxh="http://nuxeo.org/nxweb/html"
 	xmlns:nxdir="http://nuxeo.org/nxdirectory"
-	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax">
-	
-	<h:form>
+	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"><h:form>
 
-<a4j:region>
-	<div id="div4"
-		style="width: 40%; text-align: center; background: #CCFF33; margin: 10px; position: relative;">
-	<h:outputText value="#{translation['translate.filesList']}" /> <h:dataTable
-		border="1" value="#{editionBean.filesSelectionBean.files}" var="file"
-		styleClass="table1" rowClasses="table1rowEven table1rowOdd">
-		<h:column id="column1">
-			<nxh:selectBooleanCheckbox value="#{file.selected}">
-				<a4j:support event="onchange" reRender="output3" ajaxSingle="true" bypassUpdates="false" />
-			</nxh:selectBooleanCheckbox>
+	<a4j:region>
+		<div id="div4"
+			style="width: 40%; text-align: center; background: #CCFF33; margin: 10px; position: relative;">
+		<h:outputText value="#{translation['translate.filesList']}" /> 
+		
+		
+	<a4j:outputPanel id="output3">
+		<h:dataTable
+			border="1" value="#{editionBean.filesSelectionBean.files}" var="file"
+			styleClass="table1" rowClasses="table1rowEven table1rowOdd">
+			<h:column id="column1">
+				<h:selectBooleanCheckbox value="#{file.selected}" valueChangeListener="#{file.listener}">
+					<a4j:support event="onchange" reRender="output3" ajaxSingle="true" />
+				</h:selectBooleanCheckbox>
 
-			<f:facet name="header">
-				<h:outputText value="#{translation['translate.filesList.select']}" />
-			</f:facet>
-		</h:column>
-		<h:column id="column2">
-			<h:outputText value="#{file.name}" />
-			<f:facet name="header">
-				<h:outputText value="#{translation['translate.filesList.fileName']}"></h:outputText>
-			</f:facet>
-		</h:column>
-		<h:column>
-			<f:facet name="header">
-				<h:outputText
-					value="#{translation['translate.filesList.targetName']}" />
-			</f:facet>
-			<a4j:outputPanel id="output3">
-				<nxh:inputText value="#{file.targetName}"
+				<f:facet name="header">
+					<h:outputText value="#{translation['translate.filesList.select']}" />
+				</f:facet>
+			</h:column>
+			<h:column id="column2">
+				<h:outputText value="#{file.name}" />
+				<f:facet name="header">
+					<h:outputText
+						value="#{translation['translate.filesList.fileName']}"></h:outputText>
+				</f:facet>
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText
+						value="#{translation['translate.filesList.targetName']}" />
+				</f:facet>
+				<h:inputText value="#{file.targetName}"
 					rendered="#{file.selected}" required="#{file.selected}" />
-			</a4j:outputPanel>
-		</h:column>
-	</h:dataTable></div>
-</a4j:region>
+			</h:column>
+		</h:dataTable>
+		
+		</a4j:outputPanel>
+		
+		</div>
+	</a4j:region>
 
 
 	<a4j:region>
@@ -57,7 +62,7 @@
 			<nxh:selectOneMenu value="#{editionBean.wsName}">
 				<f:selectItems value="#{editionBean.availableServices}" />
 				<a4j:support event="onchange"
-				 	reRender="detection,langFrom,langTo,description,quality"
+					reRender="detection,langFrom,langTo,description,quality"
 					bypassUpdates="false" ajaxSingle="true" />
 			</nxh:selectOneMenu>
 
@@ -77,8 +82,7 @@
 
 			<a4j:outputPanel id="langFrom">
 				<nxh:selectOneMenu value="#{editionBean.langFrom}"
-					style="width: 150px"
-					disabled="#{editionBean.languageDetection}">
+					style="width: 150px" disabled="#{editionBean.languageDetection}">
 					<f:selectItems value="#{editionBean.langsFrom}" />
 					<a4j:support event="onchange" reRender="langTo"
 						bypassUpdates="false" ajaxSingle="true" />
@@ -88,9 +92,8 @@
 			<h:outputLabel value="#{translation['translate.to']}" />
 
 			<a4j:outputPanel id="langTo">
-				<nxh:selectOneMenu value="#{editionBean.langTo}" 
-				style="width: 150px"
-				disabled="#{editionBean.languageDetection}">
+				<nxh:selectOneMenu value="#{editionBean.langTo}"
+					style="width: 150px" disabled="#{editionBean.languageDetection}">
 					<f:selectItems value="#{editionBean.langsTo}" />
 				</nxh:selectOneMenu>
 			</a4j:outputPanel>
@@ -98,7 +101,8 @@
 			<h:outputLabel value="#{translation['translate.quality']}" />
 
 			<a4j:outputPanel id="quality">
-				<nxh:selectOneMenu value="#{editionBean.quality}" style="width: 150px">
+				<nxh:selectOneMenu value="#{editionBean.quality}"
+					style="width: 150px">
 					<f:selectItems value="#{editionBean.qualities}" />
 				</nxh:selectOneMenu>
 			</a4j:outputPanel>

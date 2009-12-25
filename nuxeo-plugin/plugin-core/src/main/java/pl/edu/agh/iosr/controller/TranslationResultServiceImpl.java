@@ -6,9 +6,6 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
-import pl.edu.agh.iosr.nuxeo.schema.translationresult.FileResultRequestWrapper;
-import pl.edu.agh.iosr.nuxeo.schema.translationresult.StatusRequestWrapper;
-import pl.edu.agh.iosr.nuxeo.schema.translationresult.StringResultRequestWrapper;
 import pl.edu.agh.iosr.services.TranslationResultService;
 
 @Name("translationResultServiceImpl")
@@ -16,6 +13,7 @@ import pl.edu.agh.iosr.services.TranslationResultService;
 @Stateless
 public class TranslationResultServiceImpl implements TranslationResultService {
 
+	/*
 	public String sendStatus(StatusRequestWrapper parameters) {
 		// TODO Auto-generated method stub
 		return null;
@@ -30,5 +28,5 @@ public class TranslationResultServiceImpl implements TranslationResultService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	 */
 }
