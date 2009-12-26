@@ -19,10 +19,11 @@ import pl.edu.agh.iosr.controller.ConfigurationStorage;
 import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 
+import static pl.edu.agh.iosr.util.IosrLogger.log;
+
 /**
- * backing bean dla widoku osoby administruj�cej
- * WSami. wy�wietla tabelke z zarejestrowanymi WSami oraz
- * pozwala dodawac i usuwac owe.
+ * backing bean dla widoku osoby administruj�cej WSami. wy�wietla tabelke z
+ * zarejestrowanymi WSami oraz pozwala dodawac i usuwac owe.
  * */
 @Scope(ScopeType.CONVERSATION)
 @Name("configurationBean")
@@ -32,51 +33,54 @@ public class ConfigurationBean {
 	private ConfigurationStorage configurationStorage;
 
 	private String description = "", endpoint = "", name = "";
-	
+
 	public List<TranslationServiceDescription> getRemoteWSs() {
 		return configurationStorage.getRemoteWSs();
 	}
-	
+
 	/**
 	 * rejestruje nowy WS, validacja w xhtlmu
 	 * */
-	public String addNewWS() {
-		
+	public void addNewWS(ActionEvent ae) {
+
 		// troche walidacji nie zaszkodzi
-		for (TranslationServiceDescription r : configurationStorage.getRemoteWSs()) {
+		for (TranslationServiceDescription r : configurationStorage
+				.getRemoteWSs()) {
 			if (name.equals(r.getName())) {
-				FacesContext.getCurrentInstance().
-					addMessage(null, new FacesMessage("Cannot duplicate WS."));
-				return "";
+				FacesContext.getCurrentInstance().addMessage(null,
+						new FacesMessage("Cannot duplicate WS."));
+				return;
 			}
 		}
-		
+
 		TranslationServiceDescription r = new TranslationServiceDescription();
 		r.setDescription(description);
 		r.setEndpoint(endpoint);
 		r.setName(name);
 		configurationStorage.getRemoteWSs().add(r);
-		
-		return "";
 	}
-	
+
 	/**
-	 * usuwa wybrany WS. Przed tym wydarzeniem
-	 * setPropertyActionListenery z xhtmla
-	 * ustawiaja wartosc name i endpoint
+	 * usuwa wybrany WS. Przed tym wydarzeniem setPropertyActionListenery z
+	 * xhtmla ustawiaja wartosc name i endpoint
 	 * */
-	public String deleteWS() {
+	public void deleteWS(ActionEvent ae) {
+		
+		String name = (String)ae.getComponent().getAttributes().get("czopson"); 
+		
 		TranslationServiceDescription rwds = null;
-		for (TranslationServiceDescription r : configurationStorage.getRemoteWSs()) {
-			if (r.getName().equals(name) && r.getEndpoint().equals(endpoint)) {
+		for (TranslationServiceDescription r : configurationStorage
+				.getRemoteWSs()) {
+			if (r.getName().equals(name)) {
 				rwds = r;
 				break;
 			}
 		}
 		if (rwds != null) {
-			configurationStorage.getRemoteWSs().remove(rwds);
+			log(this.getClass(), "deleted ws: "
+					+ configurationStorage.getRemoteWSs().remove(rwds)
+					+ " - chosen: " + name);
 		}
-		return "";
 	}
 
 	public String getDescription() {
@@ -107,12 +111,14 @@ public class ConfigurationBean {
 		return configurationStorage;
 	}
 
-	public void setConfigurationStorage(ConfigurationStorage configurationStorage) {
+	public void setConfigurationStorage(
+			ConfigurationStorage configurationStorage) {
 		this.configurationStorage = configurationStorage;
 	}
 
 	public TranslationServiceDescription getSelectedWS() {
-		for (TranslationServiceDescription r : configurationStorage.getRemoteWSs()) {
+		for (TranslationServiceDescription r : configurationStorage
+				.getRemoteWSs()) {
 			if (r.getName().equals(name)) {
 				return r;
 			}
@@ -120,14 +126,14 @@ public class ConfigurationBean {
 		return null;
 	}
 
-	
 	// usuwanie pojedynczych par języków
-	
+
 	private String toDeletePairLangFrom, toDeletePairLangTo;
-	
+
 	public void setToDeletePairLangFrom(String toDeletePairLangFrom) {
 		this.toDeletePairLangFrom = toDeletePairLangFrom;
-		System.out.println("toDeletePairLAng From set to " + toDeletePairLangFrom);
+		System.out.println("toDeletePairLAng From set to "
+				+ toDeletePairLangFrom);
 	}
 
 	public void setToDeletePairLangTo(String toDeletePairLangTo) {
@@ -135,7 +141,6 @@ public class ConfigurationBean {
 		System.out.println("toDeletePairLAngTo set to " + toDeletePairLangTo);
 	}
 
-	
 	/**
 	 * action do usuwanie jednej pary z obslugiwanych jezyków
 	 * */
@@ -143,21 +148,21 @@ public class ConfigurationBean {
 		int i = -1;
 		for (LangPair lp : getSelectedWS().getSupportedLangPairs()) {
 			++i;
-			if (lp.getFrom().equals(toDeletePairLangFrom) &&
-				lp.getTo().equals(toDeletePairLangTo)) {
+			if (lp.getFrom().equals(toDeletePairLangFrom)
+					&& lp.getTo().equals(toDeletePairLangTo)) {
 				break;
 			}
 		}
-		System.out.println("removing: " + toDeletePairLangFrom + "-" + 
-					toDeletePairLangTo + " which is " + i + "th");
+		System.out.println("removing: " + toDeletePairLangFrom + "-"
+				+ toDeletePairLangTo + " which is " + i + "th");
 		if (i >= 0 && i < getSelectedWS().getSupportedLangPairs().size()) {
 			getSelectedWS().getSupportedLangPairs().remove(i);
 		}
 		return "";
 	}
-	
+
 	// dodawanie pojedynczych par języków
-	
+
 	private String newLangFrom, newLangTo;
 
 	public String getNewLangFrom() {
@@ -175,7 +180,7 @@ public class ConfigurationBean {
 	public void setNewLangTo(String newLangTo) {
 		this.newLangTo = newLangTo;
 	}
-	
+
 	public SelectItem[] getIso3Codes() {
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		for (Locale l : Locale.getAvailableLocales()) {
@@ -190,33 +195,35 @@ public class ConfigurationBean {
 		}
 		return items;
 	}
-	
+
 	/**
 	 * action, dodaje parke obslugiwanych jezykow
 	 * */
 	public String addPair() {
 		if (newLangFrom.equals(newLangTo)) {
-			FacesContext.getCurrentInstance().addMessage(null, 
+			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage("Languages must differ."));
 			return "";
 		}
-		
+
 		if (getSelectedWS() == null) {
 			return "";
 		}
-		
+
 		Collection<LangPair> ll = getSelectedWS().getSupportedLangPairs();
 		for (LangPair lp : ll) {
-			if (lp.getFrom().equals(newLangFrom) &&
-				lp.getTo().equals(newLangTo)) {
-				FacesContext.getCurrentInstance().addMessage(null, 
-						new FacesMessage("Selected languages set already supported."));
+			if (lp.getFrom().equals(newLangFrom)
+					&& lp.getTo().equals(newLangTo)) {
+				FacesContext.getCurrentInstance().addMessage(
+						null,
+						new FacesMessage(
+								"Selected languages set already supported."));
 				return "";
 			}
 		}
-		
-		getSelectedWS().getSupportedLangPairs().
-			add(new LangPair(newLangFrom, newLangTo));
+
+		getSelectedWS().getSupportedLangPairs().add(
+				new LangPair(newLangFrom, newLangTo));
 
 		return "";
 	}
