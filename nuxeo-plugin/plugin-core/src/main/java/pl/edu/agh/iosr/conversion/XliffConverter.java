@@ -10,6 +10,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Create;
+import org.jboss.seam.annotations.Destroy;
+import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Scope;
 import org.nuxeo.ecm.core.api.PathRef;
 
 import pl.edu.agh.iosr.model.LangPair;
@@ -21,7 +26,7 @@ import pl.edu.agh.xliffhandler.utils.ConversionMode;
 import pl.edu.agh.xliffhandler.utils.FileType;
 
 /**
- * Implementacja AsynchronousConvertera wykorzystuj¹ca bibliotekê file2xliff4j
+ * Implementacja AsynchronousConvertera wykorzystujï¿½ca bibliotekï¿½ file2xliff4j
  * <br>
  *  
  * 
@@ -29,12 +34,15 @@ import pl.edu.agh.xliffhandler.utils.FileType;
  * 
  * */
 
+@Name("xliffConverter")
+@Scope(ScopeType.APPLICATION)
 public class XliffConverter extends AsynchronousConverter{
 	
 	private static Map<String, FileType> formats = new HashMap<String, FileType>();
 	private Converter converter = null;
 
 	public XliffConverter() {
+		super();
         formats.put("html", FileType.HTML);
         formats.put("properties", FileType.JAVA_PROPERTIES);
         formats.put("doc", FileType.MSOFFICEDOC);
@@ -45,6 +53,16 @@ public class XliffConverter extends AsynchronousConverter{
         formats.put("word", FileType.WORD);
         formats.put("xlf", FileType.XLIFF);
         formats.put("xml", FileType.XML);
+	}
+	
+	@Create
+	public void init() {
+		super.init();
+	}
+	
+	@Destroy
+	public void shutdown() {
+		super.shutdown();
 	}
 	
 	@Override
