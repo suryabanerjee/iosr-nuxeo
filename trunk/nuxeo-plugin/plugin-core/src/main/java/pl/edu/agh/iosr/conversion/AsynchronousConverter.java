@@ -118,7 +118,6 @@ abstract public class AsynchronousConverter implements Runnable {
 	public AsynchronousConverter() {
 	}
 
-	@Create
 	public void init() {
 		for (int i = 0; i < threadsNo; i++) {
 			new Thread(this).start();
@@ -126,7 +125,6 @@ abstract public class AsynchronousConverter implements Runnable {
 		}
 	}
 
-	@Destroy
 	public void shutdown() {
 		activity = false;
 		log(this.getClass(), "STOPPING");
