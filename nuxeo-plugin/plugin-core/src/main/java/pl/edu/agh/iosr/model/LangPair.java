@@ -1,11 +1,21 @@
 package pl.edu.agh.iosr.model;
 
+import javax.persistence.Embeddable;
+
 /**
  * Para kodow jezykow
  * */
-public class LangPair{
+@Embeddable
+public class LangPair implements java.io.Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 407005456052342702L;
 	
 	private String from, to;
+	
+	public LangPair() {}
 	
 	public LangPair(String from, String to) {
 		super();

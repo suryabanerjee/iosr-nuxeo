@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import org.jboss.seam.annotations.In;
 import org.nuxeo.ecm.core.api.ClientException;
@@ -18,6 +17,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import pl.edu.agh.iosr.exceptions.DataInconsistencyException;
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationOrder.RequestState;
+import pl.edu.agh.iosr.util.IosrLogger.Level;
 
 public class MetadataTranslationOrderService implements TranslationOrderService {
 
@@ -53,7 +53,7 @@ public class MetadataTranslationOrderService implements TranslationOrderService 
 			
 			
 		} catch (ClientException e) {
-			log(this.getClass(), e.getMessage(), Level.SEVERE);
+			log(this.getClass(), e.getMessage(), Level.FATAL);
 			e.printStackTrace();
 		}
 		

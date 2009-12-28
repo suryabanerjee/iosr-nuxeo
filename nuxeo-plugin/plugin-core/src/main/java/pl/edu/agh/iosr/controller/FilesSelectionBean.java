@@ -4,7 +4,6 @@ import static pl.edu.agh.iosr.util.IosrLogger.log;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -19,6 +18,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 
 import pl.edu.agh.iosr.persistence.CoreSessionProxy;
+import pl.edu.agh.iosr.util.IosrLogger.Level;
 
 /**
  * Pobiera liste plików z workspace'a

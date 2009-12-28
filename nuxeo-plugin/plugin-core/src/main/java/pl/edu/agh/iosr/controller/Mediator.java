@@ -47,22 +47,22 @@ public class Mediator {
 	@In(create = true)
 	private ValidationService validationService;
 
-	@In(create = true)
+	@In(create = true, value="#{repositoryProxyService}")
 	private RepositoryProxyService documentAccessService;
 
 	@In(create = true)
 	private TranslationOrderService translationOrderService;
 
-	@In(create = true)
+	@In(create = true, value="#{translationServicesConfigService}")
 	private TranslationServicesConfigService translationServicesConfigService;
 
-	@In(create = true)
+	@In(create = true, value="#{remoteWSInvoker}")
 	private RemoteWSInvoker remoteWSInvoker;
 
 	/**
 	 * Kolejkuje zamówienie
 	 * */
-	public void enqueuRequest(TranslationOrder request) {
+	public void enqueueRequest(TranslationOrder request) {
 		log(this.getClass(), "Złożono zamówienie na przekład:\n"
 				+ request.toString());
 	}
@@ -92,10 +92,31 @@ public class Mediator {
 	}
 
 	/**
+	 * Uogólniona obsługa błędów workflowa.
+	 * 
+	 * W razie niepowodzenia umieszczamy stosowną informacje w obiekcie order
+	 * ,logujemy błąd i zapisujemy order.
+	 * */
+	private void cancelOrder(TranslationOrder order, Exception e) {
+		e.printStackTrace();
+		log(this.getClass(), "Failed to submit translation order. "
+				+ e.getMessage());
+		order.markAsFailed(e.getLocalizedMessage());
+		try {
+			if (order != null) {
+				translationOrderService.saveOrUpdateTranslationOrder(order);
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	/**
 	 * zglasza ��danie translacji i przprowadza operacje konieczne by wyslac je
 	 * do tlumaczenia
 	 * */
-	public void submitTranslationOrder(TranslationOrder order) {
+	public void beginTranslation(TranslationOrder order) {
 		try {
 
 			validateOrder(order, RequestState.BEFORE_PROCESSING);
@@ -105,43 +126,31 @@ public class Mediator {
 			order.nextState();
 			translationOrderService.saveOrUpdateTranslationOrder(order);
 
+			log(this.getClass(), 
+				"\n\nNO KURWA, JEŻELI WIDZISZ TEN NAPIS NA KONSOLI TO JA PIERDOLE\n\n");
+			
+			TranslationOrder tmp = translationOrderService.getTranslationOrder(order.getRequestId());
+			log(this.getClass(), 
+				tmp + "\n\nNO A JAK TO WIDZISZ TO ZNACZY, ZE PERSYSTENCJA NA BAZIE DZIAŁA KYRWA!\n\n");
+		
+			
 			TranslationServiceDescription tsDescription = translationServicesConfigService
 					.getTranslationService(order.getWsId());
 			validationService.validate(order, tsDescription);
 			
-			// TODO przesunąć poniższą logikę do konwertera
 			String fileExtension = documentAccessService.getFileExtension(order
 					.getSourceDocument());
 			if (validationService.isConversionNeeded(fileExtension,
 					tsDescription)) {
-
-				// tylko to powinno sie tutaj znalezc
 				xliffConverter.convert(order);
 			}
 			else {
-				File fileToTranslate = documentAccessService.getFile(order
-						.getSourceDocument());
-				remoteWSInvoker.traslateAsync(tsDescription, order,
-						fileToTranslate);
+				performExactTranslation(order);
 			}
 
 		}
 		catch (Exception e) {
-			// w razie niepowodzenia umieszczamy stosowną informacje w obiekcie
-			// order
-			// logujemy błąd i zapisujemy order
-			e.printStackTrace();
-			log(this.getClass(), "Failed to submit translation order. "
-					+ e.getMessage());
-			order.markAsFailed(e.getLocalizedMessage());
-			try {
-				if (order != null) {
-					translationOrderService.saveOrUpdateTranslationOrder(order);
-				}
-			}
-			catch (Exception ex) {
-				ex.printStackTrace();
-			}
+			cancelOrder(order, e);
 		}
 
 	}
@@ -149,14 +158,14 @@ public class Mediator {
 	/**
 	 * zleca wyslanie do tłumaczenia remoteWSinvokerowi
 	 * */
-	public void submitExactTranslation(TranslationOrder order) {
+	public void performExactTranslation(TranslationOrder order) {
 
 		try {
 
 			validateOrder(order, RequestState.UNDER_CONVERSION);
 
 			// ustawiamy status w tym miejscu na wyslany do tlumaczenia
-			// remoteWSinvoker nie przeprowadza zadnej kontroli
+			// remoteWSinvoker nie przeprowadza zadnej kontroli workflowa
 			order.nextState();
 			translationOrderService.saveOrUpdateTranslationOrder(order);
 
@@ -166,7 +175,7 @@ public class Mediator {
 
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			cancelOrder(order, e);
 		}
 
 	}
@@ -175,26 +184,32 @@ public class Mediator {
 	 * zglasza rezultaty translacji i przeprowadza operacje konieczne by
 	 * przetlumaczenie zostalo zapisane
 	 * */
-	public void submitTranslationResult(Long id, File resultFile) {
+	public void deliverTranslationResult(Long id, File resultFile) {
+
+		TranslationOrder order = translationOrderService
+				.getTranslationOrder(id);
 
 		try {
 
-			TranslationOrder order = translationOrderService
-					.getTranslationOrder(id);
-
 			validateOrder(order, RequestState.UNDER_PROCESSING);
 
+			// w trakcie rekonwersji
+			order.nextState();
 
 			if (validationService.isReconversionNeeded(order)) {
 
 				order.setXliff(resultFile);
 
-				// TODO przesunac logike do konwertera
-				xliffConverter.reConvert(order); // TODO pobranie pliku i
-				// zapisanie go w Nuxeo
+				translationOrderService.saveOrUpdateTranslationOrder(order);
 
+				xliffConverter.reConvert(order);
 			}
 			else {
+
+				// successful
+				order.nextState();
+
+				translationOrderService.saveOrUpdateTranslationOrder(order);
 
 				documentAccessService.saveFile(order, resultFile);
 
@@ -202,7 +217,24 @@ public class Mediator {
 
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			cancelOrder(order, e);
+		}
+	}
+
+	public void completeTranslation(TranslationOrder order) {
+
+		try {
+
+			validateOrder(order, RequestState.UNDER_RECONVERSION);
+
+			// przeklad dokonany
+			order.nextState();
+
+			translationOrderService.saveOrUpdateTranslationOrder(order);
+
+		}
+		catch (Exception e) {
+			cancelOrder(order, e);
 		}
 
 	}
