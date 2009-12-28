@@ -1,13 +1,27 @@
 package pl.edu.agh.iosr.model;
 
+import java.io.Serializable;
 import java.util.Date;
-import java.util.logging.Level;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 
 import org.nuxeo.ecm.core.api.DocumentRef;
 
 import pl.edu.agh.iosr.exceptions.WorkflowException;
 import pl.edu.agh.iosr.util.IosrLogger;
 import pl.edu.agh.iosr.util.IosrRandomGenerator;
+import pl.edu.agh.iosr.util.IosrLogger.Level;
 
 /**
  * Obiekt używany do formułowania zamówień na przykład przez klientów
@@ -16,7 +30,15 @@ import pl.edu.agh.iosr.util.IosrRandomGenerator;
  *
  * Przez cały czas powinien być utrwalany.
  * */
-public class TranslationOrder {
+@Entity
+@Table(name="TranslationOrder")
+public class TranslationOrder implements java.io.Serializable{
+	
+	/**
+	 * 
+	 */
+	private static  long serialVersionUID = -4937919332325578161L;
+
 
 	public enum RequestState {
 		/**
@@ -48,71 +70,97 @@ public class TranslationOrder {
 		FAILED
 	}
 	
-	RequestState state = RequestState.BEFORE_PROCESSING;
+	@Enumerated(EnumType.STRING)
+	@Column(name="state")
+	private RequestState state = RequestState.BEFORE_PROCESSING;
 	
 	/**
 	 * Referencja do dokumentu źródłowego
 	 * */
-	private final DocumentRef sourceDocument;
+	@Lob
+	@Column(name="sourceDocument")
+	private  DocumentRef sourceDocument;
 	
 	/**
 	 * Referencja do doumentu wynikowego
 	 * */
+	@Lob
+	@Column(name="destinationDocument")
 	private DocumentRef destinationDocument;
 	
 	/**
 	 * Wiadomo co
 	 * */
-	private final LangPair langPair;
+	@Embedded
+	@AttributeOverrides({
+		@AttributeOverride(name="from", column=@Column(name="langFrom")),
+		@AttributeOverride(name="to", column=@Column(name="langTo"))
+	})
+	private  LangPair langPair;
 	
 	/**
 	 * Nazwa dokumentu wynikowego
 	 * 
 	 * sam dokument może jeszcze nie istnieć, ale trzeba znać jego nazwe
 	 * */
-	private final String destinationDocumentName;
+	@Column(name="destinationDocumentName")
+	private  String destinationDocumentName;
 	
 	/**
 	 * unikalny numer zamówienie
 	 * */
-	private final Long requestId = IosrRandomGenerator.nextLong();
+	@Id
+	@Column(name="id")
+	private  Long requestId = IosrRandomGenerator.nextLong();
 	
 	/**
 	 * Jakość zleconego tłumaczenia
 	 * */
-	private final String quality;
+	@Column(name="quality")
+	private  String quality;
 	
 	/**
 	 * identyfikator web servisu
 	 * */
-	private final Long wsId;
+	@Column(name="wsId")
+	private  Long wsId;
 	
 	/**
 	 * Lokalizacja pliku, bądź zawartość skeletona
 	 * */
-	private Object skeleton;
+	@Lob
+	@Basic(fetch=FetchType.LAZY)
+	@Column(name="skeleton")
+	private Serializable skeleton;
 	
 	/**
 	 * Lokalizacja pliku, bądź zawartość xliffa
 	 * */
-	private Object xliff;
+	@Lob
+	@Basic(fetch=FetchType.LAZY)
+	@Column(name="xliff")
+	private Serializable xliff;
 	
 	/**
 	 * Wiadomość, jakby zaszła jakaś konieczność, np. błąd
 	 * */
+	@Column(name="message")
 	private String message;
 	
 	/**
 	 * Detekcja języka
 	 * */
-	private final boolean languageDetection;
+	@Column(name="languageDetection")
+	private  boolean languageDetection;
 	
 	/**
 	 * daty, kiedy co się stało,
 	 * 
 	 * można odczytać tylko poprzez toString
 	 * */
-	private final Date[] timeStamps = new Date[RequestState.values().length];
+	@Lob
+	@Column(name="timeStamps")
+	private  Date[] timeStamps = new Date[RequestState.values().length];
 	
 	/**
 	 * dla ulatwienia przeciazamy hehe
@@ -132,7 +180,11 @@ public class TranslationOrder {
 		return result.toString();
 	}
 
-
+	/**
+	 * Konstruktor tylko na potrzeby na mechanizmów persystencji.
+	 * */
+	public TranslationOrder() {}
+	
 	// konstruktor
 	public TranslationOrder(DocumentRef sourceDocument, LangPair langPair,
 			String destinationDocumentName, String quality, Long wsId,
@@ -179,10 +231,10 @@ public class TranslationOrder {
 		this.state = RequestState.FAILED;
 		message = failureReason;
 		IosrLogger.log(this.getClass(), "Failed to translate document: " +
-				sourceDocument.reference(), Level.SEVERE);
+				sourceDocument.reference(), Level.FATAL);
 	}
 	
-	// gettery i setter, naturalnie nie wszystkie, finale w konstruktorze
+	// gettery i setter
 	
 	public RequestState getState() {
 		return state;
@@ -199,22 +251,22 @@ public class TranslationOrder {
 	}
 
 
-	public Object getSkeleton() {
+	public Serializable getSkeleton() {
 		return skeleton;
 	}
 
 
-	public void setSkeleton(Object skeleton) {
+	public void setSkeleton(Serializable skeleton) {
 		this.skeleton = skeleton;
 	}
 
 
-	public Object getXliff() {
+	public Serializable getXliff() {
 		return xliff;
 	}
 
 
-	public void setXliff(Object xliff) {
+	public void setXliff(Serializable xliff) {
 		this.xliff = xliff;
 	}
 

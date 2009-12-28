@@ -6,12 +6,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-
-import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.Destroy;
 
 import pl.edu.agh.iosr.model.TranslationOrder;
+import pl.edu.agh.iosr.util.IosrLogger.Level;
 
 /**
  * Implementuje architekture otrzymującą asynchroniczne zadania zaś 
@@ -110,7 +107,7 @@ abstract public class AsynchronousConverter implements Runnable {
 			try {
 				proceed(getEvent());
 			} catch (Exception e) {
-				log(this.getClass(), e.getMessage(), Level.SEVERE);
+				log(this.getClass(), e.getMessage(), Level.FATAL);
 			}
 		}
 	}

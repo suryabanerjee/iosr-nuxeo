@@ -242,7 +242,7 @@ public class EditionBean implements Serializable {
 						"", 
 						translationServiceDescription.getWsId(),
 						languageDetection);
-				mediator.enqueuRequest(translationOrder);
+				mediator.beginTranslation(translationOrder);
 			}
 		}	
 		log(this.getClass(), "end of buildTranslationRequest!");

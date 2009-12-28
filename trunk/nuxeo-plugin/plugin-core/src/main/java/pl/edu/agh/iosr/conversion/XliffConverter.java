@@ -8,7 +8,6 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -19,6 +18,7 @@ import org.nuxeo.ecm.core.api.PathRef;
 
 import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.TranslationOrder;
+import pl.edu.agh.iosr.util.IosrLogger.Level;
 import pl.edu.agh.xliffhandler.converter.Converter;
 import pl.edu.agh.xliffhandler.converter.ConverterFactory;
 import pl.edu.agh.xliffhandler.exceptions.ConversionException;
@@ -93,7 +93,7 @@ public class XliffConverter extends AsynchronousConverter{
 					file.getParent(), null, null, sw);
 			translationOrder.setXliff(sw.toString());
 		} catch (ConversionException e) {
-			log(this.getClass(), e.getMessage(), Level.SEVERE);
+			log(this.getClass(), e.getMessage(), Level.FATAL);
 		}
 	}
 	
@@ -112,7 +112,7 @@ public class XliffConverter extends AsynchronousConverter{
 					Charset.forName("utf-8"), null, file.getName(), 
 					file.getParent(), null, null, null);
 		} catch (ConversionException e) {
-			log(this.getClass(), e.getMessage(), Level.SEVERE);
+			log(this.getClass(), e.getMessage(), Level.FATAL);
 		}
 	}
 	

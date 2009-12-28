@@ -19,7 +19,7 @@
 			border="1" value="#{editionBean.filesSelectionBean.files}" var="file"
 			styleClass="table1" rowClasses="table1rowEven table1rowOdd">
 			<h:column id="column1">
-				<h:selectBooleanCheckbox value="#{file.selected}" valueChangeListener="#{file.listener}">
+				<h:selectBooleanCheckbox value="#{file.selected}">
 					<a4j:support event="onchange" reRender="output3" ajaxSingle="true" />
 				</h:selectBooleanCheckbox>
 

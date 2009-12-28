@@ -2,7 +2,6 @@ package pl.edu.agh.iosr.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -24,6 +23,21 @@ public class IosrLogger {
 	private static Map<Class<?>, Logger> loggersCache = 
 		new HashMap<Class<?>, Logger>();
 	
+	public enum Level {
+		FATAL, WARNING, INFO
+	}
+	
+	private static java.util.logging.Level getConcreteLevel(IosrLogger.Level level) {
+		switch (level) {
+			case FATAL:
+				return java.util.logging.Level.SEVERE;
+			case WARNING:
+				return java.util.logging.Level.WARNING;
+			default:
+				return java.util.logging.Level.INFO;
+		}
+	}
+	
 	public static Level DEFAULT_IOSR_LOGGING_LEVEL = Level.WARNING;
 	
 	/**
@@ -40,7 +54,7 @@ public class IosrLogger {
 		if (!loggersCache.containsKey(c)) {
 			loggersCache.put(c, Logger.getLogger(c.getName()));
 		}
-		loggersCache.get(c).log(DEFAULT_IOSR_LOGGING_LEVEL, o.toString());		
+		loggersCache.get(c).log(getConcreteLevel(DEFAULT_IOSR_LOGGING_LEVEL), o.toString());		
 	}
 	
 }
