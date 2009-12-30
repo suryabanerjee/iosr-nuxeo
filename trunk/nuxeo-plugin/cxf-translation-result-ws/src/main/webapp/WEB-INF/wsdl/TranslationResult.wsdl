@@ -61,41 +61,34 @@
 
         </xsd:schema>
     </wsdl:types>	
+    
+    <wsdl:message name="empty" />
 
     <wsdl:message name="sendStringResultRequest">
         <wsdl:part name="parameters" element="translation:StringResultRequestWrapper" />
     </wsdl:message>
-	<wsdl:message name="sendStringResultResponse">
-		<wsdl:part name="parameter" type="xsd:string" />
-	</wsdl:message>
 	
 	<wsdl:message name="sendFileResultRequest">
         <wsdl:part name="parameters" element="translation:FileResultRequestWrapper" />
     </wsdl:message>
-    <wsdl:message name="sendFileResultResponse">
-    	<wsdl:part name="parameter" type="xsd:string" />
-    </wsdl:message>
 
 	<wsdl:message name="sendStatusRequest">
         <wsdl:part name="parameters" element="translation:StatusRequestWrapper" />
-	</wsdl:message>
-	<wsdl:message name="sendStatusResponse">
-		<wsdl:part name="parameter" type="xsd:string" />
 	</wsdl:message>
     	
     	
     <wsdl:portType name="TranslationResultPortType">
 		<wsdl:operation name="sendStringResult">
 			<wsdl:input message="tns:sendStringResultRequest" />
-			<wsdl:output message="tns:sendStringResultResponse" />
+			<wsdl:output message="tns:empty" />
 		</wsdl:operation>
 		<wsdl:operation name="sendFileResult">
 			<wsdl:input message="tns:sendFileResultRequest" />
-			<wsdl:output message="tns:sendFileResultResponse" />
+			<wsdl:output message="tns:empty" />
 		</wsdl:operation>
 		<wsdl:operation name="sendStatus">
             <wsdl:input message="tns:sendStatusRequest" />
-            <wsdl:output message="tns:sendStatusResponse" />
+            <wsdl:output message="tns:empty" />
 		</wsdl:operation>
 	</wsdl:portType>
 	
