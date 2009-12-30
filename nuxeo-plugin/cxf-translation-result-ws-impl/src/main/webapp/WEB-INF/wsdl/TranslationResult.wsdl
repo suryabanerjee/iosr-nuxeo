@@ -9,7 +9,17 @@
 
    <wsdl:types>
         <xsd:schema targetNamespace="http://agh.edu.pl/iosr/nuxeo/schema/TranslationResult"
-        			xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
+        			xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+        			xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+					jaxb:version="2.0">
+					
+        	<xsd:annotation>
+				<xsd:appinfo>
+					<jaxb:globalBindings>
+						<jaxb:serializable uid="1" />
+					</jaxb:globalBindings>
+				</xsd:appinfo>
+			</xsd:annotation>
         			
 			<xsd:simpleType name="TranslationStatus">
 				<xsd:restriction base="xsd:string">
@@ -51,41 +61,34 @@
 
         </xsd:schema>
     </wsdl:types>	
+    
+    <wsdl:message name="empty" />
 
     <wsdl:message name="sendStringResultRequest">
         <wsdl:part name="parameters" element="translation:StringResultRequestWrapper" />
     </wsdl:message>
-	<wsdl:message name="sendStringResultResponse">
-		<wsdl:part name="parameter" type="xsd:string" />
-	</wsdl:message>
 	
 	<wsdl:message name="sendFileResultRequest">
         <wsdl:part name="parameters" element="translation:FileResultRequestWrapper" />
     </wsdl:message>
-    <wsdl:message name="sendFileResultResponse">
-    	<wsdl:part name="parameter" type="xsd:string" />
-    </wsdl:message>
 
 	<wsdl:message name="sendStatusRequest">
         <wsdl:part name="parameters" element="translation:StatusRequestWrapper" />
-	</wsdl:message>
-	<wsdl:message name="sendStatusResponse">
-		<wsdl:part name="parameter" type="xsd:string" />
 	</wsdl:message>
     	
     	
     <wsdl:portType name="TranslationResultPortType">
 		<wsdl:operation name="sendStringResult">
 			<wsdl:input message="tns:sendStringResultRequest" />
-			<wsdl:output message="tns:sendStringResultResponse" />
+			<wsdl:output message="tns:empty" />
 		</wsdl:operation>
 		<wsdl:operation name="sendFileResult">
 			<wsdl:input message="tns:sendFileResultRequest" />
-			<wsdl:output message="tns:sendFileResultResponse" />
+			<wsdl:output message="tns:empty" />
 		</wsdl:operation>
 		<wsdl:operation name="sendStatus">
             <wsdl:input message="tns:sendStatusRequest" />
-            <wsdl:output message="tns:sendStatusResponse" />
+            <wsdl:output message="tns:empty" />
 		</wsdl:operation>
 	</wsdl:portType>
 	

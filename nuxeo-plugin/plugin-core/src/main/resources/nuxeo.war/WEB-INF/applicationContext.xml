@@ -15,11 +15,13 @@
 	<context:annotation-config/>
     <context:component-scan base-package="pl.edu.agh.iosr" />
 
-    <bean
-	class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
+    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
 		 
- 	<bean id="mediator" 
- 			class="pl.edu.agh.iosr.controller.Mediator">
+ 	<bean id="mediator" class="pl.edu.agh.iosr.controller.Mediator">
+ 	</bean>
+ 	
+ 	<bean class="pl.edu.agh.iosr.controller.TranslationResultServiceImpl">
+ 		<property name="mediator" ref="mediator" />
  	</bean>
  	
 </beans>
