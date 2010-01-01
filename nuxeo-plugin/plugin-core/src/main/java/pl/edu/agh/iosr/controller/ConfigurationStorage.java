@@ -13,7 +13,6 @@ import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 import pl.edu.agh.iosr.persistence.CoreSessionProxy;
 
-
 /**
  * na potrzeby testów GUI
  * */
@@ -21,53 +20,37 @@ import pl.edu.agh.iosr.persistence.CoreSessionProxy;
 @Scope(ScopeType.APPLICATION)
 public class ConfigurationStorage {
 
-	private List<TranslationServiceDescription> remoteWSs = 
-		new LinkedList<TranslationServiceDescription>();
+	private List<TranslationServiceDescription> remoteWSs = new LinkedList<TranslationServiceDescription>();
 
-	@In(create=true)
+	@In(create = true)
 	CoreSessionProxy coreSessionProxy;
-	
+
 	@Create
 	public void init() {
 		TranslationServiceDescription wsd = new TranslationServiceDescription();
-		wsd.getSupportedLangPairs().add(new LangPair("PL", "ENG"));
-		wsd.getSupportedLangPairs().add(new LangPair("ENG", "PL"));
+		wsd.getSupportedLangPairs().add(new LangPair("pl", "en"));
+		wsd.getSupportedLangPairs().add(new LangPair("en", "pl"));
 		wsd.setDescription("tlumaczneie 1");
 		wsd.setEndpoint("http://www.goooooogle.com");
 		wsd.setName("Google");
-		wsd.getSupportedQualities().add("very good");
-		wsd.getSupportedQualities().add("very very good");
+		wsd.setSupportedDocumentTypes(new String[] { "good", "bad" });
 		remoteWSs.add(wsd);
-		
+
 		wsd = new TranslationServiceDescription();
-		wsd.getSupportedLangPairs().add(new LangPair("PL", "ES"));
-		wsd.getSupportedLangPairs().add(new LangPair("ES", "RU"));
-		wsd.getSupportedLangPairs().add(new LangPair("RU", "JP"));
+		wsd.getSupportedLangPairs().add(new LangPair("pl", "en"));
+		wsd.getSupportedLangPairs().add(new LangPair("jp", "pl"));
+		wsd.getSupportedLangPairs().add(new LangPair("es", "ru"));
+		wsd.getSupportedLangPairs().add(new LangPair("en", "pl"));
 		wsd.setDescription("tlumaczneie czopyka");
 		wsd.setEndpoint("http://www.czopyk.pl");
 		wsd.setName("Czopsonopolis");
-		wsd.getSupportedQualities().add("poor");
-		wsd.getSupportedQualities().add("very very poor, but free");
+		wsd.setSupportedDocumentTypes(new String[] { "very bad", "very good" });
 		remoteWSs.add(wsd);
-		
-		wsd = new TranslationServiceDescription();
-		wsd.getSupportedLangPairs().add(new LangPair("PL", "ES"));
-		wsd.getSupportedLangPairs().add(new LangPair("ES", "RU"));
-		wsd.getSupportedLangPairs().add(new LangPair("RU", "JP"));
-		wsd.getSupportedLangPairs().add(new LangPair("KT", "KO"));
-		wsd.getSupportedLangPairs().add(new LangPair("WW", "DP"));
-		wsd.getSupportedLangPairs().add(new LangPair("JSF", "IR"));
-		wsd.setDescription("tlumaczneie 3");
-		wsd.setEndpoint("http://www.onet.com/tr.wsdl?");
-		wsd.setName("Onet");
-		wsd.setLanguageDetection(true);
-		remoteWSs.add(wsd);
-		
-		coreSessionProxy.getCoreSession();
+
 	}
 
 	public List<TranslationServiceDescription> getRemoteWSs() {
 		return remoteWSs;
 	}
-	
+
 }

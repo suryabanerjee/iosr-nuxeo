@@ -22,7 +22,7 @@ public interface TranslationServicesConfigService {
 	/**
 	 * aktualizacja informacji o serwisie
 	 * */
-	public void saveOrUpdateTranslationService(TranslationServiceDescription translationService);
+	public TranslationServiceDescription saveOrUpdateTranslationService(TranslationServiceDescription translationService);
 	
 	/**
 	 * wiadomo
