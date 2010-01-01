@@ -43,7 +43,7 @@ public class MetadataTranslationOrderService implements TranslationOrderService 
 		return results;
 	}
 
-	public void saveOrUpdateTranslationOrder(TranslationOrder translationOrder)
+	public TranslationOrder saveOrUpdateTranslationOrder(TranslationOrder translationOrder)
 			throws DataInconsistencyException {
 		
 		log(this.getClass(), "saveOrUpdateTranslationOrder called", Level.INFO);
@@ -51,12 +51,12 @@ public class MetadataTranslationOrderService implements TranslationOrderService 
 		try {
 			DocumentModel documentModel=coreSession.getDocument(translationOrder.getSourceDocument());
 			
-			
+			return translationOrder;
 		} catch (ClientException e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
 			e.printStackTrace();
 		}
-		
+		return null;
 		
 	}
 

@@ -14,19 +14,16 @@ import pl.edu.agh.iosr.services.RepositoryProxyService;
 @Scope(ScopeType.APPLICATION)
 public class RepositoryProxyServiceImpl implements RepositoryProxyService{
 
-	@Override
 	public File getFile(DocumentRef sourceDocument) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public String getFileExtension(DocumentRef sourceDocument) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public void saveFile(TranslationOrder order, File resultFile) {
 		// TODO Auto-generated method stub
 		

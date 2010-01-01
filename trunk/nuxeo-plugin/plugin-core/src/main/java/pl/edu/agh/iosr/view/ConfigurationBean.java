@@ -1,5 +1,7 @@
 package pl.edu.agh.iosr.view;
 
+import static pl.edu.agh.iosr.util.IosrLogger.log;
+
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,8 +20,6 @@ import org.jboss.seam.annotations.Scope;
 import pl.edu.agh.iosr.controller.ConfigurationStorage;
 import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
-
-import static pl.edu.agh.iosr.util.IosrLogger.log;
 
 /**
  * backing bean dla widoku osoby administruj�cej WSami. wy�wietla tabelke z
@@ -146,17 +146,19 @@ public class ConfigurationBean {
 	 * */
 	public String deletePair() {
 		int i = -1;
-		for (LangPair lp : getSelectedWS().getSupportedLangPairs()) {
+		LangPair lp = null;
+		for (LangPair l : getSelectedWS().getSupportedLangPairs()) {
 			++i;
-			if (lp.getFrom().equals(toDeletePairLangFrom)
-					&& lp.getTo().equals(toDeletePairLangTo)) {
+			if (l.getFromLang().equals(toDeletePairLangFrom)
+					&& l.getToLang().equals(toDeletePairLangTo)) {
+				lp = l;
 				break;
 			}
 		}
 		System.out.println("removing: " + toDeletePairLangFrom + "-"
 				+ toDeletePairLangTo + " which is " + i + "th");
-		if (i >= 0 && i < getSelectedWS().getSupportedLangPairs().size()) {
-			getSelectedWS().getSupportedLangPairs().remove(i);
+		if (lp != null) {
+			getSelectedWS().getSupportedLangPairs().remove(lp);
 		}
 		return "";
 	}
@@ -212,8 +214,8 @@ public class ConfigurationBean {
 
 		Collection<LangPair> ll = getSelectedWS().getSupportedLangPairs();
 		for (LangPair lp : ll) {
-			if (lp.getFrom().equals(newLangFrom)
-					&& lp.getTo().equals(newLangTo)) {
+			if (lp.getFromLang().equals(newLangFrom)
+					&& lp.getToLang().equals(newLangTo)) {
 				FacesContext.getCurrentInstance().addMessage(
 						null,
 						new FacesMessage(
@@ -222,9 +224,12 @@ public class ConfigurationBean {
 			}
 		}
 
-		getSelectedWS().getSupportedLangPairs().add(
-				new LangPair(newLangFrom, newLangTo));
+		LangPair lp = new LangPair();
+		lp.setFromLang(newLangFrom);
+		lp.setToLang(newLangTo);
 
+		getSelectedWS().getSupportedLangPairs().add(lp);
+		
 		return "";
 	}
 }

@@ -1,41 +1,61 @@
 package pl.edu.agh.iosr.model;
 
 import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Para kodow jezykow
  * */
-@Embeddable
+@Entity
+@Table(name="LANG_PAIR")
+//@Embeddable
 public class LangPair implements java.io.Serializable {
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 407005456052342702L;
+	private static final long serialVersionUID = 6751218410817677316L;
+
+	private String fromLang;
 	
-	private String from, to;
+	private String toLang;
 	
+	private Long id;
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+
 	public LangPair() {}
 	
-	public LangPair(String from, String to) {
+	public LangPair(String fromLang, String toLang) {
 		super();
-		this.from = from;
-		this.to = to;
+		this.fromLang = fromLang;
+		this.toLang = toLang;
 	}
 
-	public String getFrom() {
-		return from;
+	public String getFromLang() {
+		return fromLang;
 	}
 
-	public void setFrom(String from) {
-		this.from = from;
+	public void setFromLang(String fromLang) {
+		this.fromLang = fromLang;
 	}
 
-	public String getTo() {
-		return to;
+	public String getToLang() {
+		return toLang;
 	}
 
-	public void setTo(String to) {
-		this.to = to;
+	public void setToLang(String toLang) {
+		this.toLang = toLang;
 	}
+	
 } 

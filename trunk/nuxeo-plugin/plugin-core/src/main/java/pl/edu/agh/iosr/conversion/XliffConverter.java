@@ -81,8 +81,8 @@ public class XliffConverter extends AsynchronousConverter{
 		log(this.getClass(), "FILE: " + file.getParent());
 		String format = file.getName();
 		format = format.substring(format.lastIndexOf(".") + 1);
-		Locale locale = new Locale(translationOrder.getLangPair().getFrom(), 
-				translationOrder.getLangPair().getFrom().toUpperCase());
+		Locale locale = new Locale(translationOrder.getLangPair().getFromLang(), 
+				translationOrder.getLangPair().getFromLang().toUpperCase());
 		System.out.println("to: " + locale);
 		StringWriter sw = new StringWriter();
 		try {
@@ -102,8 +102,8 @@ public class XliffConverter extends AsynchronousConverter{
 		File file = new File(translationOrder.getSourceDocument().reference().toString());
 		String format = file.getName();
 		format = format.substring(format.lastIndexOf(".") + 1);
-		Locale locale = new Locale(translationOrder.getLangPair().getTo(), 
-				translationOrder.getLangPair().getTo().toUpperCase());
+		Locale locale = new Locale(translationOrder.getLangPair().getToLang(), 
+				translationOrder.getLangPair().getToLang().toUpperCase());
 		System.out.println("from: " + locale);
 		try {
 			converter = ConverterFactory
@@ -121,7 +121,10 @@ public class XliffConverter extends AsynchronousConverter{
 		
 		XliffConverter xliff = new XliffConverter();
 		xliff.init();
-		TranslationOrder to = new TranslationOrder(new PathRef("E:\\Dokumenty\\STUDIA\\IOSR\\projekt\\trunk\\nuxeo-plugin\\plugin-core\\mary.txt"), new LangPair("pl", "en"), 
+		LangPair lp = new LangPair();
+		lp.setFromLang("pl");
+		lp.setToLang("en");
+		TranslationOrder to = new TranslationOrder(new PathRef("E:\\Dokumenty\\STUDIA\\IOSR\\projekt\\trunk\\nuxeo-plugin\\plugin-core\\mary.txt"), lp, 
 				"dest.xlf", "1", new Long(1), false);
 		xliff.convert(to);
 		xliff.reConvert(to);

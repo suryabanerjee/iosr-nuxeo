@@ -6,6 +6,7 @@ import java.io.File;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -15,6 +16,7 @@ import pl.edu.agh.iosr.exceptions.WorkflowException;
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 import pl.edu.agh.iosr.model.TranslationOrder.RequestState;
+import pl.edu.agh.iosr.persistence.PersistenceTest;
 import pl.edu.agh.iosr.services.RepositoryProxyService;
 import pl.edu.agh.iosr.services.TranslationOrderService;
 import pl.edu.agh.iosr.services.TranslationServicesConfigService;
@@ -50,7 +52,7 @@ public class Mediator {
 	@In(create = true, value="#{repositoryProxyService}")
 	private RepositoryProxyService documentAccessService;
 
-	@In(create = true)
+	@In(create = true, value = "#{translationOrderService}")
 	private TranslationOrderService translationOrderService;
 
 	@In(create = true, value="#{translationServicesConfigService}")
@@ -59,14 +61,15 @@ public class Mediator {
 	@In(create = true, value="#{remoteWSInvoker}")
 	private RemoteWSInvoker remoteWSInvoker;
 
-	/**
-	 * Kolejkuje zamówienie
-	 * */
-	public void enqueueRequest(TranslationOrder request) {
-		log(this.getClass(), "Złożono zamówienie na przekład:\n"
-				+ request.toString());
-	}
+	@In(create=true)
+	private PersistenceTest persistenceTest;
 
+	@Create
+	public void init() {
+		persistenceTest.testTranslationOrder();
+		persistenceTest.testServicesDescriptions();
+	}
+	
 	/**
 	 * Pomaga sprawdzać poprawność przepływu zamówień
 	 * 
@@ -126,14 +129,6 @@ public class Mediator {
 			order.nextState();
 			translationOrderService.saveOrUpdateTranslationOrder(order);
 
-			log(this.getClass(), 
-				"\n\nNO KURWA, JEŻELI WIDZISZ TEN NAPIS NA KONSOLI TO JA PIERDOLE\n\n");
-			
-			TranslationOrder tmp = translationOrderService.getTranslationOrder(order.getRequestId());
-			log(this.getClass(), 
-				tmp + "\n\nNO A JAK TO WIDZISZ TO ZNACZY, ZE PERSYSTENCJA NA BAZIE DZIAŁA KYRWA!\n\n");
-		
-			
 			TranslationServiceDescription tsDescription = translationServicesConfigService
 					.getTranslationService(order.getWsId());
 			validationService.validate(order, tsDescription);

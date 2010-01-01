@@ -20,21 +20,21 @@ public interface TranslationOrderService {
 	/**
 	 * Zapewne ma zwrócić wszystkie TranslationOrdery o zadanym stanie
 	 * */
-	Collection<TranslationOrder> getTranslationOrders(TranslationOrder.RequestState state);
+	public Collection<TranslationOrder> getTranslationOrders(TranslationOrder.RequestState state);
 	
 	/**
 	 * Nietrudno zgadnąć
 	 * */
-	TranslationOrder getTranslationOrder(Long id);
+	public TranslationOrder getTranslationOrder(Long id);
 	
 	/**
 	 * wiadomo - patrz komentarz do interfejsu!!!
 	 * */
-	void saveOrUpdateTranslationOrder(TranslationOrder translationOrder) throws
+	public TranslationOrder saveOrUpdateTranslationOrder(TranslationOrder translationOrder) throws
 			DataInconsistencyException;
 	
 	/**
 	 * prawdopodobnie nie będzie wykorzystywane
 	 * */
-	void delete(Long id);
+	public void delete(Long id);
 }

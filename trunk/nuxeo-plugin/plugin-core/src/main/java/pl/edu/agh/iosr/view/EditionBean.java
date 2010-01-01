@@ -3,6 +3,7 @@ package pl.edu.agh.iosr.view;
 import static pl.edu.agh.iosr.util.IosrLogger.log;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,14 +32,13 @@ import pl.edu.agh.iosr.model.TranslationServiceDescription;
  * 
  * 'wyświetla' tabelke z plikami oraz opcje tłumaczenie
  * 
- * tworzy rządzanie tłumaczenia TranslationRequest i wysyła je
- * do mediatora.
+ * tworzy rządzanie tłumaczenia TranslationRequest i wysyła je do mediatora.
  * 
  * */
 @Scope(ScopeType.CONVERSATION)
 @Name("editionBean")
 public class EditionBean implements Serializable {
-	
+
 	/**
 	 * 
 	 */
@@ -47,39 +47,44 @@ public class EditionBean implements Serializable {
 	@In("#{mediator}")
 	private Mediator mediator;
 
-	@In(create=true)
-    private FilesSelectionBean filesSelectionBean;
-	
-	@In(create=true)
+	@In(create = true)
+	private FilesSelectionBean filesSelectionBean;
+
+	@In(create = true)
 	private ConfigurationStorage configurationStorage;
-	
+
 	private TranslationServiceDescription translationServiceDescription;
 	private String langTo, langFrom, quality;
 	private boolean languageDetection = false;
-	
+
 	@Create
 	public void init() {
 		try {
-			if (configurationStorage != null && configurationStorage.getRemoteWSs() != null) {
-				translationServiceDescription = configurationStorage.getRemoteWSs().get(0);
-				
-				Collection<LangPair> list = translationServiceDescription.getSupportedLangPairs();
-				
+			if (configurationStorage != null
+					&& configurationStorage.getRemoteWSs() != null) {
+				translationServiceDescription = configurationStorage
+						.getRemoteWSs().get(0);
+
+				Collection<LangPair> list = translationServiceDescription
+						.getSupportedLangPairs();
+
 				if (list != null && list.size() > 0) {
-					langFrom = list.iterator().next().getFrom();
-					langTo = list.iterator().next().getTo();
+					langFrom = list.iterator().next().getFromLang();
+					langTo = list.iterator().next().getToLang();
 				}
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			log(this.getClass(), e.getMessage());
-		}		
+		}
 	}
-	
+
 	/**
 	 * Pobiera liste zarejestrowanych serwisow tlumaczacych
 	 * */
 	public SelectItem[] getAvailableServices() {
-		List<TranslationServiceDescription> wss = configurationStorage.getRemoteWSs();
+		List<TranslationServiceDescription> wss = configurationStorage
+				.getRemoteWSs();
 		SelectItem[] items = new SelectItem[wss.size()];
 		int i = 0;
 		for (TranslationServiceDescription rd : wss) {
@@ -87,98 +92,105 @@ public class EditionBean implements Serializable {
 		}
 		return items;
 	}
-	
-	
+
 	/**
-	 * Po wybraniu serwisu, pobiera dla niego liste jezykow z ktorych
-	 * mozna tlumaczyc
+	 * Po wybraniu serwisu, pobiera dla niego liste jezykow z ktorych mozna
+	 * tlumaczyc
 	 * */
 	public SelectItem[] getLangsFrom() {
-		if (translationServiceDescription == null) {
+		if (translationServiceDescription == null
+				|| translationServiceDescription.getSupportedLangPairs() == null) {
 			return new SelectItem[0];
 		}
-		
-		Collection<LangPair> langPairs = translationServiceDescription.getSupportedLangPairs();
-		
+
+		Collection<LangPair> langPairs = translationServiceDescription
+				.getSupportedLangPairs();
+
 		Set<String> froms = new HashSet<String>();
-		
+
 		for (LangPair lp : langPairs) {
-			froms.add(lp.getFrom());
+			froms.add(lp.getFromLang());
 		}
-		
+
 		SelectItem[] items = new SelectItem[froms.size()];
 		int i = 0;
 		for (String s : froms) {
 			items[i++] = new SelectItem(s, s);
 		}
-		return items;				
+		return items;
 	}
-	
-	
+
 	/**
-	 * Po wybraniu jezyka z ktorego ma byc tlumaczone,
-	 * zwraca liste jezyka na ktore moze nastapic przeklad
+	 * Po wybraniu jezyka z ktorego ma byc tlumaczone, zwraca liste jezyka na
+	 * ktore moze nastapic przeklad
 	 * */
 	public SelectItem[] getLangsTo() {
-		if (translationServiceDescription == null || langFrom == null) {
+		if (translationServiceDescription == null
+				|| langFrom == null
+				|| translationServiceDescription.getSupportedLangPairs() == null) {
 			return new SelectItem[0];
 		}
-		
+
 		Collection<LangPair> langPairs = translationServiceDescription.getSupportedLangPairs();
-		
+
 		Set<String> froms = new HashSet<String>();
-		
+
 		for (LangPair lp : langPairs) {
-			if (lp.getFrom().equals(langFrom)) {
-				froms.add(lp.getTo());
+			if (lp.getFromLang().equals(langFrom)) {
+				froms.add(lp.getToLang());
 			}
 		}
-		
+
 		SelectItem[] items = new SelectItem[froms.size()];
 		int i = 0;
 		for (String s : froms) {
 			items[i++] = new SelectItem(s, s);
 		}
-		return items;						
+		return items;
 	}
 
-
 	/**
-	 * Po wybraniu serwisu, pobiera dla niego liste wspieranych
-	 * jakosci przekladu
+	 * Po wybraniu serwisu, pobiera dla niego liste wspieranych jakosci
+	 * przekladu
 	 * */
 	public SelectItem[] getQualities() {
-		if (translationServiceDescription == null) {
+		if (translationServiceDescription == null
+				|| translationServiceDescription.getSupportedQualities() == null) {
 			return new SelectItem[0];
 		}
-				
-		SelectItem[] items = new SelectItem[translationServiceDescription.getSupportedQualities().size()];
-		Iterator<String> iterator = translationServiceDescription.getSupportedQualities().iterator();
+
+		SelectItem[] items = new SelectItem[translationServiceDescription
+				.getSupportedQualities().length];
+		Iterator<String> iterator = Arrays.asList(
+				translationServiceDescription.getSupportedQualities())
+				.iterator();
 		int i = 0;
 		while (iterator.hasNext()) {
 			String s = iterator.next();
 			items[i++] = new SelectItem(s, s);
 		}
-		return items;				
+		return items;
 	}
 
-	
 	public void setWsName(String wsName) {
-		for (TranslationServiceDescription rd : configurationStorage.getRemoteWSs()) {
-			log(this.getClass(), "trying to compare: " + rd.getName() + " vs " + wsName);
+		for (TranslationServiceDescription rd : configurationStorage
+				.getRemoteWSs()) {
+			log(this.getClass(), "trying to compare: " + rd.getName() + " vs "
+					+ wsName);
 			if (rd.getName().equals(wsName)) {
 				translationServiceDescription = rd;
-				log(this.getClass(), "translationSeviceDescription set to: " + rd);
+				log(this.getClass(), "translationSeviceDescription set to: "
+						+ rd);
 				return;
 			}
 		}
-		log(this.getClass(), "failed to find suitable translationServiceDescription!");
+		log(this.getClass(),
+				"failed to find suitable translationServiceDescription!");
 	}
 
-	
 	public String getWsName() {
 		return "";
-	}	
+	}
 
 	public String getLangTo() {
 		return langTo;
@@ -211,14 +223,14 @@ public class EditionBean implements Serializable {
 	public void setFilesSelectionBean(FilesSelectionBean filesSelectionBean) {
 		this.filesSelectionBean = filesSelectionBean;
 	}
-	
+
 	/**
 	 * zawiera validacje przed wykonaniem wlasciwiej akcji
 	 * */
 	public void validationListener(ActionEvent ae) {
 		filesSelectionBean.validate();
 	}
-	
+
 	/**
 	 * buduje i wysyła zlecenie do kontrolera
 	 * 
@@ -227,26 +239,27 @@ public class EditionBean implements Serializable {
 	 * odpalane po nacisnieciu guziora
 	 * */
 	public String buildTranslationRequest() {
-		
+
 		TranslationOrder translationOrder;
 		log(this.getClass(), "buildTranslationRequest called!");
 		for (EnrichedFile ef : filesSelectionBean.getFiles()) {
 			log(this.getClass(), "file found!");
 			if (ef.getSelected()) {
 				log(this.getClass(), "file added!");
-				
-				translationOrder = new TranslationOrder(
-						ef.getDocumentModel().getRef(),
-						new LangPair(langFrom, langTo), 
-						ef.getTargetName(), 
-						"", 
+
+				LangPair lp = new LangPair();
+				lp.setFromLang(langFrom);
+				lp.setToLang(langTo);
+
+				translationOrder = new TranslationOrder(ef.getDocumentModel()
+						.getRef(), lp, ef.getTargetName(), "",
 						translationServiceDescription.getWsId(),
 						languageDetection);
 				mediator.beginTranslation(translationOrder);
 			}
-		}	
+		}
 		log(this.getClass(), "end of buildTranslationRequest!");
-		
+
 		return "#";
 	}
 
@@ -254,18 +267,19 @@ public class EditionBean implements Serializable {
 		return configurationStorage;
 	}
 
-	public void setConfigurationStorage(ConfigurationStorage configurationStorage) {
+	public void setConfigurationStorage(
+			ConfigurationStorage configurationStorage) {
 		this.configurationStorage = configurationStorage;
 	}
 
 	public TranslationServiceDescription getTranslationServiceDescription() {
 		return translationServiceDescription;
 	}
-	
+
 	// raporty ze zleconych tłumaczeń
 	private String report;
 	private boolean hasReport = false;
-	
+
 	public String getReport() {
 		return report;
 	}
@@ -289,6 +303,5 @@ public class EditionBean implements Serializable {
 	public void setQuality(String quality) {
 		this.quality = quality;
 	}
-	
-	
+
 }

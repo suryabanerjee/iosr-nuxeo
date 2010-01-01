@@ -18,56 +18,56 @@ import pl.edu.agh.iosr.model.TranslationServiceDescription;
 @Scope(ScopeType.APPLICATION)
 public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 
-	@Override
+	
 	public List<String> getSuppportedFileFormats(
 			TranslationServiceDescription webservice) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public List<Operation> getSuppportedOperations(
 			TranslationServiceDescription webservice) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public List<String> getSuppportedQualities(
 			TranslationServiceDescription webservice) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public List<String> getSuppportedSourceTypes(
 			TranslationServiceDescription webservice) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public List<TranslationOption> getSuppportedTranslationOptions(
 			TranslationServiceDescription webservice) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public List<LangPair> getSuppportedTranslations(
 			TranslationServiceDescription webservice) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public List<Locale> getSuppportedTranslationsPerLanguage(
 			TranslationServiceDescription webservice, Locale language) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public void traslateAsync(TranslationServiceDescription webservice,
 			TranslationOrder request, File content) {
 		// TODO Auto-generated method stub

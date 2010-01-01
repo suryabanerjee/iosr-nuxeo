@@ -8,6 +8,11 @@ import org.jboss.seam.annotations.Scope;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 
+import pl.edu.agh.iosr.util.IosrLogger;
+
+/**
+ * Kolejna próba utrzymania coreSession.
+ * */
 @Name("coreSessionProxy")
 @Scope(ScopeType.STATELESS)
 public class CoreSessionProxy {
@@ -23,10 +28,10 @@ public class CoreSessionProxy {
 		coreSession = navigationContext.getOrCreateDocumentManager();	
 		
 		if (coreSession == null) {
-			System.out.println("######## coreSession is null");
+			IosrLogger.log(this.getClass(), "coreSession is null");
 		}
 		else {
-			System.out.println("######## " + coreSession);
+			IosrLogger.log(this.getClass(), "coreSession properly initialized");
 		}
 	}
 	
@@ -37,16 +42,12 @@ public class CoreSessionProxy {
 				init();
 			}
 			catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		
 		if (coreSession == null) {
-			System.out.println("######## coreSession is null");
-		}
-		else {
-			System.out.println("######## " + coreSession);
+			IosrLogger.log(this.getClass(), "coreSession is null");
 		}
 		
 		return coreSession;

@@ -11,20 +11,17 @@ import pl.edu.agh.iosr.model.TranslationServiceDescription;
 @Scope(ScopeType.APPLICATION)
 public class ValidationServiceImpl implements ValidationService{
 
-	@Override
 	public boolean isConversionNeeded(String fileExtension,
 			TranslationServiceDescription tsDescription) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public boolean isReconversionNeeded(TranslationOrder order) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public void validate(TranslationOrder order,
 			TranslationServiceDescription tsDescription) {
 		// TODO Auto-generated method stub
