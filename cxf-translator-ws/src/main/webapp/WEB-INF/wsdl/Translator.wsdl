@@ -2,7 +2,7 @@
 <!-- edited with XMLSpy v2010 (http://www.altova.com) by Tomek (Home) -->
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:translate="http://agh.edu.pl/iosr/nuxeo/schema/Translator" xmlns:tns="http://agh.edu.pl/iosr/nuxeo/wsdl/Translator.wsdl" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" name="Translator" targetNamespace="http://agh.edu.pl/iosr/nuxeo/wsdl/Translator.wsdl">
 	<wsdl:types>
-		<xsd:schema xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://agh.edu.pl/iosr/nuxeo/schema/Translator">
+		<xsd:schema xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://agh.edu.pl/iosr/nuxeo/schema/Translator" xmlns:xmime="http://www.w3.org/2005/05/xmlmime"> 
 			<xsd:element name="TranslateRequestWrapper">
 				<xsd:complexType>
 					<xsd:sequence>
@@ -145,7 +145,8 @@
 				<xsd:complexContent>
 					<xsd:extension base="translate:ContentSource">
 						<xsd:sequence>
-							<xsd:element name="fileHandler" type="xsd:string"/>
+							<xsd:element name="file" type="xsd:base64Binary" 
+									 xmime:expectedContentTypes="application/octet-stream"/>
 						</xsd:sequence>
 					</xsd:extension>
 				</xsd:complexContent>

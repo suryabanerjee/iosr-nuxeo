@@ -1,9 +1,12 @@
 package pl.edu.agh.iosr.nuxeo.translator.service;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +27,7 @@ import com.google.api.translate.Translate;
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.FileResultRequestWrapper;
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.StringResultRequestWrapper;
 import pl.edu.agh.iosr.nuxeo.schema.translator.DetectionRequest;
+import pl.edu.agh.iosr.nuxeo.schema.translator.FileContentSource;
 import pl.edu.agh.iosr.nuxeo.schema.translator.FileFormat;
 import pl.edu.agh.iosr.nuxeo.schema.translator.FileFormats;
 import pl.edu.agh.iosr.nuxeo.schema.translator.LanguagePair;
@@ -42,12 +46,18 @@ import pl.edu.agh.iosr.nuxeo.wsdl.translationresult.TranslationResultPortType;
 import pl.edu.agh.iosr.nuxeo.wsdl.translationresult.TranslationResultService;
 import pl.edu.agh.iosr.nuxeo.wsdl.translator.TranslatorPortType;
 
+
+/**
+ * Implementacja WebSerwisu tlumaczacego dla Google Translator
+ * @author lewickitom
+ * */
+
 @WebService(targetNamespace = "http://agh.edu.pl/iosr/nuxeo/wsdl/Translator.wsdl", 
         portName="TranslatorPort",
         serviceName="GoogleTranslatorService",
         endpointInterface="pl.edu.agh.iosr.nuxeo.wsdl.translator.TranslatorPortType")
-        
 public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
+
 //TODO faulty
 
 	private Operation[] supportedOperations={Operation.TRANSLATION,Operation.LANGUAGE_DETECTION};
@@ -69,31 +79,35 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 				e.printStackTrace();
 				return "TRANSLATION_FAILED";
 			}
-	        TranslationResultService service = new TranslationResultService();
-	        TranslationResultPortType port = service.getTranslationResultPort();
-	   	
+	     
 	        File file = new File("testfile.txt");
-	        sendFile(port,file);
+	    
 	     /*   StringResultRequestWrapper s=new StringResultRequestWrapper();
 	        s.setText("TAKI TEKST");
 	        s.setTranslationRequestID("ala");
 	        port.sendStringResult(s);*/	
 		}
 		if(request.getContentSource().getSourceType()==SourceType.FILE){
-			//request.getContentSource().			TODO getting file from request
 			try {
+				FileContentSource fileContentSource=(FileContentSource)request.getContentSource();
+
+				File sourceFile=createFileFromDataHandler(fileContentSource.getFile());					
+				XliffParser xliffParser=new XliffParser(sourceFile);
+				Map<String, String> sourceText;
 				
-			XliffParser xliffParser=new XliffParser("anxliff");
-			Map<String, String> sourceText;
 				sourceText = xliffParser.getSourceText();
-		
-			Map<String,String> translatedText=new HashMap<String, String>();
-			for(Map.Entry<String,String> unit:sourceText.entrySet()){
-				String translatedUnitText=Translate.execute(unit.getValue(), Language.ENGLISH ,Language.POLISH);
-				translatedText.put(unit.getKey(), translatedUnitText);
-			}
-			xliffParser.createXliffWithTranslation(translatedText, Language.POLISH.toString(),"result");
-			
+				Map<String,String> translatedText=new HashMap<String, String>();
+				for(Map.Entry<String,String> unit:sourceText.entrySet()){
+					String translatedUnitText=Translate.execute(unit.getValue(), Language.ENGLISH ,Language.POLISH);
+					translatedText.put(unit.getKey(), translatedUnitText);
+				}
+				File resultFile=xliffParser.createXliffWithTranslation(translatedText, Language.POLISH.toString(),"result");
+				
+				TranslationResultService service = new TranslationResultService();
+			    TranslationResultPortType port = service.getTranslationResultPort();
+		        sendFile(port,resultFile);
+		        sourceFile.delete();
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -118,6 +132,8 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 		
 		return "NOTHING";
 	}
+
+
 
 	@Override
 	public String detectLanguage(DetectionRequest parameter) {
@@ -188,6 +204,21 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
     	port.sendFileResult(fileResult);
     	
     }
+    
+	private File createFileFromDataHandler(DataHandler dataHandler) throws IOException {
+		String fileName=generateFileName();
+		(new File(fileName)).createNewFile();
+		File file=new File(fileName);
+		FileOutputStream out = new FileOutputStream(file);
+		dataHandler.writeTo(out); 
+		return file;
+	}
+    
+    private String generateFileName(){
+    	SimpleDateFormat simpleDateFormat=new SimpleDateFormat("File-ddMMyy-hhmmss.SSS.txt");
+    	return simpleDateFormat.format( new Date());
+    }
+    
 
 
 	

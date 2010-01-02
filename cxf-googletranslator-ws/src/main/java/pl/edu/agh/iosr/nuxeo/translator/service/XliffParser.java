@@ -39,8 +39,8 @@ public class XliffParser {
 	private static final String TRANSLATION_LANGUAGE_TAG="id";
 	
 
-	public XliffParser(String xliffFilename) {
-		xliff = new File(xliffFilename);
+	public XliffParser(File xliffFile) {
+		xliff = xliffFile;
 	}
 
 	public Map<String, String> getSourceText() throws IOException, ParserConfigurationException, SAXException {
@@ -106,7 +106,7 @@ public class XliffParser {
 	public static void main(String[] args) {
 		
 		try {
-			XliffParser x = new XliffParser("C:\\Documents and Settings\\Tomek\\Pulpit\\nuxeo\\marianka\\marianka\\mary.html.xliff");
+			XliffParser x = new XliffParser(new File("C:\\Documents and Settings\\Tomek\\Pulpit\\nuxeo\\marianka\\marianka\\mary.html.xliff"));
 			Map<String, String> map = x.getSourceText();
 			x.createXliffWithTranslation(map, "en_EN","result");
 		} catch (Exception e) {
