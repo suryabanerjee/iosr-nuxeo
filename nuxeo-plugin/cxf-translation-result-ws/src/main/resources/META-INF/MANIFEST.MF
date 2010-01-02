@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 1
+Bundle-Name: IOSR Project
+Bundle-SymbolicName: pl.edu.agh.iosr;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Vendor: AGH
