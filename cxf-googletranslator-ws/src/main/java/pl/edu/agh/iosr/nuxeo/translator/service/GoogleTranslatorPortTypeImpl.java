@@ -1,14 +1,22 @@
 package pl.edu.agh.iosr.nuxeo.translator.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.jws.WebService;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+
+import org.xml.sax.SAXException;
 
 import com.google.api.translate.Language;
 import com.google.api.translate.Translate;
@@ -43,17 +51,18 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 //TODO faulty
 
 	private Operation[] supportedOperations={Operation.TRANSLATION,Operation.LANGUAGE_DETECTION};
-	private SourceType[] supportedSourceTypes={SourceType.STRING};
+	private SourceType[] supportedSourceTypes={SourceType.STRING,SourceType.FILE};
 	private FileFormat[] supportedSourceFileFormats={FileFormat.PLAIN_TEXT};
 	
 	private SupportedLanguagesManager supportedLanguagesManager=new SupportedLanguagesManager();
 	
+	
 
 	@Override
-	public String translate(TranslationRequest parameter) {		//TODO splitting, to result and void instead of String
+	public String translate(TranslationRequest request) {		//TODO splitting, to result and void instead of String
 		Translate.setHttpReferrer("localhost");		
-		if(parameter.getContentSource().getSourceType()==SourceType.STRING){
-			StringContentSource content=(StringContentSource)parameter.getContentSource();
+		if(request.getContentSource().getSourceType()==SourceType.STRING){
+			StringContentSource content=(StringContentSource)request.getContentSource();
 			try {
 				String translatedText=Translate.execute(content.getText(), Language.ENGLISH ,Language.POLISH);
 			} catch (Exception e) {
@@ -68,12 +77,45 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 	     /*   StringResultRequestWrapper s=new StringResultRequestWrapper();
 	        s.setText("TAKI TEKST");
 	        s.setTranslationRequestID("ala");
-	        port.sendStringResult(s);*/
-	        
-
-			
-			
+	        port.sendStringResult(s);*/	
 		}
+		if(request.getContentSource().getSourceType()==SourceType.FILE){
+			//request.getContentSource().			TODO getting file from request
+			try {
+				
+			XliffParser xliffParser=new XliffParser("anxliff");
+			Map<String, String> sourceText;
+				sourceText = xliffParser.getSourceText();
+		
+			Map<String,String> translatedText=new HashMap<String, String>();
+			for(Map.Entry<String,String> unit:sourceText.entrySet()){
+				String translatedUnitText=Translate.execute(unit.getValue(), Language.ENGLISH ,Language.POLISH);
+				translatedText.put(unit.getKey(), translatedUnitText);
+			}
+			xliffParser.createXliffWithTranslation(translatedText, Language.POLISH.toString(),"result");
+			
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TransformerConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TransformerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
+		}
+		
 		return "NOTHING";
 	}
 
