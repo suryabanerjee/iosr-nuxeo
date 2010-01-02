@@ -1,8 +1,12 @@
 package pl.edu.agh.iosr.model;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.activation.DataHandler;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -111,7 +115,7 @@ public class TranslationOrder implements java.io.Serializable {
 	/**
 	 * Lokalizacja pliku, bądź zawartość xliffa
 	 * */
-	private Serializable xliff;
+	private String xliff;
 
 	/**
 	 * Wiadomość, jakby zaszła jakaś konieczność, np. błąd
@@ -212,6 +216,29 @@ public class TranslationOrder implements java.io.Serializable {
 		IosrLogger.log(this.getClass(), "Failed to translate document: "
 				+ sourceDocument.reference(), Level.FATAL);
 	}
+	
+	/**
+	 * przy zwrocie wyniku translacji, zapisuje xliffa do pliku i zwraca go jako wynik
+	 * */
+	
+	public File saveResultFile(DataHandler dh) throws IOException{
+		
+		File xliff = new File(getXliff());
+		String name = xliff.getName();
+		name = name.replaceFirst(".old", "");
+		
+		File xliffResult = new File(xliff.getParent() + name);
+	    if(!xliffResult.exists())
+	    	xliffResult.createNewFile();
+	    
+		FileOutputStream out = new FileOutputStream(xliffResult);
+		
+		dh.writeTo(out);
+    	out.flush();
+    	out.close();
+    	
+    	return xliffResult;
+	}
 
 	// gettery i setter
 
@@ -238,12 +265,11 @@ public class TranslationOrder implements java.io.Serializable {
 		this.skeleton = skeleton;
 	}
 
-	@Transient
-	public Serializable getXliff() {
+	public String getXliff() {
 		return xliff;
 	}
 
-	public void setXliff(Serializable xliff) {
+	public void setXliff(String xliff) {
 		this.xliff = xliff;
 	}
 

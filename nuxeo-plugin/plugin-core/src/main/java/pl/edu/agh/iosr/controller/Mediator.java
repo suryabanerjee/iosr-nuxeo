@@ -2,7 +2,9 @@ package pl.edu.agh.iosr.controller;
 
 import static pl.edu.agh.iosr.util.IosrLogger.log;
 
-import java.io.File;
+import java.io.*;
+
+import javax.activation.DataHandler;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
@@ -10,6 +12,7 @@ import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.nuxeo.ecm.core.api.SerializableInputStream;
 
 import pl.edu.agh.iosr.conversion.XliffConverter;
 import pl.edu.agh.iosr.exceptions.WorkflowException;
@@ -179,10 +182,9 @@ public class Mediator {
 	 * zglasza rezultaty translacji i przeprowadza operacje konieczne by
 	 * przetlumaczenie zostalo zapisane
 	 * */
-	public void deliverTranslationResult(Long id, File resultFile) {
+	public void deliverTranslationResult(Long id, DataHandler resultFileDh) {
 
-		TranslationOrder order = translationOrderService
-				.getTranslationOrder(id);
+		TranslationOrder order = translationOrderService.getTranslationOrder(id);
 
 		try {
 
@@ -190,11 +192,12 @@ public class Mediator {
 
 			// w trakcie rekonwersji
 			order.nextState();
+			
+			//Utworzenie pliku z wynikiem
+			File resultFile = order.saveResultFile(resultFileDh);
 
 			if (validationService.isReconversionNeeded(order)) {
-
-				order.setXliff(resultFile);
-
+				
 				translationOrderService.saveOrUpdateTranslationOrder(order);
 
 				xliffConverter.reConvert(order);

@@ -36,21 +36,10 @@ public class TranslationResultServiceImpl implements TranslationResultService {
 	}
 
 	public void sendFileResult(FileResultRequestWrapper parameters) {
-		try {
-			DataHandler dh = parameters.getFile();
-			
-			File file = new File(parameters.getTranslationRequestID());
-		    if(!file.exists())
-		    	file.createNewFile();
-	
-	        FileOutputStream out = new FileOutputStream(file);
-			
-	    	dh.writeTo(out);
-	    	out.flush();
-	    	out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
+		//TODO
+		//Zmienic id na long
+		mediator.deliverTranslationResult(new Long(parameters.getTranslationRequestID()), parameters.getFile());
 		
 		return;
 	}
