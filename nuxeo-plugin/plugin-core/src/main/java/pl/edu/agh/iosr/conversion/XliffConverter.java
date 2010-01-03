@@ -23,7 +23,9 @@ import org.jboss.seam.annotations.In;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.impl.DocumentModelImpl;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.core.api.CoreSession;
 
@@ -136,6 +138,25 @@ public class XliffConverter extends AsynchronousConverter{
 		}
 	}
 	
+	private void createResultFile(DocumentRef sourceFile, String name, String generatedFile) {
+		try {
+			DocumentModel source = coreSession.getDocument(sourceFile);
+			String path = source.getPathAsString();
+			path = path.substring(0, path.lastIndexOf("/"));
+			String type = source.getType();
+			
+			DocumentModel dm = new DocumentModelImpl(path, name, type);
+			coreSession.createDocument(dm);
+			FileBlob fb = new FileBlob(new File(generatedFile));
+			dm.setProperty("file", "content", fb);
+			coreSession.save();
+			log(this.getClass(), "document saved.");
+		} catch (Exception e) {
+			log(this.getClass(), e.getMessage(), Level.FATAL);
+		}
+		
+	}
+	
 	private void convertFile(TranslationOrder translationOrder) {
 		prepare();
 		log(this.getClass(), "Converting file: " + translationOrder.getSourceDocument().toString());
@@ -143,18 +164,13 @@ public class XliffConverter extends AsynchronousConverter{
 		fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
 		int i = fileName.lastIndexOf("-");
 		fileName = fileName.substring(0, i) + '.' + fileName.substring(i + 1);
-		log(this.getClass(), "file name: " + fileName);
 		
 		String filePath = TMP_PATH + File.separator + translationOrder.getRequestId().toString();
-		log(this.getClass(), "New file location: " + filePath);
 		File file = null;
-		
 		try {
 			(new File(filePath)).mkdirs();
-			log(this.getClass(), "Creating file: " + filePath + File.separator + fileName);
 			file = new File(filePath + File.separator + fileName);
 			file.createNewFile();
-			log(this.getClass(), "Created file: " + file.getCanonicalPath());
 			copyFileContent(filePath + File.separator + fileName, translationOrder.getSourceDocument());
 		} catch (IOException e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
@@ -166,9 +182,6 @@ public class XliffConverter extends AsynchronousConverter{
 		try {
 			converter = ConverterFactory
 				.createConverter(formats.get(format), formats.get("xlf"));
-			//converter.convert(ConversionMode.TO_XLIFF, locale, null, 0,
-			//		Charset.forName("utf-8"), formats.get(format), file.getName(), 
-			//		file.getParent(), null, null, sw);
 			converter.convert(ConversionMode.TO_XLIFF, locale, null, 0,
 					Charset.forName("utf-8"), formats.get(format), fileName, 
 					filePath, null, null, sw);
@@ -181,19 +194,40 @@ public class XliffConverter extends AsynchronousConverter{
 	
 	private void reConvertFile(TranslationOrder translationOrder) {
 		prepare();
-		log(this.getClass(), "ReConverting file: " + translationOrder.getSourceDocument());
-		File file = new File(translationOrder.getSourceDocument().reference().toString());
-		String format = file.getName();
-		format = format.substring(format.lastIndexOf(".") + 1);
+		log(this.getClass(), "ReConverting file: " + translationOrder.getSourceDocument().toString());
+		String fileName = translationOrder.getSourceDocument().toString();
+		String destPath =  fileName.substring(0, fileName.lastIndexOf("/"));
+		fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+		int i = fileName.lastIndexOf("-");
+		fileName = fileName.substring(0, i) + '.' + fileName.substring(i + 1);
+		
+		String filePath = TMP_PATH + File.separator + translationOrder.getRequestId().toString();
+		
+		//ONLY FOR TESTING!
+		/*
+		try {
+			File fl = new File(filePath + File.separator + fileName + ".xliff.transl");
+			fl.createNewFile();
+		} catch (IOException e) {
+			log(this.getClass(), e.getMessage(), Level.FATAL);
+		}*/
+		
+		String format = fileName.substring(fileName.lastIndexOf(".") + 1);
 		Locale locale = new Locale(translationOrder.getLangPair().getToLang(), 
 				translationOrder.getLangPair().getToLang().toUpperCase());
-		System.out.println("from: " + locale);
+		StringWriter sw = new StringWriter();
 		try {
 			converter = ConverterFactory
 				.createConverter(formats.get("xlf"), formats.get(format));
 			converter.convert(ConversionMode.FROM_XLIFF, locale, null, 0,
-					Charset.forName("utf-8"), null, file.getName(), 
-					file.getParent(), null, null, null);
+					Charset.forName("utf-8"), null, fileName, 
+					filePath, null, null, sw);
+			log(this.getClass(), "Generated file: " + sw.toString());
+			
+			String destFile = destPath + sw.toString().substring(sw.toString().lastIndexOf(File.separator));
+			translationOrder.setDestinationDocument(new PathRef(destFile));
+			createResultFile(translationOrder.getSourceDocument(), 
+				sw.toString().substring(sw.toString().lastIndexOf(File.separator) + 1), sw.toString()); 
 		} catch (ConversionException e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
 		}
