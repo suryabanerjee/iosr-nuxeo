@@ -280,68 +280,6 @@ public class PlaintextExporter implements Converter {
     }
 
 	/** 
-     * Convert one set of targets (in the translation units of an XLIFF file) back
-     * to the original plaintext format. Use (besides the XLIFF file) the skeleton 
-     * file that was generated when the XLIFF file was created. (Note: Because
-     * plaintext files--as defined by this converter--contain no formatting,
-     * no format file is used by this converter.)
-     * @param mode The mode of conversion (to or from XLIFF). Must be from XLIFF
-     *        for this converter.
-     * @param language The language of the XLIFF targets to use in constructing
-     *        the plaintext document. The language is used in constructing a 
-     *        unique name for the output file. For example, if ja_JP is specified,
-     *        the output file name will include the substring ja_JP in its name.
-     * @param phaseName The name of the phase to export. If this parameter's
-     *        value is not null, it is matched against the value of the 
-     *        optional phase-name attribute of the target elements of the
-     *        XLIFF document. If null, no check is made against a phase-name
-     *        attribute.
-     *        <p>If the phase name string consists entirely of numeric digit(s) 
-     *        equivalent to an integer with value greater than 1 but less than 
-     *        or equal to maxPhase (see next parameter) search for targets with 
-     *        lower numbered phase names.
-     * @param maxPhase The maximum phase number. If phaseName is specified as 
-     *        "0" and maxPhase is a non-negative integer, search for the highest 
-     *        "numbered" phase, starting at maxPhase, and searching down to phase
-     *        "1".
-     * @param nativeEncoding This parameter--the encoding of the original 
-     *        native plaintext file--is ignored by this converter. (UTF-8 will 
-     *        always be used in the exported target-language document, to handle
-     *        cases where a restrictive encoding [ISO-8859-1, for example--which
-     *        handles only Western European languages] in a source document is 
-     *        incapable of representing characters in a target language 
-     *        [Japanese, for example].)
-     * @param nativeFileType This parameter is ignored. The native file type is
-     *        always plaintext.
-     * @param nativeFileName The name of the original source-language file that
-     *        was previously converted to XLIFF.  It is used to determine the name 
-     *        of the XLIFF file (&lt;nativeFileName&gt;.xliff) and the skeleton 
-     *        file (&lt;nativeFileName&gt;.skeleton). It is also used in 
-     *        constructing the file name of the output plaintext file.
-     * @param baseDir The directory (in the file system) from which input files
-     *        (XLIFF and skeleton files) will be read, and to which the output 
-     *        file will be written.
-     * @param notifier Instance of a class that implements the Notifier
-     * @return Indicator of the status of the conversion.
-     * @throws ConversionException
-     *         If a conversion exception is encountered.
-     */
-	@Override
-	@Deprecated
-    public ConversionStatus convert(ConversionMode mode,
-            Locale language,
-            String phaseName,
-            int maxPhase,
-            Charset nativeEncoding,
-            FileType nativeFileType,
-            String nativeFileName,
-            String baseDir,
-            Notifier notifier) throws ConversionException {
-        return this.convert(mode, language, phaseName, maxPhase, nativeEncoding,
-                nativeFileType, nativeFileName, baseDir, notifier, null, null);
-    }
-
-	/** 
      * Return an object representing a format-specific (and converter-specific) 
      * property.
      * @param property The name of the property to return.
