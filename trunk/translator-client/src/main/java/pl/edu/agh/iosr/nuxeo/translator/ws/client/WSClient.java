@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
@@ -32,30 +33,37 @@ public class WSClient {
 
 	
 	
-	private Service translationService;
+	private Service translationService=new GoogleTranslatorService();
 	private TranslatorPortType port;
 	
-	WSClient(Service translationService)throws IllegalArgumentException{
+	WSClient()throws IllegalArgumentException{
 		
-		this.translationService=translationService;
-		setTranslationEngine(translationService);
+		this.translationService=new GoogleTranslatorService();
+		this.port=(TranslatorPortType)translationService.getPort(TranslatorPortType.class);
+		
+	
+	}
+
+	
+	
+	
+	private void setTranslationServiceEndpoint(String translationServiceEndpoint){
+		
+		BindingProvider bp=(BindingProvider)port;
+		bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, translationServiceEndpoint);
+    	
 	
 	}
 
 
-	public void setTranslationEngine(Service translationService) throws IllegalArgumentException{
-		this.translationService = translationService;
-		try{
-			this.port=(TranslatorPortType)translationService.getPort(TranslatorPortType.class);
-		}
-		catch(WebServiceException e){
-			throw new IllegalArgumentException();
-		}
-	}
-
+ 
 	public static void main (String[] args){
-		WSClient wsClient=new WSClient(new GoogleTranslatorService());
-
+		WSClient wsClient=new WSClient();
+	
+		
+		
+	
+		
         wsClient.translate("Welcome");
      /*   wsClient.detect("text to translate");
         wsClient.getSupportedOperations("text to translate");
@@ -71,7 +79,7 @@ public class WSClient {
     } 
     
     public void translate(String content) {
-    	
+    	  	
     	TranslationRequest translationRequest=new TranslationRequest();
     	CallbackEndpoint ce=new CallbackEndpoint();
     	ce.setEndpointURI("http://costam.com/");
