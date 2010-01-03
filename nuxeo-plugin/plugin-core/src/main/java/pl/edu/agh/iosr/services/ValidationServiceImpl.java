@@ -15,12 +15,12 @@ import pl.edu.agh.iosr.model.TranslationOrder.RequestState;
 public class ValidationServiceImpl implements ValidationService{
 
 	public boolean isConversionNeeded(String fileExtension, TranslationServiceDescription tsDescription) {
-		boolean result = false;
+		boolean result = true;
 		
-		for(DocumentType type: tsDescription.getSupportedDocumentTypes()){
+		/*for(DocumentType type: tsDescription.getSupportedDocumentTypes()){
 			if(fileExtension.toLowerCase().equals(type.getValue().toLowerCase()))
 				result = true;
-		}
+		}*/
 		
 		return result;
 	}
