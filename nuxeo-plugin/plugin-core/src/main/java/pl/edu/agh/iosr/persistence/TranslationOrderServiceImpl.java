@@ -53,7 +53,7 @@ public class TranslationOrderServiceImpl implements TranslationOrderService, Ser
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@SuppressWarnings("unchecked")
 	public Collection<TranslationOrder> getTranslationOrders(RequestState state) {
-		return em.createQuery("from TranslationOrder to where to.reguestState = '" + state + "'").getResultList();
+		return em.createQuery("from TranslationOrder to where to.reguestState = '" + state.name() + "'").getResultList();
 		
 	}
 
@@ -74,7 +74,7 @@ public class TranslationOrderServiceImpl implements TranslationOrderService, Ser
 				em.persist(translationOrder);
 			}
 			else {
-				em.merge(translationOrder);
+				return em.merge(translationOrder);
 			}
 		}
 		return translationOrder;

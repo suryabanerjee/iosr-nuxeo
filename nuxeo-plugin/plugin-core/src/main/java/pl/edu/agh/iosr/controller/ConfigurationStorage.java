@@ -10,6 +10,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
 import pl.edu.agh.iosr.model.LangPair;
+import pl.edu.agh.iosr.model.Quality;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 import pl.edu.agh.iosr.persistence.CoreSessionProxy;
 
@@ -33,7 +34,8 @@ public class ConfigurationStorage {
 		wsd.setDescription("tlumaczneie 1");
 		wsd.setEndpoint("http://www.goooooogle.com");
 		wsd.setName("Google");
-		wsd.setSupportedDocumentTypes(new String[] { "good", "bad" });
+		wsd.getSupportedQualities().add(new Quality("good"));
+		wsd.getSupportedQualities().add(new Quality("bad"));
 		remoteWSs.add(wsd);
 
 		wsd = new TranslationServiceDescription();
@@ -44,7 +46,9 @@ public class ConfigurationStorage {
 		wsd.setDescription("tlumaczneie czopyka");
 		wsd.setEndpoint("http://www.czopyk.pl");
 		wsd.setName("Czopsonopolis");
-		wsd.setSupportedDocumentTypes(new String[] { "very bad", "very good" });
+		wsd.getSupportedQualities().add(new Quality("very good"));
+		wsd.getSupportedQualities().add(new Quality("very bad"));
+		wsd.getSupportedQualities().add(new Quality("sucks, but free"));
 		remoteWSs.add(wsd);
 
 	}

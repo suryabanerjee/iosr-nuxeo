@@ -7,10 +7,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import pl.edu.agh.iosr.util.IosrRandomGenerator;
 
@@ -38,11 +36,11 @@ public class TranslationServiceDescription implements java.io.Serializable {
 
 	private Boolean languageDetection = false;
 
-	private String[] supportedQualities;
+	private Collection<Quality> supportedQualities = new HashSet<Quality>();
 
 	private Collection<LangPair> supportedLangPairs = new HashSet<LangPair>();
 
-	private String[] supportedDocumentTypes;
+	private Collection<DocumentType> supportedDocumentTypes = new HashSet<DocumentType>();
 
 	private String name;
 
@@ -65,14 +63,14 @@ public class TranslationServiceDescription implements java.io.Serializable {
 
 		if (supportedQualities != null) {
 			result.append("\tSupported qualities:\n");
-			for (String q : supportedQualities) {
+			for (StringEntity q : supportedQualities) {
 				result.append("\t\t" + q + "\n");
 			}
 		}
 
 		if (supportedDocumentTypes != null) {
 			result.append("\tSupported document types:\n");
-			for (String dt : supportedDocumentTypes) {
+			for (StringEntity dt : supportedDocumentTypes) {
 				result.append("\t\t" + dt + "\n");
 			}
 		}
@@ -108,24 +106,6 @@ public class TranslationServiceDescription implements java.io.Serializable {
 		this.languageDetection = languageDetection;
 	}
 
-	@Transient
-	public String[] getSupportedQualities() {
-		return supportedQualities;
-	}
-
-	public void setSupportedQualities(String[] supportedQualities) {
-		this.supportedQualities = supportedQualities;
-	}
-
-	@Transient
-	public String[] getSupportedDocumentTypes() {
-		return supportedDocumentTypes;
-	}
-
-	public void setSupportedDocumentTypes(String[] supportedDocumentTypes) {
-		this.supportedDocumentTypes = supportedDocumentTypes;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -138,7 +118,7 @@ public class TranslationServiceDescription implements java.io.Serializable {
 		this.wsId = wsId;
 	}
 
-	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Collection<LangPair> getSupportedLangPairs() {
 		return supportedLangPairs;
 	}
@@ -147,4 +127,24 @@ public class TranslationServiceDescription implements java.io.Serializable {
 		this.supportedLangPairs = supportedLangPairs;
 	}
 
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	public Collection<Quality> getSupportedQualities() {
+		return supportedQualities;
+	}
+
+	public void setSupportedQualities(Collection<Quality> supportedQualities) {
+		this.supportedQualities = supportedQualities;
+	}
+
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	public Collection<DocumentType> getSupportedDocumentTypes() {
+		return supportedDocumentTypes;
+	}
+
+	public void setSupportedDocumentTypes(
+			Collection<DocumentType> supportedDocumentTypes) {
+		this.supportedDocumentTypes = supportedDocumentTypes;
+	}
+
+	
 }

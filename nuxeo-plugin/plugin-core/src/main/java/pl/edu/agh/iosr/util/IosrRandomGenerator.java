@@ -13,7 +13,7 @@ public class IosrRandomGenerator {
 	 * @return ultrarandom random Long
 	 * */
 	public static Long nextLong() {
-		return secureRandom.nextLong();
+		return Math.abs(secureRandom.nextLong());
 	}
 	
 }
