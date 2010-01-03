@@ -23,16 +23,7 @@ public class XMLExporter implements Converter {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public ConversionStatus convert(ConversionMode mode, Locale language,
-			String phaseName, int maxPhase, Charset nativeEncoding,
-			FileType nativeFileType, String nativeFileName, String baseDir,
-			Notifier notifier) throws ConversionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public Object getConversionProperty(String property) {
 		// TODO Auto-generated method stub
