@@ -74,7 +74,7 @@ public class PlaintextImporter implements Converter {
     private OutputStreamWriter xliffOut;
     private OutputStreamWriter skeletonOut;
     
-    private String PATH;
+    //private String PATH;
     
     // Space characters that might appear at the end of a line. (We omit
     // non-breaking spaces, etc., since by definition, then won't appear
@@ -202,16 +202,15 @@ public class PlaintextImporter implements Converter {
             throw new ConversionException("Source language omitted. (Required)");
         }
         
-        try {
-	        PATH = (new File(".")).getCanonicalPath() + File.separator 
-	        		+ MAIN_DIR + File.separator + inputFileName;
-	        File dir = new File(PATH);
-	        System.out.println(dir.getPath());
+        //try {
+	        //PATH = baseDir;
+	        File dir = new File(baseDir);
+	        //System.out.println(dir.getPath());
         	dir.mkdirs();
-        } catch (IOException e) {
+        /*} catch (IOException e) {
         	System.err.println(e.getMessage());
             throw new ConversionException(e.getMessage());
-        }
+        }*/
         
         // If caller specifies no encoding, choose a default encoding based on
         // source language.
@@ -237,11 +236,12 @@ public class PlaintextImporter implements Converter {
         // We will store our output as UTF-8
         try {
             xliffOut  = new OutputStreamWriter(new FileOutputStream(
-            		PATH + File.separator + inputFileName + Converter.xliffSuffix),
+            		baseDir + File.separator + inputFileName + Converter.xliffSuffix),
                     "UTF8");
             skeletonOut = new OutputStreamWriter(new FileOutputStream(
-            		PATH + File.separator + inputFileName + Converter.skeletonSuffix),
+            		baseDir + File.separator + inputFileName + Converter.skeletonSuffix),
                     "UTF8");
+            generatedFileName.write(baseDir + File.separator + inputFileName + Converter.xliffSuffix);
 
             // Write out the XLIFF preliminaries
             this.writeXliffProlog();
@@ -361,55 +361,7 @@ public class PlaintextImporter implements Converter {
         
         // ... And we're done.
         return ConversionStatus.CONVERSION_SUCCEEDED;
-    }
-	
-	/**
-     * Convert a Maker Interchange Format file (MIF) to XLIFF. Additionally
-     * create skeleton and format files. (The skeleton and format files are used on 
-     * export to generate localized MIF files from seleced XLIFF targets.)
-     * @param mode The mode of conversion (to or from XLIFF). The value must be
-     *        TO_XLIFF.
-     * @param language The primary language of the MIF file to be imported. 
-     * @param phaseName The target phase-name. This value is ignored.
-     * @param maxPhase The maximum phase number. This value is ignored.
-     * @param nativeEncoding The encoding of the input MIF. (MIF files are 
-     *        FrameMaker documents encoded in ASCII format. On Unix, ISO Latin-1
-     *        is used. MIF can also use Shift-JIS or EUC (Japanese), Big5, CNS or 
-     *        GB2312-80.EUC (Chinese), or KSC5601-1992 for Korean.)
-     * @param nativeFileType The type of the input file. This value is ignored.
-     *        (The value "mif" is an official XLIFF attribute value and is used
-     *        unconditionally by this importer.)
-     * @param inputMifFileName The name of the input MIF file.
-     * @param baseDir The directory that contains the input MIF file--from which
-     * we will read the input file. This is also the directory in which the output
-     * xliff, skeleton and format files will be written. The output files will
-     * be named as follows:
-     * <ul>
-     * <li>&lt;original_file_name&gt;.xliff</li>
-     * <li>&lt;original_file_name&gt;.skeleton</li>
-     * <li>&lt;original_file_name&gt;.format</li>
-     * </ul>
-     * @param notifier Instance of a class that implements the Notifier
-     *        interface (to send notifications in case of conversion error).
-     * @return Indicator of the status of the conversion.
-     * @throws file2xliff4j.ConversionException
-     *         If a conversion exception is encountered.
-     */    
-    @Deprecated
-	@Override
-	public ConversionStatus convert(
-            ConversionMode mode,       // Must be TO_XLIFF
-            Locale language,
-            String phaseName,          // Ignored
-            int maxPhase,              // Ignored
-            Charset nativeEncoding,    
-            FileType nativeFileType,   // Ignored--always "mif"
-            String inputMifFileName,
-            String baseDir,
-            Notifier notifier) throws ConversionException {
-        return this.convert(mode, language, phaseName, maxPhase, nativeEncoding,
-                nativeFileType, inputMifFileName, baseDir, notifier, null, null);
-    }    
+    } 
 
 	@Override
 	public Object getConversionProperty(String property) {
