@@ -79,8 +79,7 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 				e.printStackTrace();
 				return "TRANSLATION_FAILED";
 			}
-	     
-	        File file = new File("testfile.txt");
+		   File file = new File("testfile.txt");
 	    
 	     /*   StringResultRequestWrapper s=new StringResultRequestWrapper();
 	        s.setText("TAKI TEKST");

@@ -142,7 +142,7 @@ public class Mediator {
 
 			remoteWSInvoker.traslateAsync(translationServicesConfigService
 					.getTranslationService(order.getWsId()), order,
-					documentAccessService.getFile(order.getSourceDocument()));
+					documentAccessService.getFile(order.getSourceDocument()));	//??? po co sourcedocument?
 
 		}
 		catch (Exception e) {

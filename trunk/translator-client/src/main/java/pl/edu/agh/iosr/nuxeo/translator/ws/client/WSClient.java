@@ -28,8 +28,7 @@ import pl.edu.agh.iosr.nuxeo.schema.translator.TranslationRequest;
 
 public class WSClient {
 	
-	//RemoteWSAsyncInvoker
-	
+
 
 	
 	
@@ -44,8 +43,6 @@ public class WSClient {
 	
 	}
 
-	
-	
 	
 	private void setTranslationServiceEndpoint(String translationServiceEndpoint){
 		

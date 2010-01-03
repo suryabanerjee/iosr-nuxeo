@@ -1,8 +1,12 @@
 package pl.edu.agh.iosr.ws;
 
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 import java.util.Locale;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Name;
@@ -13,11 +17,17 @@ import pl.edu.agh.iosr.model.Operation;
 import pl.edu.agh.iosr.model.TranslationOption;
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
+import pl.edu.agh.iosr.nuxeo.wsdl.translator.GoogleTranslatorService;
+import pl.edu.agh.iosr.nuxeo.wsdl.translator.TranslatorPortType;
 
 @Name("remoteWSInvoker")
 @Scope(ScopeType.APPLICATION)
 public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 
+	
+	private Service translationService=new GoogleTranslatorService();
+	private TranslatorPortType port;
+	
 	
 	public List<String> getSuppportedFileFormats(
 			TranslationServiceDescription webservice) {
@@ -70,8 +80,10 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 	
 	public void traslateAsync(TranslationServiceDescription webservice,
 			TranslationOrder request, File content) {
-		// TODO Auto-generated method stub
+		
 		
 	}
+	
+	
 
 }
