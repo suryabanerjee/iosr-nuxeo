@@ -59,7 +59,7 @@ public class PlaintextExporter implements Converter {
     private Matcher placeHolderMatcher 
     = Pattern.compile("^(.*?)(<lTLtLT:tu id=(['\"])(.+?)\\3/>)(.*)").matcher("");
     
-    private String PATH;
+    private final String SUFFIX = ".transl";
 
     /** Creates a new instance of PlaintextExporter */
     public PlaintextExporter() { }
@@ -141,14 +141,15 @@ public class PlaintextExporter implements Converter {
                     + " omitted, incomplete or incorrect.");
         }
         
-        PATH = MAIN_DIR + File.separator + nativeFileName;
-        
         nativeEncoding = Charset.forName("UTF-8");
         
-        String inXliff = PATH + File.separator 
-        		+ nativeFileName + Converter.xliffSuffix;
-        String inSkeleton = PATH + File.separator
+        String inXliff = baseDir + File.separator 
+        		+ nativeFileName + Converter.xliffSuffix + SUFFIX;
+        String inSkeleton = baseDir + File.separator
         		+ nativeFileName + Converter.skeletonSuffix;
+        		
+        System.out.println("InXliff: " + inXliff);
+        System.out.println("InSkeleton: " + inSkeleton);
 
         // Assume that the nativeFileName ends with a period and extension 
         // (something like .txt or .text). If it does, insert the language 
@@ -159,7 +160,7 @@ public class PlaintextExporter implements Converter {
         if (lastDot == -1) {  // Unusual, but no dot!
             //outPlaintext = baseDir + File.separator + outPlaintext + "."
             //    + language.toString();
-            outPlaintext = PATH + File.separator 
+            outPlaintext = baseDir + File.separator 
             	  + outPlaintext + "." + language.toString();
             if (generatedFileName != null) {
                 // Tell caller the name of the output file (wo/directories)
@@ -171,15 +172,16 @@ public class PlaintextExporter implements Converter {
             //    + outPlaintext.substring(0,lastDot)
             //    + "." + language.toString() + "."
             //    + outPlaintext.substring(lastDot+1);
-            outPlaintext = PATH + File.separator
+            if (generatedFileName != null) {
+                // Tell caller the name of the output file (wo/directories)
+                generatedFileName.write(baseDir + File.separator + nativeFileName.substring(0,lastDot)
+                    + "." + language.toString() + "." + nativeFileName.substring(lastDot+1));
+            }
+            outPlaintext = baseDir + File.separator
             	+ outPlaintext.substring(0,lastDot)
             	+ "." + language.toString() + "."
             	+ outPlaintext.substring(lastDot+1);
-            if (generatedFileName != null) {
-                // Tell caller the name of the output file (wo/directories)
-                generatedFileName.write(outPlaintext.substring(0,lastDot)
-                    + "." + language.toString() + "." + outPlaintext.substring(lastDot+1));
-            }
+            
         }
         
         // We created an empty map of TU strings when this class was loaded.
