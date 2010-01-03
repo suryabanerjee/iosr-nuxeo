@@ -76,7 +76,7 @@ public class TranslationOrder implements java.io.Serializable {
 	private DocumentRef sourceDocument;
 
 	/**
-	 * Referencja do doumentu wynikowego
+	 * Referencja do dokumentu wynikowego
 	 * */
 	private DocumentRef destinationDocument;
 
