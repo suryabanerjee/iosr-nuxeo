@@ -17,11 +17,11 @@
 
     <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
 		 
- 	<bean id="mediator" class="pl.edu.agh.iosr.controller.Mediator">
+ 	<!--bean id="mediator" class="pl.edu.agh.iosr.controller.Mediator">
  	</bean>
  	
  	<bean class="pl.edu.agh.iosr.controller.TranslationResultServiceImpl">
  		<property name="mediator" ref="mediator" />
- 	</bean>
+ 	</bean-->
  	
 </beans>

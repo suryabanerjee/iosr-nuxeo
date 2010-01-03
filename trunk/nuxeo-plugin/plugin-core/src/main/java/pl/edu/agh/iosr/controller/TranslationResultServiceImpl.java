@@ -3,6 +3,7 @@ package pl.edu.agh.iosr.controller;
 import javax.ejb.Stateless;
 
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
@@ -21,6 +22,7 @@ import pl.edu.agh.iosr.services.TranslationResultService;
 @Stateless
 public class TranslationResultServiceImpl implements TranslationResultService {
 	
+	@In("#{mediator}")
 	private Mediator mediator;
 
 	public void sendStatus(StatusRequestWrapper parameters) {
