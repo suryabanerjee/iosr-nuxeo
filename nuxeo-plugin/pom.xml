@@ -18,6 +18,7 @@
   <modules>
 	<module>cxf-translation-result-ws</module>
 	<module>cxf-translation-result-ws-impl</module>
+	<module>cxf-translator-ws</module>
 	<module>plugin-core</module>
   </modules>
 
@@ -87,7 +88,8 @@
              <groupId>pl.edu.agh.iosr.ws</groupId>
              <artifactId>cxf-translator-ws</artifactId>
 			 <version>1.0-SNAPSHOT</version>
-             <!--type>jar</type-->
+			 <classifier>jaxws</classifier>
+             <type>jar</type>
           </dependency>
 		  
 		  <dependency>
