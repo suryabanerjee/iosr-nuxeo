@@ -1,6 +1,5 @@
 package pl.edu.agh.iosr.persistence;
 
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import org.jboss.seam.ScopeType;
@@ -9,7 +8,10 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.nuxeo.ecm.core.api.DocumentRef;
 
+import pl.edu.agh.iosr.model.DocumentType;
 import pl.edu.agh.iosr.model.LangPair;
+import pl.edu.agh.iosr.model.Quality;
+import pl.edu.agh.iosr.model.StringEntity;
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 import pl.edu.agh.iosr.services.TranslationOrderService;
@@ -73,6 +75,12 @@ public class PersistenceTest implements Serializable {
 			IosrLogger.log(this.getClass(),
 					"updated translationORder: " + tmp);
 			
+			if (tmp == null) {
+				IosrLogger.log(this.getClass(),
+					"failed to update translationOrder - retrived null");
+				return;
+			}
+			
 			if (!"abc".equals(tmp.getQuality())) {
 				IosrLogger.log(this.getClass(),
 						"failed to update translationOrder, quality");
@@ -123,9 +131,8 @@ public class PersistenceTest implements Serializable {
 			
 			tsd.setEndpoint("endpoint");
 			
-		// 	transient wiec nie są persystowane
-		//	tsd.setSupportedDocumentTypes(new String[] {"pdf", "txt"});
-		//	tsd.setSupportedQualities(new String[] {"double checked"});
+			tsd.getSupportedDocumentTypes().add(new DocumentType("pdf"));
+			tsd.getSupportedQualities().add(new Quality("double checked"));
 			
 			IosrLogger.log(this.getClass(),
 				"trying to update translationServiceDescription: " + tsd);
@@ -139,17 +146,46 @@ public class PersistenceTest implements Serializable {
 			IosrLogger.log(this.getClass(),
 					"updated translationServiceDescription: " + tmp);
 			
-			if (!tmp.getSupportedLangPairs().iterator().hasNext() ||
-				!tmp.getSupportedLangPairs().iterator().next().getFromLang().equals(lp.getFromLang()) ||
-				!tmp.getSupportedLangPairs().iterator().next().getToLang().equals(lp.getToLang())) {
-					IosrLogger.log(this.getClass(),
-						"failed to update translationServiceDescription, supportedLangPairs");
-					return;
+			if (tmp == null) {
+				IosrLogger.log(this.getClass(),
+					"failed to update translationServiceDescription - retrived null");
+				return;
 			}
+			
+			if (!tmp.getSupportedLangPairs().iterator().hasNext()) {
+				
+				LangPair l = tmp.getSupportedLangPairs().iterator().next(); 
+				if (!l.getFromLang().equals(lp.getFromLang()) || !l.getToLang().equals(lp.getToLang())) {
+						IosrLogger.log(this.getClass(),
+							"failed to update translationServiceDescription, supportedLangPairs");
+						return;
+				}
+			}
+			
 			if (!"endpoint".equals(tmp.getEndpoint())) {
 				IosrLogger.log(this.getClass(),
 						"failed to update translationServiceDescription, endpoint");
 				return;
+			}
+			
+			if (!tmp.getSupportedDocumentTypes().iterator().hasNext()) {
+					
+				StringEntity se = tmp.getSupportedDocumentTypes().iterator().next(); 
+				if (!se.getValue().equals("pdf")) {
+						IosrLogger.log(this.getClass(),
+							"failed to update translationServiceDescription, supportedDocumentTypes");
+						return;
+				}
+			}
+			
+			if (!tmp.getSupportedQualities().iterator().hasNext()) {
+				
+				StringEntity se = tmp.getSupportedQualities().iterator().next(); 
+				if (!se.getValue().equals("double checked")) {
+						IosrLogger.log(this.getClass(),
+							"failed to update translationServiceDescription, supportedQualities");
+						return;
+				}
 			}
 			
 			IosrLogger.log(this.getClass(),

@@ -3,7 +3,6 @@ package pl.edu.agh.iosr.view;
 import static pl.edu.agh.iosr.util.IosrLogger.log;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,6 +23,7 @@ import pl.edu.agh.iosr.controller.EnrichedFile;
 import pl.edu.agh.iosr.controller.FilesSelectionBean;
 import pl.edu.agh.iosr.controller.Mediator;
 import pl.edu.agh.iosr.model.LangPair;
+import pl.edu.agh.iosr.model.Quality;
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 
@@ -160,13 +160,11 @@ public class EditionBean implements Serializable {
 		}
 
 		SelectItem[] items = new SelectItem[translationServiceDescription
-				.getSupportedQualities().length];
-		Iterator<String> iterator = Arrays.asList(
-				translationServiceDescription.getSupportedQualities())
-				.iterator();
+				.getSupportedQualities().size()];
+		Iterator<Quality> iterator = translationServiceDescription.getSupportedQualities().iterator();
 		int i = 0;
 		while (iterator.hasNext()) {
-			String s = iterator.next();
+			String s = iterator.next().getValue();
 			items[i++] = new SelectItem(s, s);
 		}
 		return items;
