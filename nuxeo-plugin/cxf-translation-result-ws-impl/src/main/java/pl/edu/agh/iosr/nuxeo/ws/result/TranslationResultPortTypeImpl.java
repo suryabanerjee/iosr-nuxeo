@@ -2,16 +2,19 @@ package pl.edu.agh.iosr.nuxeo.ws.result;
 
 
 import java.util.Properties;
+import java.util.concurrent.Future;
 
 import javax.jws.WebService;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Response;
 
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.FileResultRequestWrapper;
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.StatusRequestWrapper;
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.StringResultRequestWrapper;
 import pl.edu.agh.iosr.nuxeo.wsdl.translationresult.TranslationResultPortType;
-import pl.edu.agh.iosr.services.*;
+import pl.edu.agh.iosr.services.TranslationResultService;
 
 
 
@@ -32,7 +35,6 @@ public class TranslationResultPortTypeImpl implements TranslationResultPortType{
 	 * Metoda uaktualniajaca stan translacji
 	 * Wywolywana przez tlumacza w celu informowania o postepie translacji
 	 * */
-	//@Override
 	public void sendStatus(StatusRequestWrapper parameters) {
 		
 		try {
@@ -62,8 +64,6 @@ public class TranslationResultPortTypeImpl implements TranslationResultPortType{
 	 * Zwracana wartosc moze byc nullem w przypadku sukcesu lub komunikatem o bledzie
 	 * 
 	 * */
-
-	//@Override
 	public void sendStringResult(StringResultRequestWrapper parameters) {
 		
 		try {
@@ -93,7 +93,6 @@ public class TranslationResultPortTypeImpl implements TranslationResultPortType{
 	 * Zwracana wartosc moze byc nullem w przypadku sukcesu lub komunikatem o bledzie
 	 * 
 	 * */
-	//@Override
 	public void sendFileResult(FileResultRequestWrapper parameters) {
 		
 		try {
@@ -117,5 +116,6 @@ public class TranslationResultPortTypeImpl implements TranslationResultPortType{
 		return;
 		
 	}
+
 
 }
