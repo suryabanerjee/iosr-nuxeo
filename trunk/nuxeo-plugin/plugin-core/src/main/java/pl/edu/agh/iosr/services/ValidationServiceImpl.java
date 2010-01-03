@@ -14,12 +14,12 @@ public class ValidationServiceImpl implements ValidationService{
 	public boolean isConversionNeeded(String fileExtension,
 			TranslationServiceDescription tsDescription) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public boolean isReconversionNeeded(TranslationOrder order) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public void validate(TranslationOrder order,
