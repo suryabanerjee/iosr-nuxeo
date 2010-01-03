@@ -114,6 +114,7 @@ public class Mediator {
 			if (validationService.isConversionNeeded(fileExtension,
 					tsDescription)) {
 				xliffConverter.convert(order);
+				//xliffConverter.reConvert(order);
 			}
 			else {
 				performExactTranslation(order);
