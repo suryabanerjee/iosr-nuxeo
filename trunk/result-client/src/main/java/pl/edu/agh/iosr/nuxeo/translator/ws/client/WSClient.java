@@ -16,9 +16,8 @@ public class WSClient {
         TranslationResultService service = new TranslationResultService();
         TranslationResultPortType port = service.getTranslationResultPort();
         
-        //File file = new File("testfile.txt");
-        //sendFile(port,file);
-        System.out.println("Result: " + port.sendStatus(new StatusRequestWrapper()));
+        File file = new File("testfile.txt");
+        sendFile(port,file);
     }
     
     public static void sendFile(TranslationResultPortType port, File file) {
@@ -30,6 +29,5 @@ public class WSClient {
     	fileResult.setTranslationRequestID("123ABC");
     	
     	port.sendFileResult(fileResult);
-    	
     }
 }

@@ -2,7 +2,7 @@ package pl.edu.agh.iosr.controller;
 
 import static pl.edu.agh.iosr.util.IosrLogger.log;
 
-import java.io.*;
+import java.io.File;
 
 import javax.activation.DataHandler;
 
@@ -12,10 +12,8 @@ import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.nuxeo.ecm.core.api.SerializableInputStream;
 
 import pl.edu.agh.iosr.conversion.XliffConverter;
-import pl.edu.agh.iosr.exceptions.WorkflowException;
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 import pl.edu.agh.iosr.model.TranslationOrder.RequestState;
@@ -72,30 +70,6 @@ public class Mediator {
 		persistenceTest.testTranslationOrder();
 		persistenceTest.testServicesDescriptions();
 	}
-	
-	/**
-	 * Pomaga sprawdzać poprawność przepływu zamówień
-	 * 
-	 * @throws WorkflowException
-	 *             , IllegalArgumentException
-	 * */
-	private void validateOrder(TranslationOrder order,
-			RequestState expectedState) throws WorkflowException,
-			IllegalArgumentException {
-
-		// nie chcemy nulla
-		if (order == null) {
-			throw new IllegalArgumentException("Order cannot be null.");
-		}
-
-		// stan workflowa musi sie zgadzac
-		if (!order.getState().equals(expectedState)) {
-			throw new WorkflowException("Order with id: "
-					+ order.getRequestId()
-					+ " has improper workflow state. Has: " + order.getState()
-					+ ", should have: " + expectedState);
-		}
-	}
 
 	/**
 	 * Uogólniona obsługa błędów workflowa.
@@ -125,7 +99,7 @@ public class Mediator {
 	public void beginTranslation(TranslationOrder order) {
 		try {
 
-			validateOrder(order, RequestState.BEFORE_PROCESSING);
+			validationService.validateOrder(order, RequestState.BEFORE_PROCESSING);
 			
 			// ustawiamy status w tym miejscu na konwersje
 			// konwerter nie przeprowadza zadnej kontroli
@@ -134,7 +108,6 @@ public class Mediator {
 
 			TranslationServiceDescription tsDescription = translationServicesConfigService
 					.getTranslationService(order.getWsId());
-			validationService.validate(order, tsDescription);
 			
 			String fileExtension = documentAccessService.getFileExtension(order
 					.getSourceDocument());
@@ -160,7 +133,7 @@ public class Mediator {
 
 		try {
 
-			validateOrder(order, RequestState.UNDER_CONVERSION);
+			validationService.validateOrder(order, RequestState.UNDER_CONVERSION);
 
 			// ustawiamy status w tym miejscu na wyslany do tlumaczenia
 			// remoteWSinvoker nie przeprowadza zadnej kontroli workflowa
@@ -184,38 +157,41 @@ public class Mediator {
 	 * */
 	public void deliverTranslationResult(Long id, DataHandler resultFileDh) {
 
-		TranslationOrder order = translationOrderService.getTranslationOrder(id);
+		//TranslationOrder order = translationOrderService.getTranslationOrder(id);
+		TranslationOrder order = new TranslationOrder();
+		
+		if(order != null){
+			try {
 
-		try {
-
-			validateOrder(order, RequestState.UNDER_PROCESSING);
-
-			// w trakcie rekonwersji
-			order.nextState();
-			
-			//Utworzenie pliku z wynikiem
-			File resultFile = order.saveResultFile(resultFileDh);
-
-			if (validationService.isReconversionNeeded(order)) {
-				
-				translationOrderService.saveOrUpdateTranslationOrder(order);
-
-				xliffConverter.reConvert(order);
-			}
-			else {
-
-				// successful
+				validationService.validateOrder(order, RequestState.UNDER_PROCESSING);
+	
+				// w trakcie rekonwersji
 				order.nextState();
-
-				translationOrderService.saveOrUpdateTranslationOrder(order);
-
-				documentAccessService.saveFile(order, resultFile);
-
+				
+				//Utworzenie pliku z wynikiem
+				File resultFile = order.saveResultFile(resultFileDh);
+	
+				if (validationService.isReconversionNeeded(order)) {
+					
+					translationOrderService.saveOrUpdateTranslationOrder(order);
+	
+					xliffConverter.reConvert(order);
+				}
+				else {
+	
+					// successful
+					order.nextState();
+	
+					translationOrderService.saveOrUpdateTranslationOrder(order);
+	
+					documentAccessService.saveFile(order, resultFile);
+	
+				}
+	
 			}
-
-		}
-		catch (Exception e) {
-			cancelOrder(order, e);
+			catch (Exception e) {
+				cancelOrder(order, e);
+			}
 		}
 	}
 
@@ -223,7 +199,7 @@ public class Mediator {
 
 		try {
 
-			validateOrder(order, RequestState.UNDER_RECONVERSION);
+			validationService.validateOrder(order, RequestState.UNDER_RECONVERSION);
 
 			// przeklad dokonany
 			order.nextState();

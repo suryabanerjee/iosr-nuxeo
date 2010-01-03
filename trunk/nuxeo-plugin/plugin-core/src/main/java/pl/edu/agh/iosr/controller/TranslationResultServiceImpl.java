@@ -6,6 +6,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
+import pl.edu.agh.iosr.nuxeo.schema.translationresult.*;
 import pl.edu.agh.iosr.services.TranslationResultService;
 
 /**
@@ -21,7 +22,7 @@ import pl.edu.agh.iosr.services.TranslationResultService;
 public class TranslationResultServiceImpl implements TranslationResultService {
 	
 	private Mediator mediator;
-/*
+
 	public void sendStatus(StatusRequestWrapper parameters) {
 		// TODO Auto-generated method stub
 		return;
@@ -40,7 +41,7 @@ public class TranslationResultServiceImpl implements TranslationResultService {
 		
 		return;
 	}
-*/
+
 	
 	public Mediator getMediator() {
 		return mediator;
