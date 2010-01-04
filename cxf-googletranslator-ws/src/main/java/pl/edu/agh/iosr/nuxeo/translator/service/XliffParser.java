@@ -26,6 +26,14 @@ import org.xml.sax.SAXException;
 
 import java.util.BitSet;
 
+
+
+/**
+ * Klasa ta pozwala na wyciagniecie z dokumentu typu xliff tresci ktora nalezy przetlumaczyc,
+ * a takze dodac przetlumaczona tresc ujmujac je w odpowiednie tagi i wyeksportowac tak zmodyfikowany xliff do pliku.
+ * W momencie tworzenia obiekt tej klasy zwiazany zostaje z konkretnym plikiem xliff
+ * @author lewickitom
+ * */ 
 public class XliffParser {
 	
 	
@@ -42,7 +50,9 @@ public class XliffParser {
 	public XliffParser(File xliffFile) {
 		xliff = xliffFile;
 	}
-
+	/**
+	 * wyjmuje tresc ktora nalezy przetlumaczyc
+	 * */
 	public Map<String, String> getSourceText() throws IOException, ParserConfigurationException, SAXException {
 		
 		Document doc = getDocumentForXliff();		
@@ -60,7 +70,10 @@ public class XliffParser {
 		return text;	
 		
 	}
-
+	
+	/**
+	 * Dodaje przetlumaczona tresc ujeta w odpowiednie tagi oraz eksportuje tak zmodyfikowany xliff do pliku
+	 * */
 	public File createXliffWithTranslation(Map<String, String> translatedText, String translationLanguage, String outputFilename) throws TransformerException, IOException, ParserConfigurationException, SAXException, TransformerConfigurationException {
 
 		Document doc = getDocumentForXliff();
