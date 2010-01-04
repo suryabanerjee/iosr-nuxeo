@@ -51,7 +51,6 @@ import pl.edu.agh.iosr.nuxeo.wsdl.translator.TranslatorPortType;
  * Implementacja WebSerwisu tlumaczacego dla Google Translator
  * @author lewickitom
  * */
-
 @WebService(targetNamespace = "http://agh.edu.pl/iosr/nuxeo/wsdl/Translator.wsdl", 
         portName="TranslatorPort",
         serviceName="GoogleTranslatorService",
@@ -214,8 +213,8 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 	}
     
     private String generateFileName(){
-    	SimpleDateFormat simpleDateFormat=new SimpleDateFormat("File-ddMMyy-hhmmss.SSS.txt");
-    	return simpleDateFormat.format( new Date());
+    	SimpleDateFormat simpleDateFormat=new SimpleDateFormat("ddMMyy-hhmmss.SSS");
+    	return "file-"+simpleDateFormat.format( new Date())+".txt";
     }
     
 
