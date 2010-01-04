@@ -132,6 +132,7 @@ public class Mediator {
 	 * */
 	public void performExactTranslation(TranslationOrder order) {
 
+		log(this.getClass(), "PERFORM EXACT TRANSLATION CALLED");
 		try {
 
 			validationService.validateOrder(order, RequestState.UNDER_CONVERSION);
