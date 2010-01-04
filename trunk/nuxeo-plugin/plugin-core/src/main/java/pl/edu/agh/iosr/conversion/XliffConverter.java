@@ -14,6 +14,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.lang.StringBuffer;
 
+import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Destroy;
@@ -58,7 +59,8 @@ public class XliffConverter extends AsynchronousConverter{
 	
     private CoreSession coreSession;
     
-    @In("#{mediator}")
+    //@In("#{mediator}")
+    @In(create=false, required=false)
     private Mediator mediator;
 
 	
@@ -127,6 +129,7 @@ public class XliffConverter extends AsynchronousConverter{
 		if(conversionTask.task == SupportedTasks.CONVERT) {
 			convertFile(conversionTask.translationOrder);
 			log(this.getClass(), "END OF CONVERSION");
+			mediator = (Mediator)Component.getInstance("mediator",true);
 			mediator.performExactTranslation(conversionTask.translationOrder);
 		 } else
 			reConvertFile(conversionTask.translationOrder);
