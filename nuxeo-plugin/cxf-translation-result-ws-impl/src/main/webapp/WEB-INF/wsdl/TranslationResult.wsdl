@@ -78,6 +78,9 @@
     	
     	
     <wsdl:portType name="TranslationResultPortType">
+       	<!--jaxws:bindings xmlns:jaxws="http://java.sun.com/xml/ns/jaxws">
+        	<jaxws:enableAsyncMapping>true</jaxws:enableAsyncMapping>
+      	</jaxws:bindings-->
 		<wsdl:operation name="sendStringResult">
 			<wsdl:input message="tns:sendStringResultRequest" />
 			<wsdl:output message="tns:empty" />

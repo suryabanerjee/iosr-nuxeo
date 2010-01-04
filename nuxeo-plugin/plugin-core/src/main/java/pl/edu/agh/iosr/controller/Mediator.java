@@ -157,9 +157,7 @@ public class Mediator {
 	 * przetlumaczenie zostalo zapisane
 	 * */
 	public void deliverTranslationResult(Long id, DataHandler resultFileDh) {
-
-		//TranslationOrder order = translationOrderService.getTranslationOrder(id);
-		TranslationOrder order = new TranslationOrder();
+		TranslationOrder order = translationOrderService.getTranslationOrder(id);
 		
 		if(order != null){
 			try {
