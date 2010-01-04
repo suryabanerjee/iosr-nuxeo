@@ -9,6 +9,10 @@ import pl.edu.agh.iosr.nuxeo.schema.translator.Languages;
 
 import com.google.api.translate.Language;
 
+/**
+ * SupportedLanguagesManager generuje liste obslugiwanych przez GoogleTranslator tlumaczen oraz rozpoznawanych jezykow
+ * @author lewickitom
+ * */ 
 public class SupportedLanguagesManager {
 
 
