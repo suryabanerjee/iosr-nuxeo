@@ -107,6 +107,7 @@ abstract public class AsynchronousConverter implements Runnable {
 			try {
 				proceed(getEvent());
 			} catch (Exception e) {
+				e.printStackTrace();
 				log(this.getClass(), e.getMessage(), Level.FATAL);
 			}
 		}
