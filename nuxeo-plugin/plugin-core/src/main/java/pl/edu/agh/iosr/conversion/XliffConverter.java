@@ -31,6 +31,7 @@ import org.nuxeo.ecm.core.api.CoreSession;
 
 import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.TranslationOrder;
+import pl.edu.agh.iosr.controller.Mediator;
 import pl.edu.agh.iosr.util.IosrLogger.Level;
 import pl.edu.agh.iosr.persistence.CoreSessionProxy;
 import pl.edu.agh.xliffhandler.converter.Converter;
@@ -56,11 +57,22 @@ public class XliffConverter extends AsynchronousConverter{
     private CoreSessionProxy coreSessionProxy;
 	
     private CoreSession coreSession;
+    
+    @In("#{mediator}")
+    private Mediator mediator;
 
 	
 	private static Map<String, FileType> formats = new HashMap<String, FileType>();
 	private String TMP_PATH;
 	private Converter converter = null;
+	
+	public void setMediator(Mediator mediator) {
+		this.mediator = mediator;
+	}
+	
+	public Mediator getMediator() {
+		return mediator;
+	}
 
 	public XliffConverter() {
 		//super();
@@ -112,10 +124,13 @@ public class XliffConverter extends AsynchronousConverter{
 	@Override
 	public void proceed(ConversionTask conversionTask) {
 		
-		if(conversionTask.task == SupportedTasks.CONVERT) 
+		if(conversionTask.task == SupportedTasks.CONVERT) {
 			convertFile(conversionTask.translationOrder);
-		else
+			log(this.getClass(), "END OF CONVERSION");
+			mediator.performExactTranslation(conversionTask.translationOrder);
+		 } else
 			reConvertFile(conversionTask.translationOrder);
+		
 	}
 	
 	private void copyFileContent(String path, DocumentRef ref) throws IOException {
