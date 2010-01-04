@@ -7,7 +7,6 @@ import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.FileResultRequestWrapper;
-import pl.edu.agh.iosr.nuxeo.schema.translationresult.StatusRequestWrapper;
 import pl.edu.agh.iosr.nuxeo.wsdl.translationresult.TranslationResultPortType;
 import pl.edu.agh.iosr.nuxeo.wsdl.translationresult.TranslationResultService;
 
@@ -26,8 +25,10 @@ public class WSClient {
     	
     	FileResultRequestWrapper fileResult = new FileResultRequestWrapper();
     	fileResult.setFile(dh);
-    	fileResult.setTranslationRequestID("123ABC");
+    	fileResult.setTranslationRequestID("123");
     	
     	port.sendFileResult(fileResult);
+    	
+    	System.out.println("poszlo");
     }
 }

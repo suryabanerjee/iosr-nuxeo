@@ -42,7 +42,7 @@ public class TranslationResultPortTypeImpl implements TranslationResultPortType{
 			Properties p = new Properties();
 			p.put("java.naming.provider.url", "jnp://localhost:1099");
 			InitialContext ic = new InitialContext(p);
-			Object o = ic.lookup("nuxeo/translationResultServiceImpl/local");
+			Object o = ic.lookup("nuxeo/TranslationResultServiceImpl/local");
 			if (o != null) {
 				((TranslationResultService) o).sendStatus(parameters);
 			}
@@ -71,7 +71,7 @@ public class TranslationResultPortTypeImpl implements TranslationResultPortType{
 			Properties p = new Properties();
 			p.put("java.naming.provider.url", "jnp://localhost:1099");
 			InitialContext ic = new InitialContext(p);
-			Object o = ic.lookup("nuxeo/translationResultServiceImpl/local");
+			Object o = ic.lookup("nuxeo/TranslationResultServiceImpl/local");
 			if (o != null) {
 				((TranslationResultService) o).sendStringResult(parameters);
 			}
@@ -100,7 +100,7 @@ public class TranslationResultPortTypeImpl implements TranslationResultPortType{
 			Properties p = new Properties();
 			p.put("java.naming.provider.url", "jnp://localhost:1099");
 			InitialContext ic = new InitialContext(p);
-			Object o = ic.lookup("nuxeo/translationResultServiceImpl/local");
+			Object o = ic.lookup("nuxeo/TranslationResultServiceImpl/local");
 			if (o != null) {
 				((TranslationResultService) o).sendFileResult(parameters);
 			}
