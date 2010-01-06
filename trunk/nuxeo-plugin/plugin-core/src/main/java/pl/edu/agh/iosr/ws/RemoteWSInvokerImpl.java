@@ -15,9 +15,13 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Create;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
+import org.jboss.seam.contexts.Contexts;
 
+import pl.edu.agh.iosr.controller.Mediator;
 import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.Operation;
 import pl.edu.agh.iosr.model.TranslationOption;
@@ -36,28 +40,35 @@ import pl.edu.agh.iosr.ws.translator.TranslationOrderTranslator;
 
 
 /**
- * Implementacja klasy wywolujacej operacje na webservisach tlumaczacych,
+ * Implementacja interfejsu wywolujacego operacje na webservisach tlumaczacych,
  * klasa ta moze wywolywac operacje na wszystkich webservicach zgodnych z Translator.wsdl
  * @author lewickitom
- * */
+ * */  
 @Name("remoteWSInvoker")
 @Scope(ScopeType.APPLICATION)
 public class RemoteWSInvokerImpl implements RemoteWSInvoker {
-
+	
+	@In("#{mediator}")
+	private Mediator mediator;
 	
 	private Service translationService=new GoogleTranslatorService();
 	private ResponseTranslator responseTranslator=new ResponseTranslator();
 	private TranslationOrderTranslator translationOrderTranslator=new TranslationOrderTranslator();
 	private TranslatorPortType port;
 	
+	@Create
+	public void init() {
+		this.translationService=new GoogleTranslatorService();
+		this.port=(TranslatorPortType)translationService.getPort(TranslatorPortType.class);	
 	
-	
+	}
+	/*
 	public RemoteWSInvokerImpl()throws IllegalArgumentException{
 			
 		this.translationService=new GoogleTranslatorService();
 		this.port=(TranslatorPortType)translationService.getPort(TranslatorPortType.class);	
 		
-	}
+	}*/
 	
 	private void setTranslationServiceEndpoint(String translationServiceEndpoint){
 		
@@ -138,8 +149,12 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 				e.printStackTrace();
 			}
 	      }
-	  	log(this.getClass(), "file created");
+	  	if(mediator==null)		//tylko by przetestowac wstrzykiwanie
+	  		log(this.getClass(), "\n\n MEDIATOR TO NULL\n\n");
+	  	else
+			log(this.getClass(), "\n\n MEDIATOR OK\n\n");
 		  
+	  	
 	    request.setXliff(f.getAbsolutePath());
 		TranslationRequest translationRequest=translationOrderTranslator.translate(request);
 		port.translate(translationRequest);
