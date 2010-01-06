@@ -3,6 +3,7 @@ package pl.edu.agh.iosr.controller;
 import static pl.edu.agh.iosr.util.IosrLogger.log;
 
 import java.io.File;
+import java.util.List;
 
 import javax.activation.DataHandler;
 
@@ -14,6 +15,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
 import pl.edu.agh.iosr.conversion.XliffConverter;
+import pl.edu.agh.iosr.model.Operation;
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 import pl.edu.agh.iosr.model.TranslationOrder.RequestState;
@@ -23,6 +25,7 @@ import pl.edu.agh.iosr.services.TranslationOrderService;
 import pl.edu.agh.iosr.services.TranslationServicesConfigService;
 import pl.edu.agh.iosr.services.ValidationService;
 import pl.edu.agh.iosr.ws.RemoteWSInvoker;
+import pl.edu.agh.iosr.ws.RemoteWSInvokerImpl;
 
 /**
  * Mediator, koordynuje dzia�ania innych komponent�w, nale�y unika� dodawania tu
@@ -98,7 +101,6 @@ public class Mediator {
 	 * */
 	public void beginTranslation(TranslationOrder order) {
 		try {
-
 			validationService.validateOrder(order, RequestState.BEFORE_PROCESSING);
 			
 			// ustawiamy status w tym miejscu na konwersje
@@ -108,6 +110,13 @@ public class Mediator {
 
 			TranslationServiceDescription tsDescription = translationServicesConfigService
 					.getTranslationService(order.getWsId());
+			//testowe wywoalnie invokera google translatora
+			log(this.getClass(), "before calling translate");	
+			
+			remoteWSInvoker.traslateAsync(tsDescription, order, null);
+			
+			log(this.getClass(), "after calling translate");
+			
 			
 			String fileExtension = documentAccessService.getFileExtension(order
 					.getSourceDocument());
@@ -142,9 +151,9 @@ public class Mediator {
 			order.nextState();
 			translationOrderService.saveOrUpdateTranslationOrder(order);
 
-			remoteWSInvoker.traslateAsync(translationServicesConfigService
-					.getTranslationService(order.getWsId()), order,
-					documentAccessService.getFile(order.getSourceDocument()));	//??? po co sourcedocument?
+	//		remoteWSInvoker.traslateAsync(translationServicesConfigService
+	//				.getTranslationService(order.getWsId()), order,
+	//				documentAccessService.getFile(order.getSourceDocument()));	//??? po co sourcedocument?
 
 		}
 		catch (Exception e) {
