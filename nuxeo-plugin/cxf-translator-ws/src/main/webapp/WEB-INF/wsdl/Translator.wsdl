@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2010 (http://www.altova.com) by Tomek (Home) -->
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:translate="http://agh.edu.pl/iosr/nuxeo/schema/Translator" xmlns:tns="http://agh.edu.pl/iosr/nuxeo/wsdl/Translator.wsdl" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" name="Translator" targetNamespace="http://agh.edu.pl/iosr/nuxeo/wsdl/Translator.wsdl">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:translate="http://agh.edu.pl/iosr/nuxeo/schema/Translator" xmlns:tns="http://agh.edu.pl/iosr/nuxeo/wsdl/Translator.wsdl" xmlns:jaxws="http://java.sun.com/xml/ns/jaxws" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" name="Translator" targetNamespace="http://agh.edu.pl/iosr/nuxeo/wsdl/Translator.wsdl">
 	<wsdl:types>
 		<xsd:schema xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://agh.edu.pl/iosr/nuxeo/schema/Translator" xmlns:xmime="http://www.w3.org/2005/05/xmlmime"> 
 			<xsd:element name="TranslateRequestWrapper">
@@ -13,11 +13,15 @@
 				</xsd:complexType>
 			</xsd:element>
 			<xsd:element name="GetSupportedOperationsRequest"/>
-			<xsd:element name="GetSupportedOperationsResponse"/>
+			<xsd:element name="GetSupportedOptionsRequest"/>
 			<xsd:simpleType name="Operation">
 				<xsd:restriction base="xsd:string">
 					<xsd:enumeration value="TRANSLATION"/>
 					<xsd:enumeration value="LANGUAGE_DETECTION"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+			<xsd:simpleType name="Option">
+				<xsd:restriction base="xsd:string">
 					<xsd:enumeration value="TRANSLATION_QUALITY"/>
 					<xsd:enumeration value="TRANSLATION_DEADLINE"/>
 				</xsd:restriction>
@@ -26,6 +30,13 @@
 				<xsd:complexType>
 					<xsd:sequence>
 						<xsd:element name="operations" type="translate:Operation" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Options">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="options" type="translate:Option" maxOccurs="unbounded"/>
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
@@ -59,22 +70,10 @@
 				</xsd:complexType>
 			</xsd:element>
 			<xsd:element name="GetSupportedQualitiesRequest"/>
-			<xsd:simpleType name="FileFormat">
-				<xsd:restriction base="xsd:string">
-					<xsd:enumeration value="DOC"/>
-					<xsd:enumeration value="ODT"/>
-					<xsd:enumeration value="PPT"/>
-					<xsd:enumeration value="HTML"/>
-					<xsd:enumeration value="PLAIN_TEXT"/>
-					<xsd:enumeration value="PDF"/>
-					<xsd:enumeration value="RFT"/>
-					<xsd:enumeration value="XML"/>
-				</xsd:restriction>
-			</xsd:simpleType>
 			<xsd:element name="FileFormats">
 				<xsd:complexType>
 					<xsd:sequence>
-						<xsd:element name="fileFormats" type="translate:FileFormat" maxOccurs="unbounded"/>
+						<xsd:element name="mimeTypes" type="xsd:string" maxOccurs="unbounded"/>
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
@@ -160,11 +159,11 @@
 					</xsd:extension>
 				</xsd:complexContent>
 			</xsd:complexType>
-			<xsd:element name="FileHandler"/>
+			<xsd:element name="FileHandler"/>      
 		</xsd:schema>
-	</wsdl:types>
+    </wsdl:types>
 	<wsdl:message name="translateRequest">
-		<wsdl:part name="parameters" element="translate:TranslationRequest"/>
+		<wsdl:part name="in" element="translate:TranslationRequest"/>
 	</wsdl:message>
 	<wsdl:message name="translateResponse">
 		<wsdl:part name="translatedContent" type="xsd:string"/>
@@ -174,6 +173,12 @@
 	</wsdl:message>
 	<wsdl:message name="getSupportedOperationsResponse">
 		<wsdl:part name="parameter" element="translate:Operations"/>
+	</wsdl:message>
+	<wsdl:message name="getSupportedOptionsRequest">
+		<wsdl:part name="parameter" element="translate:GetSupportedOptionsRequest"/>
+	</wsdl:message>
+	<wsdl:message name="getSupportedOptionsResponse">
+		<wsdl:part name="parameter" element="translate:Options"/>
 	</wsdl:message>
 	<wsdl:message name="getSupportedDetectonsRequest">
 		<wsdl:part name="parameter" element="translate:GetSupportedDetectionsRequest"/>
@@ -212,20 +217,30 @@
 		<wsdl:part name="parameter" type="xsd:boolean"/>
 	</wsdl:message>
 	<wsdl:message name="detectLanguageRequest">
-		<wsdl:part name="parameter" element="translate:DetectionRequest"/>
+		<wsdl:part name="detectionRequest" element="translate:DetectionRequest"/>
 	</wsdl:message>
 	<wsdl:message name="detectLanguageResponse">
 		<wsdl:part name="parameter" type="xsd:language"/>
 	</wsdl:message>
-	<wsdl:portType name="TranslatorPortType">
+<!--	<wsdl:message name="SourceTypeNotSupported">
+		<wsdl:part name="description" type="xsd:string"/>
+	</wsdl:message>	-->
+	<wsdl:portType name="TranslatorPortType">	
 		<wsdl:operation name="translate">
-			<wsdl:input message="tns:translateRequest"/>
-			<wsdl:output message="tns:translateResponse"/>
+			<wsdl:input message="tns:translateRequest" name="translateRequest" />
+			<!-- <wsdl:output message="tns:translateResponse"/>  -->
+			
+			
+	<!--		<wsdl:fault name="wrongSourceType" message="tns:SourceTypeNotSupported"/>-->
 		</wsdl:operation>
 		<wsdl:operation name="getSupportedOperations">
 			<wsdl:input message="tns:getSupportedOperationsRequest"/>
 			<wsdl:output message="tns:getSupportedOperationsResponse"/>
 		</wsdl:operation>
+		<wsdl:operation name="getSupportedOptions">
+			<wsdl:input message="tns:getSupportedOptionsRequest"/>
+			<wsdl:output message="tns:getSupportedOptionsResponse"/>
+		</wsdl:operation>		
 		<wsdl:operation name="getSupportedTranslations">
 			<wsdl:input message="tns:getSupportedTranslationsRequest"/>
 			<wsdl:output message="tns:getSupportedTranslationsResponse"/>
@@ -259,6 +274,12 @@
 		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
 		<wsdl:operation name="translate">
 			<soap:operation soapAction=""/>
+			<wsdl:input  name="translateRequest" >
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+		<wsdl:operation name="getSupportedOperations">
+			<soap:operation soapAction=""/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -266,7 +287,7 @@
 				<soap:body use="literal"/>
 			</wsdl:output>
 		</wsdl:operation>
-		<wsdl:operation name="getSupportedOperations">
+		<wsdl:operation name="getSupportedOptions">
 			<soap:operation soapAction=""/>
 			<wsdl:input>
 				<soap:body use="literal"/>

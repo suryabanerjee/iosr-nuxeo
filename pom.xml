@@ -14,7 +14,7 @@
   <modules>
 	<module>nuxeo-plugin</module>
     <module>cxf-googletranslator-ws</module>
-	<module>translator-client</module>
+	<!--module>translator-client</module-->
 	<module>result-client</module>
   </modules>
   

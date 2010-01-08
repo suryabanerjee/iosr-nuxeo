@@ -116,16 +116,4 @@ public class XliffParser {
 		
 	}
 
-	public static void main(String[] args) {
-		
-		try {
-			XliffParser x = new XliffParser(new File("C:\\Documents and Settings\\Tomek\\Pulpit\\nuxeo\\marianka\\marianka\\mary.html.xliff"));
-			Map<String, String> map = x.getSourceText();
-			x.createXliffWithTranslation(map, "en_EN","result");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
-
 }
