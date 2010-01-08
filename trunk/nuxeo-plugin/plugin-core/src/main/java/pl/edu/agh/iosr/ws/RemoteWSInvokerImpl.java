@@ -30,6 +30,8 @@ import pl.edu.agh.iosr.model.TranslationServiceDescription;
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.FileResultRequestWrapper;
 import pl.edu.agh.iosr.nuxeo.schema.translator.LanguagePairs;
 import pl.edu.agh.iosr.nuxeo.schema.translator.Operations;
+import pl.edu.agh.iosr.nuxeo.schema.translator.Options;
+import pl.edu.agh.iosr.nuxeo.schema.translator.SourceTypes;
 import pl.edu.agh.iosr.nuxeo.schema.translator.TranslationQualities;
 import pl.edu.agh.iosr.nuxeo.schema.translator.TranslationRequest;
 import pl.edu.agh.iosr.nuxeo.wsdl.translationresult.TranslationResultPortType;
@@ -157,7 +159,17 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 	  	
 	    request.setXliff(f.getAbsolutePath());
 		TranslationRequest translationRequest=translationOrderTranslator.translate(request);
+		//port.translate(translationRequest);
+		SourceTypes sourceTypes=port.getSupportedSourceTypes(null);
+		log(this.getClass(), "\n\n CALLED OK\n\n");
+		log(this.getClass(), "\n\n "+sourceTypes.getSourceTypes().size() +"+OK\n\n");
+		Options options=port.getSupportedOptions(null);
+		log(this.getClass(), "\n\n OPTIONS CALLED OK\n\n");
+		
+		log(this.getClass(), "\n\n "+options.getOptions() +"+OK\n\n");
 		port.translate(translationRequest);
+		log(this.getClass(), "\n\n TRANSLATE CALLED+OK\n\n");
+		
 		
 	}
 	

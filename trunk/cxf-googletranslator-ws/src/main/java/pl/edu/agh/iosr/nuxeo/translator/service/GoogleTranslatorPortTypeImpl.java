@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -18,9 +19,14 @@ import javax.jws.WebService;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
+import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Response;
 
 import org.xml.sax.SAXException;
 
+import com.google.api.detect.Detect;
+import com.google.api.detect.DetectResult;
 import com.google.api.translate.Language;
 import com.google.api.translate.Translate;
 
@@ -28,13 +34,14 @@ import pl.edu.agh.iosr.nuxeo.schema.translationresult.FileResultRequestWrapper;
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.StringResultRequestWrapper;
 import pl.edu.agh.iosr.nuxeo.schema.translator.DetectionRequest;
 import pl.edu.agh.iosr.nuxeo.schema.translator.FileContentSource;
-import pl.edu.agh.iosr.nuxeo.schema.translator.FileFormat;
 import pl.edu.agh.iosr.nuxeo.schema.translator.FileFormats;
 import pl.edu.agh.iosr.nuxeo.schema.translator.LanguagePair;
 import pl.edu.agh.iosr.nuxeo.schema.translator.LanguagePairs;
 import pl.edu.agh.iosr.nuxeo.schema.translator.Languages;
 import pl.edu.agh.iosr.nuxeo.schema.translator.Operation;
 import pl.edu.agh.iosr.nuxeo.schema.translator.Operations;
+import pl.edu.agh.iosr.nuxeo.schema.translator.Option;
+import pl.edu.agh.iosr.nuxeo.schema.translator.Options;
 import pl.edu.agh.iosr.nuxeo.schema.translator.SourceType;
 import pl.edu.agh.iosr.nuxeo.schema.translator.SourceTypes;
 import pl.edu.agh.iosr.nuxeo.schema.translator.StringContentSource;
@@ -57,55 +64,39 @@ import pl.edu.agh.iosr.nuxeo.wsdl.translator.TranslatorPortType;
         endpointInterface="pl.edu.agh.iosr.nuxeo.wsdl.translator.TranslatorPortType")
 public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 
-//TODO faulty
+//TODO fault message defintiion in wsdl and use them
+//change 'parameter' in wsdl to something more meaningful
 
+	private TranslationResultService service;
+	private TranslationResultPortType port;
+	
+	public static final String REFERRER="localhost";
 	private Operation[] supportedOperations={Operation.TRANSLATION,Operation.LANGUAGE_DETECTION};
+	private Option[] supportedOptions={};
+	private TranslationQuality[] supportedQualities={};	
 	private SourceType[] supportedSourceTypes={SourceType.STRING,SourceType.FILE};
-	private FileFormat[] supportedSourceFileFormats={FileFormat.PLAIN_TEXT};
-	
+	private String[] supportedSourceFileFormats={"application/x-xliff+xml"};
 	private SupportedLanguagesManager supportedLanguagesManager=new SupportedLanguagesManager();
-	
-	
-
+		
 	@Override
-	public String translate(TranslationRequest request) {		//TODO splitting, to result and void instead of String
-		Translate.setHttpReferrer("localhost");		
+	public void translate(TranslationRequest request){	
+		
+		service = new TranslationResultService();
+	    port = service.getTranslationResultPort();
+	    Translate.setHttpReferrer(REFERRER);	
+		
+		setTranslationResultEndpoint(request.getCallbackEndpoint().getEndpointURI());
+		
 		if(request.getContentSource().getSourceType()==SourceType.STRING){
-			StringContentSource content=(StringContentSource)request.getContentSource();
 			try {
-				String translatedText=Translate.execute(content.getText(), Language.ENGLISH ,Language.POLISH);
+				translateString(request);
 			} catch (Exception e) {
 				e.printStackTrace();
-				return "TRANSLATION_FAILED";
 			}
-		   File file = new File("testfile.txt");
-	    
-	     /*   StringResultRequestWrapper s=new StringResultRequestWrapper();
-	        s.setText("TAKI TEKST");
-	        s.setTranslationRequestID("ala");
-	        port.sendStringResult(s);*/	
 		}
 		if(request.getContentSource().getSourceType()==SourceType.FILE){
 			try {
-				FileContentSource fileContentSource=(FileContentSource)request.getContentSource();
-
-				File sourceFile=createFileFromDataHandler(fileContentSource.getFile());					
-				XliffParser xliffParser=new XliffParser(sourceFile);
-				Map<String, String> sourceText;
-				
-				sourceText = xliffParser.getSourceText();
-				Map<String,String> translatedText=new HashMap<String, String>();
-				for(Map.Entry<String,String> unit:sourceText.entrySet()){
-					String translatedUnitText=Translate.execute(unit.getValue(), Language.ENGLISH ,Language.POLISH);
-					translatedText.put(unit.getKey(), translatedUnitText);
-				}
-				File resultFile=xliffParser.createXliffWithTranslation(translatedText, Language.POLISH.toString(),"result");
-				
-				TranslationResultService service = new TranslationResultService();
-			    TranslationResultPortType port = service.getTranslationResultPort();
-		        sendFile(port,resultFile);
-		        sourceFile.delete();
-				
+				translateFile(request);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -127,41 +118,87 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 			}
 				
 		}
+	
 		
-		return "NOTHING";
+	}
+
+	private void translateString(TranslationRequest request) throws Exception {
+		
+		StringContentSource content=(StringContentSource)request.getContentSource();
+		String translatedText=Translate.execute(content.getText(), Language.ENGLISH ,Language.POLISH);	//TODO String from getSource/DestinationLanguage to Language conversion
+		sendResultString(translatedText,request.getTranslationRequestID());
+	
+	}
+
+	private void translateFile(TranslationRequest request) throws IOException,		//TODO optimization
+			ParserConfigurationException, SAXException, Exception,
+			TransformerException, TransformerConfigurationException {
+		
+		FileContentSource fileContentSource=(FileContentSource)request.getContentSource();
+		File sourceFile=createFileFromDataHandler(fileContentSource.getFile());					
+		XliffParser xliffParser=new XliffParser(sourceFile);
+		Map<String, String> sourceText=xliffParser.getSourceText();
+		Map<String,String> translatedText=new HashMap<String, String>();
+		for(Map.Entry<String,String> unit:sourceText.entrySet()){
+			String translatedUnitText=Translate.execute(unit.getValue(), Language.ENGLISH ,Language.POLISH);
+			translatedText.put(unit.getKey(), translatedUnitText);
+		}
+		File resultFile=xliffParser.createXliffWithTranslation(translatedText, Language.POLISH.toString(),"result");
+		sendResultFile(resultFile,request.getTranslationRequestID());
+		sourceFile.delete();
+		
 	}
 
 
 
 	@Override
-	public String detectLanguage(DetectionRequest parameter) {
+	public String detectLanguage(DetectionRequest parameter){
 		if(parameter.getContentSource().getSourceType()==SourceType.STRING){
 			StringContentSource content=(StringContentSource)parameter.getContentSource();
-			return content.getText()+"DETECTED";
+			DetectResult result=null;
+			try {
+				result=Detect.execute(content.getText());			//TODO Language to String(xsd:lang) conversion
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return result.getLanguage().toString();
 		}
-		return "DETECTED";
+		return "FAIL";
 	}
 
 	
 	@Override
 	public Operations getSupportedOperations(Object parameter) {
+		
 		Operations operations=new Operations();
 		operations.getOperations().addAll(Arrays.asList(supportedOperations));
 		return operations;	
-	}
 	
+	}
+	@Override
+	public Options getSupportedOptions(Object arg0) {
+	
+		Options options=new Options();
+		options.getOptions().addAll(Arrays.asList(supportedOptions));
+		return options;
+	
+	}
 	@Override
 	public SourceTypes getSupportedSourceTypes(Object parameter) {
+		
 		SourceTypes types=new SourceTypes();
 		types.getSourceTypes().addAll(Arrays.asList(supportedSourceTypes));
 		return types;
+		
 	}
 
 	@Override
 	public FileFormats getSupportedFileFormats(Object parameter) {
 		
 		FileFormats fileFormats=new FileFormats();
-		fileFormats.getFileFormats().addAll(Arrays.asList(supportedSourceFileFormats));
+		fileFormats.getMimeTypes().addAll(Arrays.asList(supportedSourceFileFormats));
 		return fileFormats;
 		
 	}
@@ -184,40 +221,66 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 
 	@Override
 	public TranslationQualities getSupportedQualities(Object parameter) {
-		return null;
+		
+		TranslationQualities qualities=new TranslationQualities();
+		qualities.getTranslationQualities().addAll(Arrays.asList(supportedQualities));
+		return qualities;
+		
 	}
 
 	@Override
 	public boolean ping(Object parameter) {
+		
 		return true;
+		
 	}
 
-    public static void sendFile(TranslationResultPortType port, File file) {
-    	
-    	DataHandler dh = new DataHandler(new FileDataSource(file));
-    	
-    	FileResultRequestWrapper fileResult = new FileResultRequestWrapper();
-    	fileResult.setFile(dh);
-    	fileResult.setTranslationRequestID("123ABC");
-    	port.sendFileResult(fileResult);
-    	
-    }
-    
+	
+
 	private File createFileFromDataHandler(DataHandler dataHandler) throws IOException {
+		
 		String fileName=generateFileName();
 		(new File(fileName)).createNewFile();
 		File file=new File(fileName);
 		FileOutputStream out = new FileOutputStream(file);
 		dataHandler.writeTo(out); 
 		return file;
+		
 	}
     
     private String generateFileName(){
+    	
     	SimpleDateFormat simpleDateFormat=new SimpleDateFormat("ddMMyy-hhmmss.SSS");
-    	return "file-"+simpleDateFormat.format( new Date())+".txt";
+    	return "file-"+simpleDateFormat.format( new Date())+".txt";				//TODO the same ms request problem
+    	
     }
-    
 
+    private void sendResultFile( File file, String translationRequestId) {
+    	
+    	DataHandler dh = new DataHandler(new FileDataSource(file));
+    	FileResultRequestWrapper fileResult = new FileResultRequestWrapper();
+    	fileResult.setFile(dh);
+    	fileResult.setTranslationRequestID(translationRequestId);
+    	port.sendFileResult(fileResult);
+    	
+    }
+
+	private void sendResultString(String translatedText,String translationRequestID) {
+
+		StringResultRequestWrapper stringResult=new StringResultRequestWrapper();
+		stringResult.setText(translatedText);
+		stringResult.setTranslationRequestID(translationRequestID);
+		port.sendStringResult(stringResult);
+		
+	}
+
+    
+	private void setTranslationResultEndpoint(String translationServiceEndpoint){
+		
+		BindingProvider bp=(BindingProvider)port;
+		bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, translationServiceEndpoint);
+    	
+	}
 
 	
 }
