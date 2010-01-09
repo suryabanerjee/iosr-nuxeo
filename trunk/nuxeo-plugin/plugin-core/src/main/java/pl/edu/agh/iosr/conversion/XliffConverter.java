@@ -59,25 +59,17 @@ public class XliffConverter extends AsynchronousConverter{
 	
     private CoreSession coreSession;
     
-    //@In("#{mediator}")
-    @In(create=false, required=false)
-    private Mediator mediator;
+    //@In(value="#{mediator}")
+    private final Mediator mediator;
 
 	
 	private static Map<String, FileType> formats = new HashMap<String, FileType>();
 	private String TMP_PATH;
 	private Converter converter = null;
-	
-	public void setMediator(Mediator mediator) {
-		this.mediator = mediator;
-	}
-	
-	public Mediator getMediator() {
-		return mediator;
-	}
 
 	public XliffConverter() {
-		//super();
+		super();
+		mediator = (Mediator) Component.getInstance("mediator",true);
     }
     
     private void prepare() {
@@ -115,7 +107,6 @@ public class XliffConverter extends AsynchronousConverter{
 		if (coreSession == null) {
 			log(this.getClass(), "coreSession is null");
 		}
-		
 	}
 	
 	@Destroy
@@ -129,7 +120,12 @@ public class XliffConverter extends AsynchronousConverter{
 		if(conversionTask.task == SupportedTasks.CONVERT) {
 			convertFile(conversionTask.translationOrder);
 			log(this.getClass(), "END OF CONVERSION");
-			mediator = (Mediator)Component.getInstance("mediator",true);
+			if (mediator == null)
+				log(this.getClass(), "MEDIATOR TO NULL, PROCEED");
+			else {
+				log(this.getClass(), "MEDIATOR OK, PROCEED");
+				log(this.getClass(), mediator.toString());
+			}
 			mediator.performExactTranslation(conversionTask.translationOrder);
 		 } else
 			reConvertFile(conversionTask.translationOrder);
@@ -222,13 +218,13 @@ public class XliffConverter extends AsynchronousConverter{
 		String filePath = TMP_PATH + File.separator + translationOrder.getRequestId().toString();
 		
 		//ONLY FOR TESTING!
-		/*
+		
 		try {
 			File fl = new File(filePath + File.separator + fileName + ".xliff.transl");
 			fl.createNewFile();
 		} catch (IOException e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
-		}*/
+		}
 		
 		String format = fileName.substring(fileName.lastIndexOf(".") + 1);
 		Locale locale = new Locale(translationOrder.getLangPair().getToLang(), 
@@ -252,7 +248,7 @@ public class XliffConverter extends AsynchronousConverter{
 	}
 	
 	// method only for testing purposes
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		
 		XliffConverter xliff = new XliffConverter();
 		xliff.init();
@@ -266,6 +262,5 @@ public class XliffConverter extends AsynchronousConverter{
 		xliff.convert(to);
 		xliff.reConvert(to);
 		
-	}
-	
+	}*/
 }
