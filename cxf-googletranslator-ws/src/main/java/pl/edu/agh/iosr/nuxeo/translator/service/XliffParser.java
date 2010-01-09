@@ -55,19 +55,7 @@ public class XliffParser {
 	 * */
 	public Map<String, String> getSourceText() throws IOException, ParserConfigurationException, SAXException {
 		
-		Document doc = getDocumentForXliff();		
-		Map<String, String> text = new HashMap<String, String>();
-		
-		NodeList units = doc.getElementsByTagName(TRANSLATION_UNIT_TAG);
-		
-		for(int i=0; i < units.getLength(); ++i) {
-			Element unit = (Element) units.item(i); 
-			Element source = (Element) unit.getElementsByTagName(SOURCE_TAG).item(0);
-			Element mrk = (Element) source.getElementsByTagName(SOURCE_VALUE_TAG).item(0);
-			text.put(unit.getAttributeNode(ID_TAG).getValue(), mrk.getTextContent());
-		}
-		 
-		return text;	
+		return getSourceText(false,-1);
 		
 	}
 	
@@ -115,5 +103,58 @@ public class XliffParser {
 		return doc;
 		
 	}
+	
+	private  Map<String, String> getSourceText(boolean isLenghtLimit,long limit) throws IOException, ParserConfigurationException, SAXException{
+		
+		Document doc = getDocumentForXliff();		
+		Map<String, String> text = new HashMap<String, String>();
+		
+		NodeList units = doc.getElementsByTagName(TRANSLATION_UNIT_TAG);
+		long contentLength=0;
+		for(int i=0; i < units.getLength(); ++i) {
+			Element unit = (Element) units.item(i); 
+			Element source = (Element) unit.getElementsByTagName(SOURCE_TAG).item(0);
+			Element mrk = (Element) source.getElementsByTagName(SOURCE_VALUE_TAG).item(0);
+			String content= mrk.getTextContent();
+			if(isLenghtLimit && (contentLength+content.length())>=limit){
+				text.put(unit.getAttributeNode(ID_TAG).getValue(),content.substring((int)(limit-contentLength)));
+				return text;
+			}
+			else
+				text.put(unit.getAttributeNode(ID_TAG).getValue(),content);
+			contentLength+=content.length();
+		} 
+		return text;	
+			
+	}
+	/**
+	 * wyjmuje probke tresci do przetlmuaczenia o podanej dlugosci ktora nalezy przetlumaczyc,
+	 * zwraca ja w postaci pojedynczego Stringa
+	 * */
+	public String getSample(long detectionSampleSizeLimit)throws IOException, ParserConfigurationException, SAXException{
+		
+		Document doc = getDocumentForXliff();		
+		NodeList units = doc.getElementsByTagName(TRANSLATION_UNIT_TAG);
+		StringBuilder sb=new StringBuilder();
+		long contentLength=0;
+		for(int i=0; i < units.getLength(); ++i) {
+			Element unit = (Element) units.item(i); 
+			Element source = (Element) unit.getElementsByTagName(SOURCE_TAG).item(0);
+			Element mrk = (Element) source.getElementsByTagName(SOURCE_VALUE_TAG).item(0);
+			String content= mrk.getTextContent();
+			if((contentLength+content.length())>=detectionSampleSizeLimit){
+				sb.append(content.substring((int)(detectionSampleSizeLimit-contentLength)));
+				return sb.toString();
+			}
+			else
+				sb.append(content);
+			contentLength+=content.length();
+		} 
+		return sb.toString();	
+
+	}
+	
+	
+	
 
 }
