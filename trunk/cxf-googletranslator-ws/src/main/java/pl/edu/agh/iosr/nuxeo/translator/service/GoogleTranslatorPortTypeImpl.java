@@ -51,6 +51,8 @@ import pl.edu.agh.iosr.nuxeo.schema.translator.TranslationQuality;
 import pl.edu.agh.iosr.nuxeo.schema.translator.TranslationRequest;
 import pl.edu.agh.iosr.nuxeo.wsdl.translationresult.TranslationResultPortType;
 import pl.edu.agh.iosr.nuxeo.wsdl.translationresult.TranslationResultService;
+import pl.edu.agh.iosr.nuxeo.wsdl.translator.ContentExtractionException;
+import pl.edu.agh.iosr.nuxeo.wsdl.translator.DetectionException;
 import pl.edu.agh.iosr.nuxeo.wsdl.translator.TranslatorPortType;
 
 
@@ -64,24 +66,26 @@ import pl.edu.agh.iosr.nuxeo.wsdl.translator.TranslatorPortType;
         endpointInterface="pl.edu.agh.iosr.nuxeo.wsdl.translator.TranslatorPortType")
 public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 
-//TODO fault message defintiion in wsdl and use them
-//change 'parameter' in wsdl to something more meaningful
+//TODO change 'parameter' in wsdl to something more meaningful
 
 	private TranslationResultService service;
 	private TranslationResultPortType port;
 	
 	public static final String REFERRER="localhost";
+	public static final int DETECTION_SAMPLE_SIZE_LIMIT=500;
+	
 	private Operation[] supportedOperations={Operation.TRANSLATION,Operation.LANGUAGE_DETECTION};
 	private Option[] supportedOptions={};
 	private TranslationQuality[] supportedQualities={};	
 	private SourceType[] supportedSourceTypes={SourceType.STRING,SourceType.FILE};
 	private String[] supportedSourceFileFormats={"application/x-xliff+xml"};
+	
 	private SupportedLanguagesManager supportedLanguagesManager=new SupportedLanguagesManager();
 		
 	@Override
 	public void translate(TranslationRequest request){	
 		
-		service = new TranslationResultService();
+		service = new TranslationResultService();			
 	    port = service.getTranslationResultPort();
 	    Translate.setHttpReferrer(REFERRER);	
 		
@@ -92,9 +96,10 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 				translateString(request);
 			} catch (Exception e) {
 				e.printStackTrace();
+				
 			}
 		}
-		if(request.getContentSource().getSourceType()==SourceType.FILE){
+		if(request.getContentSource().getSourceType()==SourceType.FILE){			
 			try {
 				translateFile(request);
 			} catch (IOException e) {
@@ -152,23 +157,80 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 
 
 	@Override
-	public String detectLanguage(DetectionRequest parameter){
-		if(parameter.getContentSource().getSourceType()==SourceType.STRING){
-			StringContentSource content=(StringContentSource)parameter.getContentSource();
-			DetectResult result=null;
-			try {
-				result=Detect.execute(content.getText());			//TODO Language to String(xsd:lang) conversion
-				
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return result.getLanguage().toString();
+	public String detectLanguage(DetectionRequest request) throws DetectionException, ContentExtractionException{
+		
+		service = new TranslationResultService();			
+	    port = service.getTranslationResultPort();
+		Detect.setHttpReferrer(REFERRER);
+		DetectResult detectResult=null;
+		if(request.getContentSource().getSourceType()==SourceType.STRING){
+			detectResult=detectFromString(request);		
 		}
-		return "FAIL";
+		else if(request.getContentSource().getSourceType()==SourceType.FILE){
+			detectResult=detectFromFile(request);
+		}
+		else{
+			throw  new ContentExtractionException("Not supported source type");
+		}
+		
+		if(notDetected(detectResult))
+			return null;
+		else
+			return detectResult.getLanguage().toString();
+		
+	}
+
+	private DetectResult detectFromFile(DetectionRequest request) throws ContentExtractionException,DetectionException{
+
+		FileContentSource content=(FileContentSource)request.getContentSource();
+		XliffParser xliffParser=null;
+		String sample=null;
+		try {
+			xliffParser=new XliffParser(createFileFromDataHandler(content.getFile()));
+			sample=xliffParser.getSample(DETECTION_SAMPLE_SIZE_LIMIT);	
+		} catch (IOException e) {
+			throw new ContentExtractionException(e.getMessage(),e);
+		} catch (ParserConfigurationException e) {
+			throw new ContentExtractionException(e.getMessage(),e);
+		} catch (SAXException e) {
+			throw new ContentExtractionException(e.getMessage(),e);
+		} 
+		if(sample.length()==0)
+			throw new ContentExtractionException("No text found!");		
+		try{	
+			DetectResult detectResult=Detect.execute(sample);
+			return detectResult;
+		}catch (Exception e) {
+			throw new DetectionException(e.getMessage(),e);	
+		}
+		
+	}
+
+	private DetectResult detectFromString(DetectionRequest parameter) throws ContentExtractionException,DetectionException{
+		
+		StringContentSource content=(StringContentSource)parameter.getContentSource();
+		String text=content.getText();
+		if(text==null || text.length()==0)
+			throw new ContentExtractionException("No text found!");
+		
+		try{
+			DetectResult result=Detect.execute(content.getText());			//TODO Language to String(xsd:lang) conversion
+			return result;
+		}
+		catch(Exception e){
+			throw new DetectionException(e.getMessage(),e);	
+		}
+		
 	}
 
 	
+	private boolean notDetected(DetectResult result) {
+		if(result.getLanguage()==Language.AUTO_DETECT)
+			return true;
+		else
+			return false;
+	}
+
 	@Override
 	public Operations getSupportedOperations(Object parameter) {
 		

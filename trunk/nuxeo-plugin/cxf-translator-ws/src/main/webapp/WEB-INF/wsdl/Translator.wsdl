@@ -222,9 +222,12 @@
 	<wsdl:message name="detectLanguageResponse">
 		<wsdl:part name="parameter" type="xsd:language"/>
 	</wsdl:message>
-<!--	<wsdl:message name="SourceTypeNotSupported">
-		<wsdl:part name="description" type="xsd:string"/>
-	</wsdl:message>	-->
+	<wsdl:message name="ContentExtractionException">
+		<wsdl:part name="descritpion" type="xsd:string"/>
+	</wsdl:message>	
+	<wsdl:message name="DetectionException">
+		<wsdl:part name="descritpion" type="xsd:string"/>
+	</wsdl:message>
 	<wsdl:portType name="TranslatorPortType">	
 		<wsdl:operation name="translate">
 			<wsdl:input message="tns:translateRequest" name="translateRequest" />
@@ -268,6 +271,8 @@
 		<wsdl:operation name="detectLanguage">
 			<wsdl:input message="tns:detectLanguageRequest"/>
 			<wsdl:output message="tns:detectLanguageResponse"/>
+			<wsdl:fault name="detectionException" message="tns:DetectionException"/>
+			<wsdl:fault name="contentExtractionException" message="tns:ContentExtractionException"/>
 		</wsdl:operation>
 	</wsdl:portType>
 	<wsdl:binding name="TranslatorBinding" type="tns:TranslatorPortType">

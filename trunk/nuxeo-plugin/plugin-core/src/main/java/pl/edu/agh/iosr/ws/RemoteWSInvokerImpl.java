@@ -28,6 +28,7 @@ import pl.edu.agh.iosr.model.TranslationOption;
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.FileResultRequestWrapper;
+import pl.edu.agh.iosr.nuxeo.schema.translator.DetectionRequest;
 import pl.edu.agh.iosr.nuxeo.schema.translator.LanguagePairs;
 import pl.edu.agh.iosr.nuxeo.schema.translator.Operations;
 import pl.edu.agh.iosr.nuxeo.schema.translator.Options;
@@ -35,6 +36,8 @@ import pl.edu.agh.iosr.nuxeo.schema.translator.SourceTypes;
 import pl.edu.agh.iosr.nuxeo.schema.translator.TranslationQualities;
 import pl.edu.agh.iosr.nuxeo.schema.translator.TranslationRequest;
 import pl.edu.agh.iosr.nuxeo.wsdl.translationresult.TranslationResultPortType;
+import pl.edu.agh.iosr.nuxeo.wsdl.translator.ContentExtractionException;
+import pl.edu.agh.iosr.nuxeo.wsdl.translator.DetectionException;
 import pl.edu.agh.iosr.nuxeo.wsdl.translator.GoogleTranslatorService;
 import pl.edu.agh.iosr.nuxeo.wsdl.translator.TranslatorPortType;
 import pl.edu.agh.iosr.ws.translator.ResponseTranslator;
@@ -60,17 +63,12 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 	
 	@Create
 	public void init() {
+		
 		this.translationService=new GoogleTranslatorService();
 		this.port=(TranslatorPortType)translationService.getPort(TranslatorPortType.class);	
 	
 	}
-	/*
-	public RemoteWSInvokerImpl()throws IllegalArgumentException{
-			
-		this.translationService=new GoogleTranslatorService();
-		this.port=(TranslatorPortType)translationService.getPort(TranslatorPortType.class);	
-		
-	}*/
+
 	
 	private void setTranslationServiceEndpoint(String translationServiceEndpoint){
 		
@@ -169,6 +167,23 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 		log(this.getClass(), "\n\n "+options.getOptions() +"+OK\n\n");
 		port.translate(translationRequest);
 		log(this.getClass(), "\n\n TRANSLATE CALLED+OK\n\n");
+		
+		
+		DetectionRequest detectionRequest=new DetectionRequest();
+		detectionRequest.setDetectionRequestID(request.getRequestId().toString());
+		detectionRequest.setContentSource(translationRequest.getContentSource());
+		String detectResult=null;
+		try {
+			detectResult=port.detectLanguage(detectionRequest);
+		} catch (ContentExtractionException e) {
+			log(this.getClass(), "\n\n FAULT MESSAGE RECEIVED\n\n");
+			e.printStackTrace();
+		} catch (DetectionException e) {
+			log(this.getClass(), "\n\n FAULT MESSAGE RECEIVED\n\n");
+			e.printStackTrace();
+		}
+		
+		log(this.getClass(), "\n\n DETECT CALLED+OK result is: "+detectResult+"\n\n");
 		
 		
 	}
