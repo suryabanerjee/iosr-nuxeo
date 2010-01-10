@@ -66,6 +66,7 @@ public class ResponseTranslator {
 			resultList.add(langPair);
 		}
 		return resultList;
+		
 	}
 	
 	

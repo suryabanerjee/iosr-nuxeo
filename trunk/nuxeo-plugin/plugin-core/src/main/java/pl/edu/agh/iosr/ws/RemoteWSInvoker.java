@@ -34,4 +34,7 @@ public interface RemoteWSInvoker {
 	
 	List<String> getSuppportedSourceTypes(TranslationServiceDescription webservice);
 	
+	void testInvoke(TranslationServiceDescription webservice,
+			TranslationOrder request, File content);
+	
 }
