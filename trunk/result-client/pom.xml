@@ -15,6 +15,22 @@
    <packaging>jar</packaging>
 
    <dependencies>
+   
+   	      <dependency>
+             <groupId>org.apache.cxf</groupId>
+             <artifactId>cxf-rt-frontend-jaxws</artifactId>
+          </dependency>
+		  
+          <dependency>
+             <groupId>org.apache.cxf</groupId>
+             <artifactId>cxf-rt-transports-http</artifactId>
+          </dependency>
+		  
+          <dependency>
+             <groupId>org.apache.cxf</groupId>
+             <artifactId>cxf-rt-ws-security</artifactId>
+          </dependency>		
+   
      <dependency>
        <groupId>pl.edu.agh.iosr.ws</groupId>
        <artifactId>cxf-translation-result-ws</artifactId>
