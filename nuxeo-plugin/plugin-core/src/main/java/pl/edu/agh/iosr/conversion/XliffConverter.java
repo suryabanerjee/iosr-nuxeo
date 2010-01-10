@@ -185,7 +185,10 @@ public class XliffConverter extends AsynchronousConverter{
 			(new File(filePath)).mkdirs();
 			file = new File(filePath + File.separator + fileName);
 			file.createNewFile();
-			copyFileContent(filePath + File.separator + fileName, translationOrder.getSourceDocument());
+			
+			// TODO Tu czopyk zmienił, po zmianie documentRef na documentRefWrapper
+			copyFileContent(filePath + File.separator + fileName, translationOrder.getSourceDocument().getDocumentModel().getRef());
+			
 		} catch (IOException e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
 		}
@@ -239,9 +242,17 @@ public class XliffConverter extends AsynchronousConverter{
 			log(this.getClass(), "Generated file: " + sw.toString());
 			
 			String destFile = destPath + sw.toString().substring(sw.toString().lastIndexOf(File.separator));
-			translationOrder.setDestinationDocument(new PathRef(destFile));
-			createResultFile(translationOrder.getSourceDocument(), 
-				sw.toString().substring(sw.toString().lastIndexOf(File.separator) + 1), sw.toString()); 
+			
+			// TODO Tu czopyk zmienił, po zmianie documentRef na documentRefWrapper
+			// nie wiem jak przerobić documentRef na te 3 rzeczy z których da się go zbudować, tzn:
+			// name, path i type!
+			//translationOrder.setDestinationDocument(new PathRef(destFile));
+			
+			// TODO Tu czopyk zmienił, po zmianie documentRef na documentRefWrapper
+			createResultFile(translationOrder.getSourceDocument().getDocumentModel().getRef(),
+				sw.toString().substring(sw.toString().lastIndexOf(File.separator) + 1), sw.toString());
+			
+			
 		} catch (ConversionException e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
 		}

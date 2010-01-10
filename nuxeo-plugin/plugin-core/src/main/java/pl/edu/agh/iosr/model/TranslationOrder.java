@@ -7,7 +7,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.activation.DataHandler;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,8 +21,6 @@ import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.nuxeo.ecm.core.api.DocumentRef;
 
 import pl.edu.agh.iosr.exceptions.WorkflowException;
 import pl.edu.agh.iosr.util.IosrLogger;
@@ -73,12 +75,12 @@ public class TranslationOrder implements java.io.Serializable {
 	/**
 	 * Referencja do dokumentu źródłowego
 	 * */
-	private DocumentRef sourceDocument;
+	private DocumentRefWrapper sourceDocument;
 
 	/**
 	 * Referencja do dokumentu wynikowego
 	 * */
-	private DocumentRef destinationDocument;
+	private DocumentRefWrapper destinationDocument;
 
 	/**
 	 * Wiadomo co
@@ -151,6 +153,7 @@ public class TranslationOrder implements java.io.Serializable {
 		}
 		result.append("\tstate: " + state);
 		result.append("\tdocument to translate: " + sourceDocument);
+		result.append("\tdestination document: " + destinationDocument);
 		result.append("\tactions happened in lifecycle:");
 		for (int i = 0; i < timeStamps.length; ++i) {
 			result.append("\t\t" + RequestState.values()[i] + ": "
@@ -168,7 +171,7 @@ public class TranslationOrder implements java.io.Serializable {
 	}
 
 	// konstruktor
-	public TranslationOrder(DocumentRef sourceDocument, LangPair langPair,
+	public TranslationOrder(DocumentRefWrapper sourceDocument, LangPair langPair,
 			String destinationDocumentName, String quality, Long wsId,
 			boolean languageDetection) {
 		super();
@@ -214,7 +217,7 @@ public class TranslationOrder implements java.io.Serializable {
 		this.state = RequestState.FAILED;
 		message = failureReason;
 		IosrLogger.log(this.getClass(), "Failed to translate document: "
-				+ sourceDocument.reference(), Level.FATAL);
+				+ sourceDocument.getName(), Level.FATAL);
 	}
 	
 	/**
@@ -241,17 +244,27 @@ public class TranslationOrder implements java.io.Serializable {
 
 	// gettery i setter
 
+	@Id
+	public Long getRequestId() {
+		return requestId;
+	}
+	
 	@Enumerated(EnumType.STRING)
 	public RequestState getState() {
 		return state;
 	}
 
-	@Transient
-	public DocumentRef getDestinationDocument() {
+	@Embedded
+	@AttributeOverrides({
+		@AttributeOverride(name="name", column=@Column(name="distName")),
+		@AttributeOverride(name="path", column=@Column(name="distPath")),
+		@AttributeOverride(name="type", column=@Column(name="distType"))
+	})
+	public DocumentRefWrapper getDestinationDocument() {
 		return destinationDocument;
 	}
 
-	public void setDestinationDocument(DocumentRef destinationDocument) {
+	public void setDestinationDocument(DocumentRefWrapper destinationDocument) {
 		this.destinationDocument = destinationDocument;
 	}
 
@@ -272,12 +285,16 @@ public class TranslationOrder implements java.io.Serializable {
 		this.xliff = xliff;
 	}
 
-	@Transient
-	public DocumentRef getSourceDocument() {
+	@Embedded
+	@AttributeOverrides({
+		@AttributeOverride(name="name", column=@Column(name="srcName")),
+		@AttributeOverride(name="path", column=@Column(name="srcPath")),
+		@AttributeOverride(name="type", column=@Column(name="srcType"))
+	})
+	public DocumentRefWrapper getSourceDocument() {
 		return sourceDocument;
 	}
 
-	//@Embedded	
 	@OneToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, optional=true)
 	public LangPair getLangPair() {
 		return langPair;
@@ -287,11 +304,7 @@ public class TranslationOrder implements java.io.Serializable {
 		return destinationDocumentName;
 	}
 
-	@Id
-	public Long getRequestId() {
-		return requestId;
-	}
-
+	
 	public String getQuality() {
 		return quality;
 	}
@@ -304,7 +317,7 @@ public class TranslationOrder implements java.io.Serializable {
 		return message;
 	}
 
-	public boolean isLanguageDetection() {
+	public boolean getLanguageDetection() {
 		return languageDetection;
 	}
 
@@ -325,7 +338,7 @@ public class TranslationOrder implements java.io.Serializable {
 		this.state = state;
 	}
 
-	public void setSourceDocument(DocumentRef sourceDocument) {
+	public void setSourceDocument(DocumentRefWrapper sourceDocument) {
 		this.sourceDocument = sourceDocument;
 	}
 
