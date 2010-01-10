@@ -113,7 +113,7 @@ public class Mediator {
 			//testowe wywoalnie invokera google translatora
 			log(this.getClass(), "before calling translate");	
 			
-			remoteWSInvoker.traslateAsync(tsDescription, order, null);
+			remoteWSInvoker.testInvoke(tsDescription, order, null);
 			
 			log(this.getClass(), "after calling translate");
 			
@@ -151,9 +151,9 @@ public class Mediator {
 			order.nextState();
 			translationOrderService.saveOrUpdateTranslationOrder(order);
 
-	//		remoteWSInvoker.traslateAsync(translationServicesConfigService
-	//				.getTranslationService(order.getWsId()), order,
-	//				documentAccessService.getFile(order.getSourceDocument()));	//??? po co sourcedocument?
+			remoteWSInvoker.traslateAsync(translationServicesConfigService
+					.getTranslationService(order.getWsId()), order,
+					documentAccessService.getFile(order.getSourceDocument()));	//??? po co sourcedocument?
 
 		}
 		catch (Exception e) {

@@ -88,7 +88,7 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 	public List<Operation> getSuppportedOperations(
 			TranslationServiceDescription webservice) {
 		
-	//	setTranslationServiceEndpoint(webservice.getEndpoint());
+		setTranslationServiceEndpoint(webservice.getEndpoint());
 		Operations supportedOperations=port.getSupportedOperations("whatever");	
 		return responseTranslator.translateOperations(supportedOperations);
 	
@@ -97,9 +97,9 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 	
 	public List<String> getSuppportedQualities(
 			TranslationServiceDescription webservice) {
+		
 		setTranslationServiceEndpoint(webservice.getEndpoint());
 		TranslationQualities translationQualities=port.getSupportedQualities("whatever");
-		
 		return responseTranslator.translateQualities(translationQualities);
 		
 	}
@@ -138,6 +138,18 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 	
 	public void traslateAsync(TranslationServiceDescription webservice,
 			TranslationOrder request, File content) {
+		
+	    TranslationRequest translationRequest=translationOrderTranslator.translate(request);
+		//port.translate(translationRequest);
+		log(this.getClass(), "\n\n invoking translate...\n\n");
+		port.translate(translationRequest);
+		log(this.getClass(), "\n\n TRANSLATE CALLED+OK\n\n");
+		
+	}
+	
+	
+	public void testInvoke(TranslationServiceDescription webservice,
+			TranslationOrder request, File content){
 		
 		File f;
 	      f=new File("findme");
@@ -185,9 +197,7 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 		
 		log(this.getClass(), "\n\n DETECT CALLED+OK result is: "+detectResult+"\n\n");
 		
-		
 	}
-	
 	
 
 	

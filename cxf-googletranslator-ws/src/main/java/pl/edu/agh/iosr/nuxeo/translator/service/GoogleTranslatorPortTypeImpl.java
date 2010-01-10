@@ -130,7 +130,7 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 	private void translateString(TranslationRequest request) throws Exception {
 		
 		StringContentSource content=(StringContentSource)request.getContentSource();
-		String translatedText=Translate.execute(content.getText(), Language.ENGLISH ,Language.POLISH);	//TODO String from getSource/DestinationLanguage to Language conversion
+		String translatedText=Translate.execute(content.getText(), Language.fromString(request.getSourceLanguage()) ,Language.fromString(request.getDestinationLanguage()));
 		sendResultString(translatedText,request.getTranslationRequestID());
 	
 	}
@@ -145,7 +145,7 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 		Map<String, String> sourceText=xliffParser.getSourceText();
 		Map<String,String> translatedText=new HashMap<String, String>();
 		for(Map.Entry<String,String> unit:sourceText.entrySet()){
-			String translatedUnitText=Translate.execute(unit.getValue(), Language.ENGLISH ,Language.POLISH);
+			String translatedUnitText=Translate.execute(unit.getValue(),Language.fromString(request.getSourceLanguage()) ,Language.fromString(request.getDestinationLanguage()));
 			translatedText.put(unit.getKey(), translatedUnitText);
 		}
 		File resultFile=xliffParser.createXliffWithTranslation(translatedText, Language.POLISH.toString(),"result");
@@ -214,7 +214,7 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 			throw new ContentExtractionException("No text found!");
 		
 		try{
-			DetectResult result=Detect.execute(content.getText());			//TODO Language to String(xsd:lang) conversion
+			DetectResult result=Detect.execute(content.getText());	
 			return result;
 		}
 		catch(Exception e){
