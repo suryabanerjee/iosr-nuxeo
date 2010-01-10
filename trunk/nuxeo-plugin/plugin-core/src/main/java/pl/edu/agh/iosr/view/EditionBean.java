@@ -18,12 +18,11 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
-import org.nuxeo.ecm.core.api.PathRef;
-
 import pl.edu.agh.iosr.controller.ConfigurationStorage;
 import pl.edu.agh.iosr.controller.EnrichedFile;
 import pl.edu.agh.iosr.controller.FilesSelectionBean;
 import pl.edu.agh.iosr.controller.Mediator;
+import pl.edu.agh.iosr.model.DocumentRefWrapper;
 import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.Quality;
 import pl.edu.agh.iosr.model.TranslationOrder;
@@ -251,7 +250,12 @@ public class EditionBean implements Serializable {
 				lp.setFromLang(langFrom);
 				lp.setToLang(langTo);
 
-				translationOrder = new TranslationOrder(new PathRef(ef.getDocumentModel().getPathAsString()),
+				DocumentRefWrapper drw = new DocumentRefWrapper();
+				drw.setName(ef.getDocumentModel().getName());
+				drw.setPath(ef.getDocumentModel().getPathAsString());
+				drw.setType(ef.getDocumentModel().getType());
+				
+				translationOrder = new TranslationOrder(drw,
 						lp, ef.getTargetName(), "",
 						translationServiceDescription.getWsId(),
 						languageDetection);

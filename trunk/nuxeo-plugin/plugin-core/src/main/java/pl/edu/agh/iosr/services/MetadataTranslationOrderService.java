@@ -49,7 +49,7 @@ public class MetadataTranslationOrderService implements TranslationOrderService 
 		log(this.getClass(), "saveOrUpdateTranslationOrder called", Level.INFO);
 		
 		try {
-			DocumentModel documentModel=coreSession.getDocument(translationOrder.getSourceDocument());
+			DocumentModel documentModel=coreSession.getDocument(translationOrder.getSourceDocument().getDocumentModel().getRef());
 			
 			return translationOrder;
 		} catch (ClientException e) {

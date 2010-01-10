@@ -6,8 +6,8 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.nuxeo.ecm.core.api.DocumentRef;
 
+import pl.edu.agh.iosr.model.DocumentRefWrapper;
 import pl.edu.agh.iosr.model.DocumentType;
 import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.Quality;
@@ -38,17 +38,11 @@ public class PersistenceTest implements Serializable {
 		LangPair lp = new LangPair("pl", "en");
 		TranslationOrder to = new TranslationOrder();
 		to.setLangPair(lp);
-		DocumentRef df = new DocumentRef() {
-			private static final long serialVersionUID = 1218374980873504947L;
-
-			public int type() {
-				return 0;
-			}
-
-			public Object reference() {
-				return null;
-			}
-		};
+		
+		DocumentRefWrapper df = new DocumentRefWrapper();
+		df.setName("name");
+		df.setPath("pith/path");
+		df.setType("type");
 		
 		try {
 			
@@ -60,9 +54,7 @@ public class PersistenceTest implements Serializable {
 			to.setQuality("abc");
 			to.nextState();
 			
-			
-//		 	transient wiec nie są persystowane
-		//	to.setDestinationDocument(df);
+			to.setDestinationDocument(df);
 
 			IosrLogger.log(this.getClass(),
 					"trying to update translationORder: " + to);
@@ -86,19 +78,20 @@ public class PersistenceTest implements Serializable {
 						"failed to update translationOrder, quality");
 				return;
 			}
+			
 			if (0 != TranslationOrder.RequestState.UNDER_CONVERSION.compareTo(tmp
 					.getState())) {
 				IosrLogger.log(this.getClass(),
 						"failed to update translationOrder, state");
 				return;
 			}
-			/*
-			if (!df.equals(tmp.getDestinationDocument())) {
+			
+			if (!df.getPath().equals(tmp.getDestinationDocument().getPath())) {
 				IosrLogger.log(this.getClass(),
 						"failed to update translationOrder, documentRef");
 				return;
 			}
-			*/
+			
 			IosrLogger.log(this.getClass(),
 				"TranslationOrder test passed!", Level.INFO);
 		}

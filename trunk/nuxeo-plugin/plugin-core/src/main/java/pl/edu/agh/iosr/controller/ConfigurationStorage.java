@@ -31,26 +31,12 @@ public class ConfigurationStorage {
 		TranslationServiceDescription wsd = new TranslationServiceDescription();
 		wsd.getSupportedLangPairs().add(new LangPair("pl", "en"));
 		wsd.getSupportedLangPairs().add(new LangPair("en", "pl"));
-		wsd.setDescription("tlumaczneie 1");
-		wsd.setEndpoint("http://www.goooooogle.com");
+		wsd.setDescription("abc");
+		wsd.setEndpoint("http://localhost:9080/cxf-translation-result-ws/services/result");
 		wsd.setName("Google");
 		wsd.getSupportedQualities().add(new Quality("good"));
 		wsd.getSupportedQualities().add(new Quality("bad"));
 		remoteWSs.add(wsd);
-
-		wsd = new TranslationServiceDescription();
-		wsd.getSupportedLangPairs().add(new LangPair("pl", "en"));
-		wsd.getSupportedLangPairs().add(new LangPair("jp", "pl"));
-		wsd.getSupportedLangPairs().add(new LangPair("es", "ru"));
-		wsd.getSupportedLangPairs().add(new LangPair("en", "pl"));
-		wsd.setDescription("tlumaczneie czopyka");
-		wsd.setEndpoint("http://www.czopyk.pl");
-		wsd.setName("Czopsonopolis");
-		wsd.getSupportedQualities().add(new Quality("very good"));
-		wsd.getSupportedQualities().add(new Quality("very bad"));
-		wsd.getSupportedQualities().add(new Quality("sucks, but free"));
-		remoteWSs.add(wsd);
-
 	}
 
 	public List<TranslationServiceDescription> getRemoteWSs() {
