@@ -252,7 +252,7 @@ public class EditionBean implements Serializable {
 
 				DocumentRefWrapper drw = new DocumentRefWrapper();
 				drw.setName(ef.getDocumentModel().getName());
-				drw.setPath(ef.getDocumentModel().getPathAsString().substring(0, path.lastIndexOf("/"));
+				drw.setPath(ef.getDocumentModel().getPathAsString().substring(0, path.lastIndexOf("/")));
 				drw.setType(ef.getDocumentModel().getType());
 				
 				translationOrder = new TranslationOrder(drw,
