@@ -19,6 +19,7 @@ import pl.edu.agh.iosr.model.Operation;
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 import pl.edu.agh.iosr.model.TranslationOrder.RequestState;
+import pl.edu.agh.iosr.nuxeo.schema.translationresult.TranslationStatus;
 import pl.edu.agh.iosr.persistence.PersistenceTest;
 import pl.edu.agh.iosr.services.RepositoryProxyService;
 import pl.edu.agh.iosr.services.TranslationOrderService;
@@ -111,15 +112,15 @@ public class Mediator {
 			TranslationServiceDescription tsDescription = translationServicesConfigService
 					.getTranslationService(order.getWsId());
 			//testowe wywoalnie invokera google translatora
-			log(this.getClass(), "before calling translate");	
+			//log(this.getClass(), "before calling translate");	
 			
-			remoteWSInvoker.testInvoke(tsDescription, order, null);
+			//remoteWSInvoker.testInvoke(tsDescription, order, null);
 			
-			log(this.getClass(), "after calling translate");
+			//log(this.getClass(), "after calling translate");
 			
 			
 			String fileExtension = documentAccessService.getFileExtension(order
-					.getSourceDocument());
+					.getSourceDocument().getDocumentModel().getRef());
 			if (validationService.isConversionNeeded(fileExtension,
 					tsDescription)) {
 				xliffConverter.convert(order);
@@ -153,7 +154,7 @@ public class Mediator {
 
 			remoteWSInvoker.traslateAsync(translationServicesConfigService
 					.getTranslationService(order.getWsId()), order,
-					documentAccessService.getFile(order.getSourceDocument()));	//??? po co sourcedocument?
+					documentAccessService.getFile(order.getSourceDocument().getDocumentModel().getRef()));	//??? po co sourcedocument?
 
 		}
 		catch (Exception e) {
@@ -203,6 +204,14 @@ public class Mediator {
 			}
 		}
 	}
+	
+	
+	/**
+	 * uaktualnia status okreslajacy postep translacji
+	 * */
+	public void updateTranslationStatus(Long id, TranslationStatus status){
+		//translationOrderService.getTranslationOrder(id).updateStatus(status);
+	}
 
 	public void completeTranslation(TranslationOrder order) {
 
@@ -219,7 +228,6 @@ public class Mediator {
 		catch (Exception e) {
 			cancelOrder(order, e);
 		}
-
 	}
 
 }
