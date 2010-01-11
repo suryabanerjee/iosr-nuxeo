@@ -32,6 +32,7 @@ import org.nuxeo.ecm.core.api.CoreSession;
 
 import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.TranslationOrder;
+import pl.edu.agh.iosr.model.DocumentRefWrapper;
 import pl.edu.agh.iosr.controller.Mediator;
 import pl.edu.agh.iosr.util.IosrLogger.Level;
 import pl.edu.agh.iosr.persistence.CoreSessionProxy;
@@ -152,9 +153,9 @@ public class XliffConverter extends AsynchronousConverter{
 		}
 	}
 	
-	private void createResultFile(DocumentRef sourceFile, String name, String generatedFile) {
+	private void createResultFile(DocumentModel source, String name, String generatedFile) {
 		try {
-			DocumentModel source = coreSession.getDocument(sourceFile);
+			//DocumentModel source = coreSession.getDocument(sourceFile);
 			String path = source.getPathAsString();
 			path = path.substring(0, path.lastIndexOf("/"));
 			String type = source.getType();
@@ -173,10 +174,13 @@ public class XliffConverter extends AsynchronousConverter{
 	
 	private void convertFile(TranslationOrder translationOrder) {
 		prepare();
-		log(this.getClass(), "Converting file: " + translationOrder.getSourceDocument().toString());
-		String fileName = translationOrder.getSourceDocument().toString();
+		log(this.getClass(), "Converting file: " + translationOrder.getSourceDocument().getDocumentModel().getRef().toString());
+		String fileName = translationOrder.getSourceDocument().getDocumentModel().getRef().toString();
 		fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
 		int i = fileName.lastIndexOf("-");
+		if(i == -1) {
+			i = fileName.lastIndexOf(".");
+		}
 		fileName = fileName.substring(0, i) + '.' + fileName.substring(i + 1);
 		
 		String filePath = TMP_PATH + File.separator + translationOrder.getRequestId().toString();
@@ -211,23 +215,26 @@ public class XliffConverter extends AsynchronousConverter{
 	
 	private void reConvertFile(TranslationOrder translationOrder) {
 		prepare();
-		log(this.getClass(), "ReConverting file: " + translationOrder.getSourceDocument().toString());
-		String fileName = translationOrder.getSourceDocument().toString();
+		log(this.getClass(), "ReConverting file: " + translationOrder.getSourceDocument().getDocumentModel().getRef().toString());
+		String fileName = translationOrder.getSourceDocument().getDocumentModel().getRef().toString();
 		String destPath =  fileName.substring(0, fileName.lastIndexOf("/"));
 		fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
 		int i = fileName.lastIndexOf("-");
+		if(i == -1) {
+			i = fileName.lastIndexOf(".");
+		}
 		fileName = fileName.substring(0, i) + '.' + fileName.substring(i + 1);
 		
 		String filePath = TMP_PATH + File.separator + translationOrder.getRequestId().toString();
 		
 		//ONLY FOR TESTING!
-		
+		/*
 		try {
 			File fl = new File(filePath + File.separator + fileName + ".xliff.transl");
 			fl.createNewFile();
 		} catch (IOException e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
-		}
+		}*/
 		
 		String format = fileName.substring(fileName.lastIndexOf(".") + 1);
 		Locale locale = new Locale(translationOrder.getLangPair().getToLang(), 
@@ -240,20 +247,34 @@ public class XliffConverter extends AsynchronousConverter{
 					Charset.forName("utf-8"), null, fileName, 
 					filePath, null, null, sw);
 			log(this.getClass(), "Generated file: " + sw.toString());
+			String destName = sw.toString().substring(sw.toString().lastIndexOf(File.separator) + 1);
 			
-			String destFile = destPath + sw.toString().substring(sw.toString().lastIndexOf(File.separator));
+			String destFile = destPath + File.separator + destName;
 			
 			// TODO Tu czopyk zmienił, po zmianie documentRef na documentRefWrapper
 			// nie wiem jak przerobić documentRef na te 3 rzeczy z których da się go zbudować, tzn:
 			// name, path i type!
-			//translationOrder.setDestinationDocument(new PathRef(destFile));
+			try {
+				DocumentModel source = coreSession.getDocument(translationOrder.getSourceDocument().getDocumentModel().getRef());
+				String path = source.getPathAsString();
+				path = path.substring(0, path.lastIndexOf("/"));
+				String type = source.getType();
+				
+				DocumentRefWrapper drw = new DocumentRefWrapper();
+				drw.setName(destName);
+				drw.setPath(path);
+				drw.setType(type);
+				translationOrder.setDestinationDocument(drw);
+				
+				// TODO Tu czopyk zmienił, po zmianie documentRef na documentRefWrapper
+				createResultFile(source,
+					destName, sw.toString());
+			} catch(Exception ec) {
+				log(this.getClass(), ec.getMessage(), Level.FATAL);
+			}
 			
-			// TODO Tu czopyk zmienił, po zmianie documentRef na documentRefWrapper
-			createResultFile(translationOrder.getSourceDocument().getDocumentModel().getRef(),
-				sw.toString().substring(sw.toString().lastIndexOf(File.separator) + 1), sw.toString());
 			
-			
-		} catch (ConversionException e) {
+		} catch(ConversionException e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
 		}
 	}
