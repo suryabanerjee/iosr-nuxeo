@@ -365,5 +365,13 @@ public class TranslationOrder implements java.io.Serializable {
 	public void setLanguageDetection(boolean languageDetection) {
 		this.languageDetection = languageDetection;
 	}
+	
+	/* na potrzeby wyswietlania */
+	@Transient public Date getBefore() {return timeStamps[0];}
+	@Transient public Date getConversion() {return timeStamps[1];}
+	@Transient public Date getProcessing() {return timeStamps[2];}
+	@Transient public Date getReconversion() {return timeStamps[3];}
+	@Transient public Date getSucceeded() {return timeStamps[4];}
+	@Transient public Date getFailed() {return timeStamps[5];}
 
 }

@@ -15,18 +15,16 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
 import pl.edu.agh.iosr.conversion.XliffConverter;
-import pl.edu.agh.iosr.model.Operation;
+import pl.edu.agh.iosr.model.LangPair;
+import pl.edu.agh.iosr.model.Quality;
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 import pl.edu.agh.iosr.model.TranslationOrder.RequestState;
-import pl.edu.agh.iosr.nuxeo.schema.translationresult.TranslationStatus;
 import pl.edu.agh.iosr.persistence.PersistenceTest;
 import pl.edu.agh.iosr.services.RepositoryProxyService;
 import pl.edu.agh.iosr.services.TranslationOrderService;
 import pl.edu.agh.iosr.services.TranslationServicesConfigService;
 import pl.edu.agh.iosr.services.ValidationService;
-import pl.edu.agh.iosr.ws.RemoteWSInvoker;
-import pl.edu.agh.iosr.ws.RemoteWSInvokerImpl;
 
 /**
  * Mediator, koordynuje dzia�ania innych komponent�w, nale�y unika� dodawania tu
@@ -54,25 +52,45 @@ public class Mediator {
 	@In(create = true)
 	private ValidationService validationService;
 
-	@In(create = true, value="#{repositoryProxyService}")
+	@In(create = true, value = "#{repositoryProxyService}")
 	private RepositoryProxyService documentAccessService;
 
 	@In(create = true, value = "#{translationOrderService}")
 	private TranslationOrderService translationOrderService;
 
-	@In(create = true, value="#{translationServicesConfigService}")
+	@In(create = true, value = "#{translationServicesConfigService}")
 	private TranslationServicesConfigService translationServicesConfigService;
+	//
+	// @In(create = true, value="#{remoteWSInvoker}")
+	// private RemoteWSInvoker remoteWSInvoker;
 
-	@In(create = true, value="#{remoteWSInvoker}")
-	private RemoteWSInvoker remoteWSInvoker;
-
-	@In(create=true)
+	@In(create = true)
 	private PersistenceTest persistenceTest;
 
 	@Create
 	public void init() {
 		persistenceTest.testTranslationOrder();
 		persistenceTest.testServicesDescriptions();
+
+		/* konfiguracja jednego początkowego web servisu */
+		TranslationServiceDescription wsd = new TranslationServiceDescription();
+		wsd.getSupportedLangPairs().add(new LangPair("pl", "en"));
+		wsd.getSupportedLangPairs().add(new LangPair("en", "pl"));
+		wsd.setDescription("google translator");
+		wsd
+				.setEndpoint("http://localhost:9080/cxf-translation-result-ws/services/result");
+		wsd.setName("Google");
+		wsd.getSupportedQualities().add(
+				new Quality("google translator quality"));
+
+		List<TranslationServiceDescription> list = translationServicesConfigService.getTranslationServices();
+		for (TranslationServiceDescription t : list) {
+			if (t.getName().equals("Google")) {
+				return;
+			}
+		}
+		translationServicesConfigService.saveOrUpdateTranslationService(wsd);
+
 	}
 
 	/**
@@ -102,8 +120,9 @@ public class Mediator {
 	 * */
 	public void beginTranslation(TranslationOrder order) {
 		try {
-			validationService.validateOrder(order, RequestState.BEFORE_PROCESSING);
-			
+			validationService.validateOrder(order,
+					RequestState.BEFORE_PROCESSING);
+
 			// ustawiamy status w tym miejscu na konwersje
 			// konwerter nie przeprowadza zadnej kontroli
 			order.nextState();
@@ -111,20 +130,19 @@ public class Mediator {
 
 			TranslationServiceDescription tsDescription = translationServicesConfigService
 					.getTranslationService(order.getWsId());
-			//testowe wywoalnie invokera google translatora
-			//log(this.getClass(), "before calling translate");	
-			
-			//remoteWSInvoker.testInvoke(tsDescription, order, null);
-			
-			//log(this.getClass(), "after calling translate");
-			
-			
+			// testowe wywoalnie invokera google translatora
+			log(this.getClass(), "before calling translate");
+
+			// remoteWSInvoker.testInvoke(tsDescription, order, null);
+
+			log(this.getClass(), "after calling translate");
+
 			String fileExtension = documentAccessService.getFileExtension(order
 					.getSourceDocument().getDocumentModel().getRef());
 			if (validationService.isConversionNeeded(fileExtension,
 					tsDescription)) {
 				xliffConverter.convert(order);
-				//xliffConverter.reConvert(order);
+				// xliffConverter.reConvert(order);
 			}
 			else {
 				performExactTranslation(order);
@@ -145,16 +163,18 @@ public class Mediator {
 		log(this.getClass(), "PERFORM EXACT TRANSLATION CALLED");
 		try {
 
-			validationService.validateOrder(order, RequestState.UNDER_CONVERSION);
+			validationService.validateOrder(order,
+					RequestState.UNDER_CONVERSION);
 
 			// ustawiamy status w tym miejscu na wyslany do tlumaczenia
 			// remoteWSinvoker nie przeprowadza zadnej kontroli workflowa
 			order.nextState();
 			translationOrderService.saveOrUpdateTranslationOrder(order);
 
-			remoteWSInvoker.traslateAsync(translationServicesConfigService
-					.getTranslationService(order.getWsId()), order,
-					documentAccessService.getFile(order.getSourceDocument().getDocumentModel().getRef()));	//??? po co sourcedocument?
+			// remoteWSInvoker.traslateAsync(translationServicesConfigService
+			// .getTranslationService(order.getWsId()), order,
+			// documentAccessService.getFile(order.getSourceDocument())); //???
+			// po co sourcedocument?
 
 		}
 		catch (Exception e) {
@@ -168,56 +188,51 @@ public class Mediator {
 	 * przetlumaczenie zostalo zapisane
 	 * */
 	public void deliverTranslationResult(Long id, DataHandler resultFileDh) {
-		TranslationOrder order = translationOrderService.getTranslationOrder(id);
-		
-		if(order != null){
+		TranslationOrder order = translationOrderService
+				.getTranslationOrder(id);
+
+		if (order != null) {
 			try {
 
-				validationService.validateOrder(order, RequestState.UNDER_PROCESSING);
-	
+				validationService.validateOrder(order,
+						RequestState.UNDER_PROCESSING);
+
 				// w trakcie rekonwersji
 				order.nextState();
-				
-				//Utworzenie pliku z wynikiem
+
+				// Utworzenie pliku z wynikiem
 				File resultFile = order.saveResultFile(resultFileDh);
-	
+
 				if (validationService.isReconversionNeeded(order)) {
-					
+
 					translationOrderService.saveOrUpdateTranslationOrder(order);
-	
+
 					xliffConverter.reConvert(order);
 				}
 				else {
-	
+
 					// successful
 					order.nextState();
-	
+
 					translationOrderService.saveOrUpdateTranslationOrder(order);
-	
+
 					documentAccessService.saveFile(order, resultFile);
-	
+
 				}
-	
+
 			}
 			catch (Exception e) {
 				cancelOrder(order, e);
 			}
 		}
 	}
-	
-	
-	/**
-	 * uaktualnia status okreslajacy postep translacji
-	 * */
-	public void updateTranslationStatus(Long id, TranslationStatus status){
-		//translationOrderService.getTranslationOrder(id).updateStatus(status);
-	}
 
 	public void completeTranslation(TranslationOrder order) {
 
 		try {
 
-			validationService.validateOrder(order, RequestState.UNDER_RECONVERSION);
+			validationService.validateOrder(order,
+					RequestState.UNDER_RECONVERSION);
 
 			// przeklad dokonany
 			order.nextState();
@@ -228,6 +243,7 @@ public class Mediator {
 		catch (Exception e) {
 			cancelOrder(order, e);
 		}
+
 	}
 
 }

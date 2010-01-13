@@ -11,42 +11,50 @@
 	<a4j:region>
 		<div id="div4"
 			style="width: 40%; text-align: center; background: #CCFF33; margin: 10px; position: relative;">
-		<h:outputText value="#{translation['translate.filesList']}" /> 
-		
-		
-	<a4j:outputPanel id="output3">
-		<h:dataTable
-			border="1" value="#{editionBean.filesSelectionBean.files}" var="file"
-			styleClass="table1" rowClasses="table1rowEven table1rowOdd">
-			<h:column id="column1">
-				<h:selectBooleanCheckbox value="#{file.selected}">
-					<a4j:support event="onchange" reRender="output3" ajaxSingle="true" />
-				</h:selectBooleanCheckbox>
+		<h:outputText value="#{translation['translate.filesList']}" /> <a4j:outputPanel
+			id="output3">
+			<h:dataTable border="1"
+				value="#{editionBean.filesSelectionBean.files}" var="file"
+				styleClass="table1" rowClasses="table1rowEven table1rowOdd">
+				<h:column id="column1">
+					<h:selectBooleanCheckbox value="#{file.selected}">
+						<a4j:support event="onchange" reRender="output3" ajaxSingle="true" />
+					</h:selectBooleanCheckbox>
 
-				<f:facet name="header">
-					<h:outputText value="#{translation['translate.filesList.select']}" />
-				</f:facet>
-			</h:column>
-			<h:column id="column2">
-				<h:outputText value="#{file.name}" />
-				<f:facet name="header">
-					<h:outputText
-						value="#{translation['translate.filesList.fileName']}"></h:outputText>
-				</f:facet>
-			</h:column>
-			<h:column>
-				<f:facet name="header">
-					<h:outputText
-						value="#{translation['translate.filesList.targetName']}" />
-				</f:facet>
-				<h:inputText value="#{file.targetName}"
-					rendered="#{file.selected}" required="#{file.selected}" />
-			</h:column>
-		</h:dataTable>
-		
-		</a4j:outputPanel>
-		
-		</div>
+					<f:facet name="header">
+						<h:outputText value="#{translation['translate.filesList.select']}" />
+					</f:facet>
+				</h:column>
+				<h:column id="column2">
+					<h:outputText value="#{file.name}" />
+					<f:facet name="header">
+						<h:outputText
+							value="#{translation['translate.filesList.fileName']}"></h:outputText>
+					</f:facet>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputText
+							value="#{translation['translate.filesList.targetName']}" />
+					</f:facet>
+					<h:inputText value="#{file.targetName}" rendered="#{file.selected}"
+						required="#{file.selected}" />
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="#{translation['display.history']}" />
+					</f:facet>
+					<a4j:commandButton value="#{translation['display']}"
+						actionListener="#{editionBean.showHistory}"
+						reRender="history">
+						<f:attribute name="file" value="#{file}" />
+					</a4j:commandButton>
+				</h:column>
+
+			</h:dataTable>
+
+		</a4j:outputPanel></div>
 	</a4j:region>
 
 
@@ -128,7 +136,97 @@
 
 		<div id="div7"
 			style="background: #FFFF99; margin: 10px; position: relative; width: 350px; display: block;">
-		<h:messages layout="table" /> <h:outputText
+		<h:messages layout="table" globalOnly="true"/> <h:outputText
 			value="#{editionBean.report}" rendered="#{editionBean.hasReport}" /></div>
 	</a4j:region>
+
+	<a4j:region>
+		<a4j:outputPanel id="history">
+			<h:dataTable border="1" value="#{editionBean.toHistory}" var="order"
+				styleClass="table1" rendered="#{! empty editionBean.toHistory}">
+
+				<h:column id="column11">
+					<f:facet name="header">
+						<h:outputText value="numer zamówienia" />
+					</f:facet>
+					<h:outputText value="#{order.requestId}" />
+				</h:column>
+
+				<h:column id="column12">
+					<f:facet name="header">
+						<h:outputText value="język źródłowy" />
+					</f:facet>
+					<h:outputText value="#{order.langPair.fromLang}" />
+				</h:column>
+
+				<h:column id="column13">
+					<f:facet name="header">
+						<h:outputText value="język docelowy" />
+					</f:facet>
+					<h:outputText value="#{order.langPair.toLang}" />
+				</h:column>
+
+				<h:column id="column14">
+					<f:facet name="header">
+						<h:outputText value="bierzący status zamówienia" />
+					</f:facet>
+					<h:outputText value="#{order.state}">
+						<f:converter converterId="stateConverter"/>
+					</h:outputText>
+				</h:column>
+
+				<h:column id="column15">
+					<f:facet name="header">
+						<h:outputText value="przebieg realizacji" />
+					</f:facet>
+					
+					<h:panelGrid columns="2">
+					
+						<h:outputLabel value="złożone:"/>
+						<h:outputLabel value="#{order.before}">
+							<f:convertDateTime dateStyle="full"/>
+						</h:outputLabel>
+			
+						<h:outputLabel value="konwersja"/>
+						<h:outputLabel value="#{order.conversion}">
+							<f:convertDateTime dateStyle="full"/>
+						</h:outputLabel>
+			
+						<h:outputLabel value="tłumaczenie"/>
+						<h:outputLabel value="#{order.processing}">
+							<f:convertDateTime dateStyle="full"/>
+						</h:outputLabel>
+			
+						<h:outputLabel value="rekonwersja"/>
+						<h:outputLabel value="#{order.reconversion}">
+							<f:convertDateTime dateStyle="full"/>
+						</h:outputLabel>
+			
+						<h:outputLabel value="zakończenie tłumaczenie"/>
+						<h:outputLabel value="#{order.succeeded}">
+							<f:convertDateTime dateStyle="full"/>
+						</h:outputLabel>
+			
+						<h:outputLabel value="niepowodzenie"/>
+						<h:outputLabel value="#{order.failed}">
+							<f:convertDateTime dateStyle="full"/>
+						</h:outputLabel>
+						
+					</h:panelGrid>
+					
+				</h:column>
+
+				<h:column id="column16">
+					<f:facet name="header">
+						<h:outputText value="błędy" />
+					</f:facet>
+					<h:outputText value="#{order.message}" />
+				</h:column>
+
+			</h:dataTable>
+
+		</a4j:outputPanel>
+
+	</a4j:region>
+
 </h:form></div>

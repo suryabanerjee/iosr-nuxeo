@@ -33,6 +33,7 @@ public class CoreSessionProxy {
 		else {
 			IosrLogger.log(this.getClass(), "coreSession properly initialized");
 		}
+		
 	}
 	
 	public CoreSession getCoreSession() {

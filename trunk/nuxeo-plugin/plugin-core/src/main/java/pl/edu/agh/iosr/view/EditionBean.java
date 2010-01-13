@@ -6,9 +6,12 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
@@ -18,7 +21,6 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
-import pl.edu.agh.iosr.controller.ConfigurationStorage;
 import pl.edu.agh.iosr.controller.EnrichedFile;
 import pl.edu.agh.iosr.controller.FilesSelectionBean;
 import pl.edu.agh.iosr.controller.Mediator;
@@ -27,6 +29,9 @@ import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.Quality;
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
+import pl.edu.agh.iosr.services.TranslationOrderService;
+import pl.edu.agh.iosr.services.TranslationServicesConfigService;
+import pl.edu.agh.iosr.util.MessagesLocalizer;
 
 /**
  * Backing bean dla widoku wyboru tłumaczenia
@@ -51,8 +56,15 @@ public class EditionBean implements Serializable {
 	@In(create = true)
 	private FilesSelectionBean filesSelectionBean;
 
-	@In(create = true)
-	private ConfigurationStorage configurationStorage;
+	@In("#{translationServicesConfigService}")
+	private TranslationServicesConfigService configService;
+
+	@In(value = "#{translationOrderService}")
+	private TranslationOrderService translationOrderService;
+
+	private List<TranslationOrder> orders;
+
+	private List<TranslationServiceDescription> translationServices;
 
 	private TranslationServiceDescription translationServiceDescription;
 	private String langTo, langFrom, quality;
@@ -61,19 +73,29 @@ public class EditionBean implements Serializable {
 	@Create
 	public void init() {
 		try {
-			if (configurationStorage != null
-					&& configurationStorage.getRemoteWSs() != null) {
-				translationServiceDescription = configurationStorage
-						.getRemoteWSs().get(0);
+			translationServices = configService.getTranslationServices();
 
-				Collection<LangPair> list = translationServiceDescription
-						.getSupportedLangPairs();
-
-				if (list != null && list.size() > 0) {
-					langFrom = list.iterator().next().getFromLang();
-					langTo = list.iterator().next().getToLang();
-				}
+			if (translationServices.size() == 0) {
+				return;
 			}
+
+			List<String> names = new LinkedList<String>();
+			for (EnrichedFile ef : filesSelectionBean.getFiles()) {
+				names.add(ef.getName());
+			}
+			orders = translationOrderService.getTranslationOrders(names
+					.toArray(new String[0]));
+
+			translationServiceDescription = translationServices.get(0);
+
+			Collection<LangPair> list = translationServiceDescription
+					.getSupportedLangPairs();
+
+			if (list != null && list.size() > 0) {
+				langFrom = list.iterator().next().getFromLang();
+				langTo = list.iterator().next().getToLang();
+			}
+
 		}
 		catch (Exception e) {
 			log(this.getClass(), e.getMessage());
@@ -84,11 +106,9 @@ public class EditionBean implements Serializable {
 	 * Pobiera liste zarejestrowanych serwisow tlumaczacych
 	 * */
 	public SelectItem[] getAvailableServices() {
-		List<TranslationServiceDescription> wss = configurationStorage
-				.getRemoteWSs();
-		SelectItem[] items = new SelectItem[wss.size()];
+		SelectItem[] items = new SelectItem[translationServices.size()];
 		int i = 0;
-		for (TranslationServiceDescription rd : wss) {
+		for (TranslationServiceDescription rd : translationServices) {
 			items[i++] = new SelectItem(rd.getName(), rd.getName());
 		}
 		return items;
@@ -132,7 +152,8 @@ public class EditionBean implements Serializable {
 			return new SelectItem[0];
 		}
 
-		Collection<LangPair> langPairs = translationServiceDescription.getSupportedLangPairs();
+		Collection<LangPair> langPairs = translationServiceDescription
+				.getSupportedLangPairs();
 
 		Set<String> froms = new HashSet<String>();
 
@@ -162,7 +183,8 @@ public class EditionBean implements Serializable {
 
 		SelectItem[] items = new SelectItem[translationServiceDescription
 				.getSupportedQualities().size()];
-		Iterator<Quality> iterator = translationServiceDescription.getSupportedQualities().iterator();
+		Iterator<Quality> iterator = translationServiceDescription
+				.getSupportedQualities().iterator();
 		int i = 0;
 		while (iterator.hasNext()) {
 			String s = iterator.next().getValue();
@@ -172,8 +194,7 @@ public class EditionBean implements Serializable {
 	}
 
 	public void setWsName(String wsName) {
-		for (TranslationServiceDescription rd : configurationStorage
-				.getRemoteWSs()) {
+		for (TranslationServiceDescription rd : translationServices) {
 			log(this.getClass(), "trying to compare: " + rd.getName() + " vs "
 					+ wsName);
 			if (rd.getName().equals(wsName)) {
@@ -242,40 +263,29 @@ public class EditionBean implements Serializable {
 		TranslationOrder translationOrder;
 		log(this.getClass(), "buildTranslationRequest called!");
 		for (EnrichedFile ef : filesSelectionBean.getFiles()) {
-			log(this.getClass(), "file found!");
 			if (ef.getSelected()) {
-				log(this.getClass(), "file added!");
+				log(this.getClass(), "file: " + ef.getName() + " added!");
 
 				LangPair lp = new LangPair();
 				lp.setFromLang(langFrom);
 				lp.setToLang(langTo);
-				
+
 				String path = ef.getDocumentModel().getPathAsString();
 
 				DocumentRefWrapper drw = new DocumentRefWrapper();
 				drw.setName(ef.getDocumentModel().getName());
 				drw.setPath(path.substring(0, path.lastIndexOf("/")));
 				drw.setType(ef.getDocumentModel().getType());
-				
-				translationOrder = new TranslationOrder(drw,
-						lp, ef.getTargetName(), "",
-						translationServiceDescription.getWsId(),
-						languageDetection);
+
+				translationOrder = new TranslationOrder(drw, lp, ef
+						.getTargetName(), "", translationServiceDescription
+						.getWsId(), languageDetection);
 				mediator.beginTranslation(translationOrder);
 			}
 		}
 		log(this.getClass(), "end of buildTranslationRequest!");
 
 		return "#";
-	}
-
-	public ConfigurationStorage getConfigurationStorage() {
-		return configurationStorage;
-	}
-
-	public void setConfigurationStorage(
-			ConfigurationStorage configurationStorage) {
-		this.configurationStorage = configurationStorage;
 	}
 
 	public TranslationServiceDescription getTranslationServiceDescription() {
@@ -309,5 +319,34 @@ public class EditionBean implements Serializable {
 	public void setQuality(String quality) {
 		this.quality = quality;
 	}
+	
+	/* zabawa z wyświetlaniem raportów START */
+	
+	private List<TranslationOrder> toHistory;
+	
+	public void showHistory(ActionEvent ae) {
+		EnrichedFile ef = (EnrichedFile) ae
+				.getComponent().getAttributes().get("file");
+		String name = ef.getName();
+		toHistory = new LinkedList<TranslationOrder>();
+		for(TranslationOrder to : orders) {
+			if (to.getSourceDocument().getName().equals(name)) {
+				toHistory.add(to);
+			}
+		}
+		if (toHistory.size() == 0) {
+			String message = MessagesLocalizer.getMessage("no.orders.yet");
+			if (message == null) {
+				message = "No translations pertaining this file has been ordered yet.";
+			}
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(message));
+		}
+	}
+
+	public List<TranslationOrder> getToHistory() {
+		return toHistory;
+	}
+
+	/* zabawa z wyświetlaniem raportów END */
 
 }
