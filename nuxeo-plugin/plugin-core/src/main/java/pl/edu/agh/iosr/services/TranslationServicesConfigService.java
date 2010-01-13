@@ -1,6 +1,6 @@
 package pl.edu.agh.iosr.services;
 
-import java.util.Collection;
+import java.util.List;
 
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 
@@ -13,7 +13,7 @@ public interface TranslationServicesConfigService {
 	/**
 	 * Lista wszystkich
 	 * */
-	public Collection<TranslationServiceDescription> getTranslationServices();
+	public List<TranslationServiceDescription> getTranslationServices();
 	
 	
 	public TranslationServiceDescription getTranslationService(Long wsId);
@@ -30,6 +30,11 @@ public interface TranslationServicesConfigService {
 	public void delete(Long id);
 	
 	
-	
+	/**
+	 * Synchronicznie odświeża informacje o wybranym web servicie.
+	 * 
+	 * @Throws {@link InterruptedException} kiedy stracimy cierpliwość.
+	 * */
+	public void refreshWs(Long id) throws InterruptedException; 
 	
 }

@@ -1,7 +1,7 @@
 package pl.edu.agh.iosr.persistence;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -19,25 +19,44 @@ import pl.edu.agh.iosr.util.IosrLogger;
 
 @Stateless
 @Name("translationOrderService")
-public class TranslationOrderServiceImpl implements TranslationOrderService, Serializable {
+public class TranslationOrderServiceImpl implements TranslationOrderService,
+		Serializable {
 
 	private static final long serialVersionUID = 816314691789456174L;
 
-	@PersistenceContext(name="iosr")
+	@PersistenceContext(name = "iosr")
 	private EntityManager em;
-	
+
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void delete(Long id) {
-		
+
 		if (id == null) {
 			IosrLogger.log(this.getClass(), "id is null!!");
 			return;
 		}
-		
+
 		TranslationOrder to = em.find(TranslationOrder.class, id);
 		if (to != null) {
 			em.remove(to);
 		}
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@SuppressWarnings("unchecked")
+	public List<TranslationOrder> getTranslationOrders(String[] names) {
+		if (names == null || names.length == 0) {
+			return null;
+		}
+		
+		String tabEx = "(";
+		for (String name : names) {
+			tabEx += "'" + name + "',";
+		}
+		tabEx = tabEx.substring(0, tabEx.length() - 1) + ")";
+		
+		return em.createQuery(
+				"from TranslationOrder to where to.sourceDocument.name in "
+						+ tabEx).getResultList();
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -46,21 +65,24 @@ public class TranslationOrderServiceImpl implements TranslationOrderService, Ser
 			IosrLogger.log(this.getClass(), "id is null!!");
 			return null;
 		}
-		
+
 		return em.find(TranslationOrder.class, id);
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@SuppressWarnings("unchecked")
-	public Collection<TranslationOrder> getTranslationOrders(RequestState state) {
-		return em.createQuery("from TranslationOrder to where to.reguestState = '" + state.name() + "'").getResultList();
-		
+	public List<TranslationOrder> getTranslationOrders(RequestState state) {
+		return em.createQuery(
+				"from TranslationOrder to where to.reguestState = '"
+						+ state.name() + "'").getResultList();
+
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public TranslationOrder saveOrUpdateTranslationOrder(TranslationOrder translationOrder)
+	public TranslationOrder saveOrUpdateTranslationOrder(
+			TranslationOrder translationOrder)
 			throws DataInconsistencyException {
-	
+
 		if (translationOrder == null) {
 			IosrLogger.log(this.getClass(), "translationOrder is null!!");
 			return null;
@@ -69,7 +91,8 @@ public class TranslationOrderServiceImpl implements TranslationOrderService, Ser
 			em.persist(translationOrder);
 		}
 		else {
-			TranslationOrder to = getTranslationOrder(translationOrder.getRequestId());
+			TranslationOrder to = getTranslationOrder(translationOrder
+					.getRequestId());
 			if (to == null) {
 				em.persist(translationOrder);
 			}

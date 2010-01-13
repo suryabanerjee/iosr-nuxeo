@@ -1,7 +1,5 @@
 package pl.edu.agh.iosr.view;
 
-import static pl.edu.agh.iosr.util.IosrLogger.log;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,13 +11,15 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
-import pl.edu.agh.iosr.controller.ConfigurationStorage;
 import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
+import pl.edu.agh.iosr.services.TranslationServicesConfigService;
+import pl.edu.agh.iosr.util.MessagesLocalizer;
 
 /**
  * backing bean dla widoku osoby administruj�cej WSami. wy�wietla tabelke z
@@ -29,13 +29,20 @@ import pl.edu.agh.iosr.model.TranslationServiceDescription;
 @Name("configurationBean")
 public class ConfigurationBean {
 
-	@In("#{configurationStorage}")
-	private ConfigurationStorage configurationStorage;
-
+	@In("#{translationServicesConfigService}")
+	private TranslationServicesConfigService configService;
+	
 	private String description = "", endpoint = "", name = "";
 
-	public List<TranslationServiceDescription> getRemoteWSs() {
-		return configurationStorage.getRemoteWSs();
+	private List<TranslationServiceDescription> translationServices;
+
+	@Create
+	public void init() {
+		translationServices = configService.getTranslationServices();
+	}
+
+	public List<TranslationServiceDescription> getTranslationServices() {
+		return translationServices;
 	}
 
 	/**
@@ -44,8 +51,7 @@ public class ConfigurationBean {
 	public void addNewWS(ActionEvent ae) {
 
 		// troche walidacji nie zaszkodzi
-		for (TranslationServiceDescription r : configurationStorage
-				.getRemoteWSs()) {
+		for (TranslationServiceDescription r : translationServices) {
 			if (name.equals(r.getName())) {
 				FacesContext.getCurrentInstance().addMessage(null,
 						new FacesMessage("Cannot duplicate WS."));
@@ -57,7 +63,8 @@ public class ConfigurationBean {
 		r.setDescription(description);
 		r.setEndpoint(endpoint);
 		r.setName(name);
-		configurationStorage.getRemoteWSs().add(r);
+		configService.saveOrUpdateTranslationService(r);
+		init();
 	}
 
 	/**
@@ -65,21 +72,19 @@ public class ConfigurationBean {
 	 * xhtmla ustawiaja wartosc name i endpoint
 	 * */
 	public void deleteWS(ActionEvent ae) {
-		
-		String name = (String)ae.getComponent().getAttributes().get("czopson"); 
-		
+
+		String name = (String) ae.getComponent().getAttributes().get("czopson");
+
 		TranslationServiceDescription rwds = null;
-		for (TranslationServiceDescription r : configurationStorage
-				.getRemoteWSs()) {
+		for (TranslationServiceDescription r : translationServices) {
 			if (r.getName().equals(name)) {
 				rwds = r;
 				break;
 			}
 		}
 		if (rwds != null) {
-			log(this.getClass(), "deleted ws: "
-					+ configurationStorage.getRemoteWSs().remove(rwds)
-					+ " - chosen: " + name);
+			configService.delete(rwds.getWsId());
+			init();
 		}
 	}
 
@@ -107,18 +112,8 @@ public class ConfigurationBean {
 		this.name = name;
 	}
 
-	public ConfigurationStorage getConfigurationStorage() {
-		return configurationStorage;
-	}
-
-	public void setConfigurationStorage(
-			ConfigurationStorage configurationStorage) {
-		this.configurationStorage = configurationStorage;
-	}
-
 	public TranslationServiceDescription getSelectedWS() {
-		for (TranslationServiceDescription r : configurationStorage
-				.getRemoteWSs()) {
+		for (TranslationServiceDescription r : translationServices) {
 			if (r.getName().equals(name)) {
 				return r;
 			}
@@ -229,7 +224,31 @@ public class ConfigurationBean {
 		lp.setToLang(newLangTo);
 
 		getSelectedWS().getSupportedLangPairs().add(lp);
-		
+
 		return "";
 	}
+
+	/* odświeżanie wsa START */
+
+	public void refreshWs(ActionEvent ae) {
+		TranslationServiceDescription t = (TranslationServiceDescription) ae
+				.getComponent().getAttributes().get("ws");
+		try {
+			configService.refreshWs(t.getWsId());
+		}
+		catch (InterruptedException e) {
+			String message = MessagesLocalizer.getMessage("failed.refresh");
+			if (message == null) {
+				message = "Failed to refresh translation service configuration.";
+			}
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(message));
+		}
+		init();
+	}
+
+	/* odświeżanie wsa END */
+
+
+
 }

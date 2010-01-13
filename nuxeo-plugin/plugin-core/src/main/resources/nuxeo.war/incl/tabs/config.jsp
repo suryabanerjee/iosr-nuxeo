@@ -40,7 +40,7 @@
 		<h:column>
 			<h:commandButton value="#{translation['ws.delete']}"
 				actionListener="#{configurationBean.deleteWS}">
-				<f:attribute name="czopson" value="#{ws.name}"/>
+				<f:attribute name="czopson" value="#{ws.name}" />
 			</h:commandButton>
 		</h:column>
 
@@ -49,10 +49,22 @@
 				<h:outputText value="pokaz szczegoly" />
 			</f:facet>
 
-			<h:commandButton value="pokaz szczegoly #{ws.name}">
+			<h:commandButton value="#{translation['ws.show.details']} #{ws.name}">
 				<f:setPropertyActionListener target="#{configurationBean.name}"
 					value="#{ws.name}" />
 				<a4j:support reRender="details" event="onclick" ajaxSingle="true" />
+			</h:commandButton>
+
+		</h:column>
+
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="#{translation['ws.refresh.configuration']}" />
+			</f:facet>
+
+			<h:commandButton value="#{translation['ws.refresh.now']}"
+				actionListener="#{configurationBean.refreshWs}">
+				<f:attribute name="ws" value="#{ws}" />
 			</h:commandButton>
 
 		</h:column>
@@ -68,8 +80,7 @@
 
 		<h:dataTable border="1" styleClass="table1"
 			rowClasses="table1rowEven table1rowOdd"
-			value="#{configurationBean.selectedWS.supportedLangPairs}"
-			var="pair">
+			value="#{configurationBean.selectedWS.supportedLangPairs}" var="pair">
 
 			<h:column>
 				<h:outputText value="#{pair.from}" />
@@ -86,12 +97,13 @@
 			</h:column>
 
 		</h:dataTable>
-		
+
 		<h:outputLabel value="wykrywanie jezyka:" />
 
-		<h:selectBooleanCheckbox value="#{configurationBean.selectedWS.languageDetection}"
-					readonly="true"/>
-		
+		<h:selectBooleanCheckbox
+			value="#{configurationBean.selectedWS.languageDetection}"
+			readonly="true" />
+
 		<h:outputLabel value="wspierane jakosci:" />
 
 		<h:dataTable border="1" styleClass="table1"
