@@ -5,9 +5,14 @@ import java.util.List;
 
 import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.Operation;
+import pl.edu.agh.iosr.model.TranslationOption;
 import pl.edu.agh.iosr.nuxeo.schema.translator.LanguagePair;
 import pl.edu.agh.iosr.nuxeo.schema.translator.LanguagePairs;
 import pl.edu.agh.iosr.nuxeo.schema.translator.Operations;
+import pl.edu.agh.iosr.nuxeo.schema.translator.Option;
+import pl.edu.agh.iosr.nuxeo.schema.translator.Options;
+import pl.edu.agh.iosr.nuxeo.schema.translator.SourceType;
+import pl.edu.agh.iosr.nuxeo.schema.translator.SourceTypes;
 import pl.edu.agh.iosr.nuxeo.schema.translator.TranslationQualities;
 import pl.edu.agh.iosr.nuxeo.schema.translator.TranslationQuality;
 
@@ -44,6 +49,24 @@ public class ResponseTranslator {
 		return resultList;
 		
 	}
+	
+	public List<TranslationOption> translateOptions(Options options) {
+		
+		List<TranslationOption> resultList=new ArrayList<TranslationOption>();
+		for(Option option:options.getOptions()){
+
+			if(option==Option.TRANSLATION_DEADLINE){
+				resultList.add(TranslationOption.TRANSLATION_DEADLINE);
+			}
+			else if(option==Option.TRANSLATION_QUALITY){
+				resultList.add(TranslationOption.TRANSLATION_QUALITY);
+			}
+			
+		}
+		return resultList;
+		
+	}
+	
 
 	public List<String> translateQualities(
 			TranslationQualities translationQualities) {
@@ -68,6 +91,17 @@ public class ResponseTranslator {
 		return resultList;
 		
 	}
+
+	public List<String> translateSourceTypes(SourceTypes sourceTypes) {
+		
+		List<String> resultList=new ArrayList<String>();
+		for(SourceType srcType:sourceTypes.getSourceTypes())
+			resultList.add(srcType.toString());
+		return resultList;
+		
+	}
+
+	
 	
 	
 
