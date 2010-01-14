@@ -28,6 +28,7 @@
 					<xsd:enumeration value="MIDDLE"/>
 					<xsd:enumeration value="ADVANCED"/>
 					<xsd:enumeration value="FINISHED"/>
+					<xsd:enumeration value="FAILED"/>
 				</xsd:restriction>
 			</xsd:simpleType>
 			

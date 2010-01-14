@@ -37,7 +37,9 @@ import com.google.api.translate.Language;
 import com.google.api.translate.Translate;
 
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.FileResultRequestWrapper;
+import pl.edu.agh.iosr.nuxeo.schema.translationresult.StatusRequestWrapper;
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.StringResultRequestWrapper;
+import pl.edu.agh.iosr.nuxeo.schema.translationresult.TranslationStatus;
 import pl.edu.agh.iosr.nuxeo.schema.translator.DetectionRequest;
 import pl.edu.agh.iosr.nuxeo.schema.translator.FileContentSource;
 import pl.edu.agh.iosr.nuxeo.schema.translator.FileFormats;
@@ -96,7 +98,7 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 	    port = service.getTranslationResultPort();
 	    Translate.setHttpReferrer(REFERRER);	
 		
-	//	setTranslationResultEndpoint(request.getCallbackEndpoint().getEndpointURI());
+	//	setTranslationResultEndpoint(request.getCallbackEndpoint().getEndpointURI());	TODO!!!
 		
 		if(request.getContentSource().getSourceType()==SourceType.STRING){
 			try {
@@ -109,24 +111,9 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 		if(request.getContentSource().getSourceType()==SourceType.FILE){			
 			try {
 				translateFile(request);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ParserConfigurationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SAXException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TransformerConfigurationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TransformerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				sendStatus(TranslationStatus.FAILED,request.getTranslationRequestID());
 			}
 				
 		}
@@ -148,13 +135,11 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 		System.out.println("translate file");
 		FileContentSource fileContentSource=(FileContentSource)request.getContentSource();
 		File sourceFile=createFileFromDataHandler(fileContentSource.getFile());					
-	//	//boolean ala=new File("nuxeo").createNewFile();
-		
 		XliffParser xliffParser=new XliffParser(sourceFile);
 		Map<String, String> sourceText=xliffParser.getSourceText();
 		Map<String,String> translatedText=new HashMap<String, String>();
 		for(Map.Entry<String,String> unit:sourceText.entrySet()){
-		//	String translatedUnitText=unit.getValue().toUpperCase();
+
 			String translatedUnitText=Translate.execute(unit.getValue(),Language.fromString(request.getSourceLanguage()) ,Language.fromString(request.getDestinationLanguage()));
 		
 			translatedText.put(unit.getKey(), translatedUnitText);
@@ -359,6 +344,15 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 		stringResult.setTranslationRequestID(translationRequestID);
 	//	port.sendStringResult(stringResult);
 		
+	}
+	
+	private void sendStatus(TranslationStatus status,String requestId){
+
+		StatusRequestWrapper statusRequestWrapper=new StatusRequestWrapper();
+		statusRequestWrapper.setStatus(status);
+		statusRequestWrapper.setTranslationRequestID(requestId);
+		port.sendStatus(statusRequestWrapper);
+
 	}
 
     
