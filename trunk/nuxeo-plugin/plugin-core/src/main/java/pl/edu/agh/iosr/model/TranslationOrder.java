@@ -247,14 +247,6 @@ public class TranslationOrder implements java.io.Serializable {
     	
     	return xliffResult;
 	}
-	
-	/**
-	 * uaktualnia status okreslajacy postep translacji
-	 * */
-	public void updateStatus(TranslationStatus status){
-		
-		this.status = status;
-	}
 
 	// gettery i setter
 
@@ -387,5 +379,13 @@ public class TranslationOrder implements java.io.Serializable {
 	@Transient public Date getReconversion() {return timeStamps[3];}
 	@Transient public Date getSucceeded() {return timeStamps[4];}
 	@Transient public Date getFailed() {return timeStamps[5];}
+
+	public TranslationStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(TranslationStatus status) {
+		this.status = status;
+	}
 
 }
