@@ -11,8 +11,10 @@
          
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
     <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
-    <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>         
-
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+    
+    <bean name="callbackHandler" class="pl.edu.agh.iosr.nuxeo.ws.result.ServerPasswordCallback" />     
+    
     <jaxws:endpoint 
         id="result"
         implementor="pl.edu.agh.iosr.nuxeo.ws.result.TranslationResultPortTypeImpl"
@@ -22,5 +24,21 @@
         <jaxws:properties>
       		<entry key="mtom-enabled" value="true"/>
     	</jaxws:properties>
+
+		<!-- jaxws:inInterceptors>
+		    <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+		         <constructor-arg>
+		            <map>
+		               <entry key="action" value="UsernameToken"/>
+		               <entry key="passwordType" value="PasswordText"/>
+		               <entry key="passwordCallbackRef">
+		               	  <ref bean="callbackHandler" />
+		               </entry>
+		            </map>
+		         </constructor-arg>
+		    </bean>
+	     </jaxws:inInterceptors-->
     </jaxws:endpoint>
+    
+    
 </beans>

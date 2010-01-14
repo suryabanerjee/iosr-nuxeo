@@ -23,6 +23,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import pl.edu.agh.iosr.exceptions.WorkflowException;
+import pl.edu.agh.iosr.nuxeo.schema.translationresult.TranslationStatus;
 import pl.edu.agh.iosr.util.IosrLogger;
 import pl.edu.agh.iosr.util.IosrRandomGenerator;
 import pl.edu.agh.iosr.util.IosrLogger.Level;
@@ -135,6 +136,11 @@ public class TranslationOrder implements java.io.Serializable {
 	 * można odczytać tylko poprzez toString
 	 * */
 	private Date[] timeStamps = new Date[RequestState.values().length];
+	
+	/**
+	 * zawiera status okreslajacy postep translacji
+	 * */
+	private TranslationStatus status = TranslationStatus.NOT_STARTED;
 
 	/**
 	 * dla ulatwienia przeciazamy hehe
@@ -240,6 +246,14 @@ public class TranslationOrder implements java.io.Serializable {
     	out.close();
     	
     	return xliffResult;
+	}
+	
+	/**
+	 * uaktualnia status okreslajacy postep translacji
+	 * */
+	public void updateStatus(TranslationStatus status){
+		
+		this.status = status;
 	}
 
 	// gettery i setter
