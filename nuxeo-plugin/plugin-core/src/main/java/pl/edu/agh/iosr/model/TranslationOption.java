@@ -5,5 +5,5 @@ package pl.edu.agh.iosr.model;
  * */
 
 public enum TranslationOption {
-	TRANSLATION_QUALITY,RANSLATION_DEADLINE
+	TRANSLATION_QUALITY,TRANSLATION_DEADLINE
 }

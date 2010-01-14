@@ -29,6 +29,7 @@ import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.FileResultRequestWrapper;
 import pl.edu.agh.iosr.nuxeo.schema.translator.DetectionRequest;
+import pl.edu.agh.iosr.nuxeo.schema.translator.FileFormats;
 import pl.edu.agh.iosr.nuxeo.schema.translator.LanguagePairs;
 import pl.edu.agh.iosr.nuxeo.schema.translator.Operations;
 import pl.edu.agh.iosr.nuxeo.schema.translator.Options;
@@ -72,16 +73,19 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 	
 	private void setTranslationServiceEndpoint(String translationServiceEndpoint){
 		
-		BindingProvider bp=(BindingProvider)port;
-		bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, translationServiceEndpoint);
+	//	BindingProvider bp=(BindingProvider)port;
+	//	bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, translationServiceEndpoint);
     	
 	
 	}
 	
 	public List<String> getSuppportedFileFormats(
 			TranslationServiceDescription webservice) {
+		System.out.println("\n\n\nENDPOINT IS"+webservice.getEndpoint());
+		setTranslationServiceEndpoint(webservice.getEndpoint());
+		FileFormats fileFormats=port.getSupportedFileFormats("whatever");
+		return fileFormats.getMimeTypes();
 		
-			return null;
 	}
 
 	
@@ -107,15 +111,21 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 	
 	public List<String> getSuppportedSourceTypes(
 			TranslationServiceDescription webservice) {
-		// TODO Auto-generated method stub
-		return null;
+
+		setTranslationServiceEndpoint(webservice.getEndpoint());
+		SourceTypes sourceTypes=port.getSupportedSourceTypes("whatever");
+		return responseTranslator.translateSourceTypes(sourceTypes);
+		
 	}
 
 	
 	public List<TranslationOption> getSuppportedTranslationOptions(
 			TranslationServiceDescription webservice) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		setTranslationServiceEndpoint(webservice.getEndpoint());
+		Options options=port.getSupportedOptions("whatever");
+		return responseTranslator.translateOptions(options);
+		
 	}
 
 	
@@ -129,7 +139,7 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 	}
 
 	
-	public List<Locale> getSuppportedTranslationsPerLanguage(
+	public List<Locale> getSuppportedTranslationsPerLanguage(		
 			TranslationServiceDescription webservice, Locale language) {
 		// TODO Auto-generated method stub
 		return null;
@@ -140,14 +150,13 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 			TranslationOrder request, File content) {
 		
 	    TranslationRequest translationRequest=translationOrderTranslator.translate(request);
-		//port.translate(translationRequest);
 		log(this.getClass(), "\n\n invoking translate...\n\n");
 		port.translate(translationRequest);
 		log(this.getClass(), "\n\n TRANSLATE CALLED+OK\n\n");
 		
 	}
 	
-	
+
 	public void testInvoke(TranslationServiceDescription webservice,
 			TranslationOrder request, File content){
 		
