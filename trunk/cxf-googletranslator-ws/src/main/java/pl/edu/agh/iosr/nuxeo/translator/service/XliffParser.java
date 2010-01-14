@@ -43,8 +43,8 @@ public class XliffParser {
 	private static final String SOURCE_VALUE_TAG="mrk";
 	private static final String ID_TAG="id";
 	
-	private static final String TRANSLATED_TEXT_TAG="id";
-	private static final String TRANSLATION_LANGUAGE_TAG="id";
+	private static final String TRANSLATED_TEXT_TAG="target";
+	private static final String TRANSLATION_LANGUAGE_TAG="xml:lang";
 	
 
 	public XliffParser(File xliffFile) {

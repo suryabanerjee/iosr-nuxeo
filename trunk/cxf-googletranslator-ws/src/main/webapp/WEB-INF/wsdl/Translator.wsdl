@@ -231,7 +231,7 @@
 	<wsdl:portType name="TranslatorPortType">	
 		<wsdl:operation name="translate">
 			<wsdl:input message="tns:translateRequest" name="translateRequest" />
-			<!-- <wsdl:output message="tns:translateResponse"/>  -->
+			<wsdl:output message="tns:translateResponse"/>
 			
 			
 	<!--		<wsdl:fault name="wrongSourceType" message="tns:SourceTypeNotSupported"/>-->
@@ -367,7 +367,7 @@
 	</wsdl:binding>
 	<wsdl:service name="GoogleTranslatorService">
 		<wsdl:port name="TranslatorPort" binding="tns:TranslatorBinding">
-			<soap:address location="http://localhost:8080/cxf-googletranslator-ws/services/translator"/>
+			<soap:address location="http://localhost:8090/cxf-googletranslator-ws/services/translator"/>
 		</wsdl:port>
 	</wsdl:service>
 	<wsdl:service name="OtherTranslatorService">
