@@ -25,6 +25,7 @@ import pl.edu.agh.iosr.services.RepositoryProxyService;
 import pl.edu.agh.iosr.services.TranslationOrderService;
 import pl.edu.agh.iosr.services.TranslationServicesConfigService;
 import pl.edu.agh.iosr.services.ValidationService;
+import pl.edu.agh.iosr.ws.RemoteWSInvoker;
 
 /**
  * Mediator, koordynuje dzia�ania innych komponent�w, nale�y unika� dodawania tu
@@ -60,9 +61,9 @@ public class Mediator {
 
 	@In(create = true, value = "#{translationServicesConfigService}")
 	private TranslationServicesConfigService translationServicesConfigService;
-	//
-	// @In(create = true, value="#{remoteWSInvoker}")
-	// private RemoteWSInvoker remoteWSInvoker;
+	
+	@In(create = true, value="#{remoteWSInvoker}")
+	private RemoteWSInvoker remoteWSInvoker;
 
 	@In(create = true)
 	private PersistenceTest persistenceTest;
@@ -131,14 +132,13 @@ public class Mediator {
 			TranslationServiceDescription tsDescription = translationServicesConfigService
 					.getTranslationService(order.getWsId());
 			// testowe wywoalnie invokera google translatora
-			log(this.getClass(), "before calling translate");
+			//log(this.getClass(), "before calling translate");
 
 			// remoteWSInvoker.testInvoke(tsDescription, order, null);
 
-			log(this.getClass(), "after calling translate");
+			//log(this.getClass(), "after calling translate");
 
-			String fileExtension = documentAccessService.getFileExtension(order
-					.getSourceDocument().getDocumentModel().getRef());
+			String fileExtension = "";//documentAccessService.getFileExtension(order.getSourceDocument().getDocumentModel().getRef());   - to powodowalo blad kompilacji
 			if (validationService.isConversionNeeded(fileExtension,
 					tsDescription)) {
 				xliffConverter.convert(order);
@@ -171,9 +171,9 @@ public class Mediator {
 			order.nextState();
 			translationOrderService.saveOrUpdateTranslationOrder(order);
 
-			// remoteWSInvoker.traslateAsync(translationServicesConfigService
-			// .getTranslationService(order.getWsId()), order,
-			// documentAccessService.getFile(order.getSourceDocument())); //???
+			 remoteWSInvoker.traslateAsync(translationServicesConfigService
+			 .getTranslationService(order.getWsId()), order,
+			null); //??? documentAccessService.getFile(order.getSourceDocument())
 			// po co sourcedocument?
 
 		}
