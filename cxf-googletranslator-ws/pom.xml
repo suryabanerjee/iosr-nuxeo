@@ -21,7 +21,7 @@
 	   <artifactId>google-api-translate-java</artifactId>
     </dependency>	
 	
-	<dependency>
+		<dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
@@ -36,16 +36,31 @@
         <artifactId>cxf-rt-transports-http</artifactId>
     </dependency>    
 		  
-	<dependency>
+		<dependency>
        <groupId>pl.edu.agh.iosr.ws</groupId>
        <artifactId>cxf-translator-ws</artifactId>
-     </dependency>
+    </dependency>
 	 
-     <dependency>
+    <dependency>
        <groupId>pl.edu.agh.iosr.ws</groupId>
        <artifactId>cxf-translation-result-ws</artifactId>
        <classifier>jaxws</classifier>
-     </dependency>
+    </dependency>
+		
+    <dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-ws-security</artifactId>
+		</dependency>		
      
   </dependencies>
   
