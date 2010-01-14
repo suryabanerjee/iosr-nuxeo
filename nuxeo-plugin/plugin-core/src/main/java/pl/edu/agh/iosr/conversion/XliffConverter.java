@@ -21,6 +21,7 @@ import org.jboss.seam.annotations.Destroy;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.In;
+import org.jboss.seam.contexts.Contexts;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -70,7 +71,7 @@ public class XliffConverter extends AsynchronousConverter{
 
 	public XliffConverter() {
 		super();
-		mediator = (Mediator) Component.getInstance("mediator",true);
+		mediator = (Mediator) Contexts.getApplicationContext().get("mediator");
     }
     
     private void prepare() {
