@@ -230,10 +230,8 @@
 	</wsdl:message>
 	<wsdl:portType name="TranslatorPortType">	
 		<wsdl:operation name="translate">
-			<wsdl:input message="tns:translateRequest" name="translateRequest" />
-			<wsdl:output message="tns:translateResponse"/>
-			
-			
+			 <wsdl:input message="tns:translateRequest" name="translateRequest" />		
+	<!--		 <wsdl:output message="tns:translateResponse"/>  -->
 	<!--		<wsdl:fault name="wrongSourceType" message="tns:SourceTypeNotSupported"/>-->
 		</wsdl:operation>
 		<wsdl:operation name="getSupportedOperations">
