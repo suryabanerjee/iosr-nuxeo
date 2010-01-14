@@ -83,7 +83,7 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 	private SupportedLanguagesManager supportedLanguagesManager=new SupportedLanguagesManager();
 		
 	@Override
-	public String translate(TranslationRequest request){	
+	public void translate(TranslationRequest request){	
 		System.out.println("traalala");
 		
 		service = new TranslationResultService();			
@@ -124,7 +124,6 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 			}
 				
 		}
-		return null;
 	
 		
 	}
