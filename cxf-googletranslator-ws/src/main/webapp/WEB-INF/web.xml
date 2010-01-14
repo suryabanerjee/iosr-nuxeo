@@ -18,6 +18,10 @@
 	      classpath:META-INF/cxf/cxf-servlet.xml 
         </param-value>
     </context-param>
+    <context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>google.root</param-value>
+	</context-param>
     <servlet>
         <servlet-name>WebServicePort</servlet-name>
         <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>

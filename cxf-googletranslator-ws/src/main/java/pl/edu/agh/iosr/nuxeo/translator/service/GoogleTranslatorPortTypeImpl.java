@@ -83,13 +83,14 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 	private SupportedLanguagesManager supportedLanguagesManager=new SupportedLanguagesManager();
 		
 	@Override
-	public void translate(TranslationRequest request){	
+	public String translate(TranslationRequest request){	
+		System.out.println("traalala");
 		
 		service = new TranslationResultService();			
 	    port = service.getTranslationResultPort();
 	    Translate.setHttpReferrer(REFERRER);	
 		
-		setTranslationResultEndpoint(request.getCallbackEndpoint().getEndpointURI());
+	//	setTranslationResultEndpoint(request.getCallbackEndpoint().getEndpointURI());
 		
 		if(request.getContentSource().getSourceType()==SourceType.STRING){
 			try {
@@ -123,12 +124,13 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 			}
 				
 		}
+		return null;
 	
 		
 	}
 
 	private void translateString(TranslationRequest request) throws Exception {
-		
+		System.out.println("translate string");
 		StringContentSource content=(StringContentSource)request.getContentSource();
 		String translatedText=Translate.execute(content.getText(), Language.fromString(request.getSourceLanguage()) ,Language.fromString(request.getDestinationLanguage()));
 		sendResultString(translatedText,request.getTranslationRequestID());
@@ -138,19 +140,23 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 	private void translateFile(TranslationRequest request) throws IOException,		//TODO optimization
 			ParserConfigurationException, SAXException, Exception,
 			TransformerException, TransformerConfigurationException {
-		
+		System.out.println("translate file");
 		FileContentSource fileContentSource=(FileContentSource)request.getContentSource();
 		File sourceFile=createFileFromDataHandler(fileContentSource.getFile());					
+	//	//boolean ala=new File("nuxeo").createNewFile();
+		
 		XliffParser xliffParser=new XliffParser(sourceFile);
 		Map<String, String> sourceText=xliffParser.getSourceText();
 		Map<String,String> translatedText=new HashMap<String, String>();
 		for(Map.Entry<String,String> unit:sourceText.entrySet()){
+		//	String translatedUnitText=unit.getValue().toUpperCase();
 			String translatedUnitText=Translate.execute(unit.getValue(),Language.fromString(request.getSourceLanguage()) ,Language.fromString(request.getDestinationLanguage()));
+		
 			translatedText.put(unit.getKey(), translatedUnitText);
 		}
-		File resultFile=xliffParser.createXliffWithTranslation(translatedText, Language.POLISH.toString(),"result");
+		File resultFile=xliffParser.createXliffWithTranslation(translatedText, request.getDestinationLanguage()+"_"+request.getDestinationLanguage().toUpperCase(),"result");
 		sendResultFile(resultFile,request.getTranslationRequestID());
-		sourceFile.delete();
+	//	sourceFile.delete();
 		
 	}
 
@@ -159,8 +165,6 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 	@Override
 	public String detectLanguage(DetectionRequest request) throws DetectionException, ContentExtractionException{
 		
-		service = new TranslationResultService();			
-	    port = service.getTranslationResultPort();
 		Detect.setHttpReferrer(REFERRER);
 		DetectResult detectResult=null;
 		if(request.getContentSource().getSourceType()==SourceType.STRING){
@@ -178,6 +182,7 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 		else
 			return detectResult.getLanguage().toString();
 		
+		//return null;
 	}
 
 	private DetectResult detectFromFile(DetectionRequest request) throws ContentExtractionException,DetectionException{
@@ -198,8 +203,8 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 		if(sample.length()==0)
 			throw new ContentExtractionException("No text found!");		
 		try{	
-			DetectResult detectResult=Detect.execute(sample);
-			return detectResult;
+			//DetectResult detectResult=new DetectResult(Language.ENGLISH, true, 1.0);//=Detect.execute(sample);
+			return null;
 		}catch (Exception e) {
 			throw new DetectionException(e.getMessage(),e);	
 		}
@@ -249,7 +254,7 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 	}
 	@Override
 	public SourceTypes getSupportedSourceTypes(Object parameter) {
-		
+		System.out.println("source types!!!");
 		SourceTypes types=new SourceTypes();
 		types.getSourceTypes().addAll(Arrays.asList(supportedSourceTypes));
 		return types;
@@ -332,15 +337,15 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 		StringResultRequestWrapper stringResult=new StringResultRequestWrapper();
 		stringResult.setText(translatedText);
 		stringResult.setTranslationRequestID(translationRequestID);
-		port.sendStringResult(stringResult);
+	//	port.sendStringResult(stringResult);
 		
 	}
 
     
 	private void setTranslationResultEndpoint(String translationServiceEndpoint){
 		
-		BindingProvider bp=(BindingProvider)port;
-		bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, translationServiceEndpoint);
+	//	BindingProvider bp=(BindingProvider)port;
+	//	bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, translationServiceEndpoint);
     	
 	}
 
