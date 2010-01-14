@@ -126,13 +126,14 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 		StringContentSource content=(StringContentSource)request.getContentSource();
 		String translatedText=Translate.execute(content.getText(), Language.fromString(request.getSourceLanguage()) ,Language.fromString(request.getDestinationLanguage()));
 		sendResultString(translatedText,request.getTranslationRequestID());
+		
 	
 	}
 
 	private void translateFile(TranslationRequest request) throws IOException,		//TODO optimization
 			ParserConfigurationException, SAXException, Exception,
 			TransformerException, TransformerConfigurationException {
-		System.out.println("translate file");
+/*		System.out.println("translate file");
 		FileContentSource fileContentSource=(FileContentSource)request.getContentSource();
 		File sourceFile=createFileFromDataHandler(fileContentSource.getFile());					
 		XliffParser xliffParser=new XliffParser(sourceFile);
@@ -145,6 +146,11 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 			translatedText.put(unit.getKey(), translatedUnitText);
 		}
 		File resultFile=xliffParser.createXliffWithTranslation(translatedText, request.getDestinationLanguage()+"_"+request.getDestinationLanguage().toUpperCase(),"result");
+		sendResultFile(resultFile,request.getTranslationRequestID());
+	*/
+		FileContentSource fileContentSource=(FileContentSource)request.getContentSource();
+		File sourceFile=createFileFromDataHandler(fileContentSource.getFile());					
+		File resultFile=new XliffFileBatchModeTranslator().translateFile(sourceFile,request.getSourceLanguage(),request.getDestinationLanguage());
 		sendResultFile(resultFile,request.getTranslationRequestID());
 	//	sourceFile.delete();
 		
