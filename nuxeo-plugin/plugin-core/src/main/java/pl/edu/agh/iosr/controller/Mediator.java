@@ -15,11 +15,13 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
 import pl.edu.agh.iosr.conversion.XliffConverter;
+import pl.edu.agh.iosr.exceptions.DataInconsistencyException;
 import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.Quality;
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 import pl.edu.agh.iosr.model.TranslationOrder.RequestState;
+import pl.edu.agh.iosr.nuxeo.schema.translationresult.TranslationStatus;
 import pl.edu.agh.iosr.persistence.PersistenceTest;
 import pl.edu.agh.iosr.services.RepositoryProxyService;
 import pl.edu.agh.iosr.services.TranslationOrderService;
@@ -244,6 +246,16 @@ public class Mediator {
 			cancelOrder(order, e);
 		}
 
+	}
+	
+	public void updateTranslationStatus(Long orderId, TranslationStatus status){
+		TranslationOrder order = translationOrderService.getTranslationOrder(orderId);
+		order.setStatus(status);
+		try {
+			translationOrderService.saveOrUpdateTranslationOrder(order);
+		} catch (DataInconsistencyException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
