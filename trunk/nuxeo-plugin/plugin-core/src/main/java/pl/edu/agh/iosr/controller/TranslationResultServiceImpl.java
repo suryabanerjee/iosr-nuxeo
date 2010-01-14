@@ -26,8 +26,7 @@ public class TranslationResultServiceImpl implements TranslationResultService {
 	private Mediator mediator;
 
 	public void sendStatus(StatusRequestWrapper parameters) {
-		// TODO Auto-generated method stub
-		return;
+		mediator.updateTranslationStatus(new Long(parameters.getTranslationRequestID()), parameters.getStatus());
 	}
 
 	public void sendStringResult(StringResultRequestWrapper parameters) {

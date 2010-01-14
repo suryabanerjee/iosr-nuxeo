@@ -1,6 +1,8 @@
 package pl.edu.agh.iosr.nuxeo.ws.result;
 
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
@@ -9,6 +11,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
+
+import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
+import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.FileResultRequestWrapper;
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.StatusRequestWrapper;
@@ -94,7 +99,6 @@ public class TranslationResultPortTypeImpl implements TranslationResultPortType{
 	 * 
 	 * */
 	public void sendFileResult(FileResultRequestWrapper parameters) {
-		
 		try {
 
 			Properties p = new Properties();
@@ -112,7 +116,7 @@ public class TranslationResultPortTypeImpl implements TranslationResultPortType{
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-			
+
 		return;
 		
 	}

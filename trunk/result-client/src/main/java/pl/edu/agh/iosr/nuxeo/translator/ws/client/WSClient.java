@@ -25,7 +25,7 @@ public class WSClient {
 	public static void main (String[] args){
         TranslationResultService service = new TranslationResultService();
         TranslationResultPortType port = service.getTranslationResultPort();
-        Client client = ClientProxy.getClient(port);
+        /*Client client = ClientProxy.getClient(port);
         Endpoint cxfEndpoint = client.getEndpoint();
         
     	Map<String,Object> outProps= new HashMap<String,Object>();
@@ -37,7 +37,7 @@ public class WSClient {
 		outProps.put(WSHandlerConstants.PW_CALLBACK_CLASS, ClientPasswordHandler.class.getName());
 		
 		WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
-		cxfEndpoint.getOutInterceptors().add(wssOut);
+		cxfEndpoint.getOutInterceptors().add(wssOut);*/
         
         File file = new File("testfile.txt");
       
