@@ -23,6 +23,12 @@ import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Response;
 
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
+import org.apache.ws.security.WSConstants;
+import org.apache.ws.security.handler.WSHandlerConstants;
 import org.xml.sax.SAXException;
 
 import com.google.api.detect.Detect;
@@ -253,7 +259,7 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 	}
 	@Override
 	public SourceTypes getSupportedSourceTypes(Object parameter) {
-		System.out.println("source types!!!");
+
 		SourceTypes types=new SourceTypes();
 		types.getSourceTypes().addAll(Arrays.asList(supportedSourceTypes));
 		return types;
@@ -327,6 +333,21 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
     	FileResultRequestWrapper fileResult = new FileResultRequestWrapper();
     	fileResult.setFile(dh);
     	fileResult.setTranslationRequestID(translationRequestId);
+    	
+    	Client client = ClientProxy.getClient(port);
+        Endpoint cxfEndpoint = client.getEndpoint();
+    	
+    	Map<String,Object> outProps= new HashMap<String,Object>();
+		
+		outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
+		outProps.put(WSHandlerConstants.USER, "nuxeo");
+		outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
+		//properties.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_DIGEST);
+		outProps.put(WSHandlerConstants.PW_CALLBACK_CLASS, ClientPasswordHandler.class.getName());
+		
+		WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
+		cxfEndpoint.getOutInterceptors().add(wssOut);
+    	
     	port.sendFileResult(fileResult);
     	
     }
