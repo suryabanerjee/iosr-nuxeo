@@ -147,8 +147,7 @@ public class XliffConverter extends AsynchronousConverter{
 				fos.write(buffer, 0, data);
 			}
 			fis.close();
-			fos.close();
-			
+			fos.close();	
 		} catch(Exception e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
 		}
@@ -160,11 +159,12 @@ public class XliffConverter extends AsynchronousConverter{
 			String path = source.getPathAsString();
 			path = path.substring(0, path.lastIndexOf("/"));
 			String type = source.getType();
-			
 			DocumentModel dm = new DocumentModelImpl(path, name, type);
-			coreSession.createDocument(dm);
+			log(this.getClass(), "document created.");
 			FileBlob fb = new FileBlob(new File(generatedFile));
 			dm.setProperty("file", "content", fb);
+			System.out.println("title: " + dm.getTitle());
+			coreSession.createDocument(dm);
 			coreSession.save();
 			log(this.getClass(), "document saved.");
 		} catch (Exception e) {
@@ -271,6 +271,7 @@ public class XliffConverter extends AsynchronousConverter{
 				createResultFile(source,
 					destName, sw.toString());
 			} catch(Exception ec) {
+				ec.printStackTrace();
 				log(this.getClass(), ec.getMessage(), Level.FATAL);
 			}
 			
