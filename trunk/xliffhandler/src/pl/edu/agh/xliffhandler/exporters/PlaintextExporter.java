@@ -148,8 +148,8 @@ public class PlaintextExporter implements Converter {
         String inSkeleton = baseDir + File.separator
         		+ nativeFileName + Converter.skeletonSuffix;
         		
-        System.out.println("InXliff: " + inXliff);
-        System.out.println("InSkeleton: " + inSkeleton);
+        //System.out.println("InXliff: " + inXliff);
+        //System.out.println("InSkeleton: " + inSkeleton);
 
         // Assume that the nativeFileName ends with a period and extension 
         // (something like .txt or .text). If it does, insert the language 
