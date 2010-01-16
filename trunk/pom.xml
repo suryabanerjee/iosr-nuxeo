@@ -67,11 +67,11 @@
              <type>jar</type>
           </dependency>
 		  
-		  <!--dependency>
+		  <dependency>
 			<groupId>com.google.api.translate</groupId>
 			<artifactId>google-api-translate-java</artifactId>
 			<version>0.91</version>
-		  </dependency-->
+		  </dependency>
 		  
 	  </dependencies>
   </dependencyManagement>
