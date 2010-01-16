@@ -202,15 +202,8 @@ public class PlaintextImporter implements Converter {
             throw new ConversionException("Source language omitted. (Required)");
         }
         
-        //try {
-	        //PATH = baseDir;
-	        File dir = new File(baseDir);
-	        //System.out.println(dir.getPath());
-        	dir.mkdirs();
-        /*} catch (IOException e) {
-        	System.err.println(e.getMessage());
-            throw new ConversionException(e.getMessage());
-        }*/
+	    File dir = new File(baseDir);
+		dir.mkdirs();
         
         // If caller specifies no encoding, choose a default encoding based on
         // source language.
