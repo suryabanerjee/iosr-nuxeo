@@ -14,10 +14,6 @@
   <name>Core of plugin for Nuxeo</name>
 
   <dependencies>
-	<dependency>
-		<groupId>pl.edu.agh.iosr</groupId>
-		<artifactId>pl.edu.agh.xliffhandler</artifactId>
-	</dependency>
   
     <dependency>
       <groupId>org.nuxeo.ecm.core</groupId>
@@ -97,6 +93,11 @@
        <artifactId>cxf-translator-ws</artifactId>
 	   <classifier>jaxws</classifier>
      </dependency>
+	 
+	 <dependency>
+		<groupId>pl.edu.agh.iosr</groupId>
+		<artifactId>xliffhandler</artifactId>
+	</dependency>
 
     <!-- Scope test -->
     <dependency>

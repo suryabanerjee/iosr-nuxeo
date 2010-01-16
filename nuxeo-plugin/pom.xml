@@ -108,10 +108,8 @@
 		  
 		  <dependency>
 			<groupId>pl.edu.agh.iosr</groupId>
-			<artifactId>pl.edu.agh.xliffhandler</artifactId>
+			<artifactId>xliffhandler</artifactId>
 			<version>1.0</version>
-			<!--scope>system</scope>
-			<systemPath>${basedir}/src/main/lib/file2xliff4j-20070711.jar</systemPath-->
 		  </dependency>
 		  
 	  </dependencies>
