@@ -633,6 +633,8 @@ public abstract class OdfImporter implements Converter {
             generatedFileName.write(baseDir + File.separator + xliffOriginalFileName + Converter.xliffSuffix);
         }
         
+        System.out.println("generatedFileName: " + generatedFileName.toString());
+        
         return ConversionStatus.CONVERSION_SUCCEEDED;
     }
 

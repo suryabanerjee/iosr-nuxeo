@@ -166,6 +166,8 @@ public class OOoTextImporter extends OdfImporter implements Converter {
 
         }
         
+        System.out.println("generatedFileName: " + generatedFileName.toString());
+        
         // Now call superclass's convert method to complete the conversion.
         // Be optimistic that it will succeed ...
         return super.convert(mode, language, null, 0, null,
