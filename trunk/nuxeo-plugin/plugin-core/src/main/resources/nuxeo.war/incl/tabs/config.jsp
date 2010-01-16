@@ -11,7 +11,7 @@
 		style="padding: 10px; width: 90%; text-align: center; height: 40%; background: #CCFF00; margin: 10px;">
 
 	<h:outputLabel value="#{translation['ws.title']}" /> <h:dataTable
-		value="#{configurationBean.remoteWSs}" var="ws" border="1"
+		value="#{configurationBean.translationServices}" var="ws" border="1"
 		styleClass="table1" style="width: 100%;
 	background: #99FFFF;"
 		rowClasses="table1rowEven table1rowOdd">
@@ -83,14 +83,14 @@
 			value="#{configurationBean.selectedWS.supportedLangPairs}" var="pair">
 
 			<h:column>
-				<h:outputText value="#{pair.from}" />
+				<h:outputText value="#{pair.fromLang}" />
 				<f:facet name="header">
 					<h:outputText value="column1" />
 				</f:facet>
 			</h:column>
 
 			<h:column>
-				<h:outputText value="#{pair.to}" />
+				<h:outputText value="#{pair.toLang}" />
 				<f:facet name="header">
 					<h:outputText value="column2" />
 				</f:facet>
@@ -112,7 +112,7 @@
 			var="quality">
 
 			<h:column>
-				<h:outputText value="#{quality}" />
+				<h:outputText value="#{quality.value}" />
 				<f:facet name="header">
 					<h:outputText value="column1" />
 				</f:facet>
@@ -128,7 +128,7 @@
 			var="dt">
 
 			<h:column>
-				<h:outputText value="#{dt}" />
+				<h:outputText value="#{dt.value}" />
 				<f:facet name="header">
 					<h:outputText value="column1" />
 				</f:facet>
