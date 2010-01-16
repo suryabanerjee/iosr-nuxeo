@@ -122,7 +122,7 @@ public class HtmlExporter implements Converter {
                 + language.toString();
             if (generatedFileName != null) {
                 // Tell caller the name of the output file (wo/directories)
-                generatedFileName.write(outHtmlNameOnly + "." + language.toString());
+                generatedFileName.write(baseDir + File.separator + outHtmlNameOnly + "." + language.toString());
             }
         }
         else {
