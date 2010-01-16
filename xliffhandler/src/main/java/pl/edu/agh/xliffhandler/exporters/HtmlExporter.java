@@ -117,6 +117,8 @@ public class HtmlExporter implements Converter {
         String outHtml;
         
         int lastDot = outHtmlNameOnly.lastIndexOf(".");
+        if (lastDot == -1)
+			lastDot = outHtmlNameOnly.lastIndexOf("-");
         if (lastDot == -1) {  // Unusual, but no dot!
             outHtml = baseDir + File.separator + outHtmlNameOnly + "."
                 + language.toString();
@@ -132,7 +134,7 @@ public class HtmlExporter implements Converter {
                 + outHtmlNameOnly.substring(lastDot+1);
             if (generatedFileName != null) {
                 // Tell caller the name of the output file (wo/directories)
-                generatedFileName.write(outHtmlNameOnly.substring(0,lastDot)
+                generatedFileName.write(baseDir + File.separator + outHtmlNameOnly.substring(0,lastDot)
                     + "." + language.toString() + "." + outHtmlNameOnly.substring(lastDot+1));
             }
         }
