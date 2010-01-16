@@ -320,7 +320,7 @@ public class HtmlImporter extends AbstractSAXParser implements Converter {
         }
         
         if (generatedFileName != null) {
-            generatedFileName.write(nativeFileName + Converter.xliffSuffix);
+            generatedFileName.write(baseDir + File.separator + nativeFileName + Converter.xliffSuffix);
         }
                 
         return ConversionStatus.CONVERSION_SUCCEEDED;
