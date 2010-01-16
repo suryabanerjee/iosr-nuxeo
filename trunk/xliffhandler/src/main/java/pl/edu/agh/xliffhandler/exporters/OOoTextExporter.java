@@ -185,7 +185,7 @@ public class OOoTextExporter extends OdfExporter implements Converter {
                     + language.toString() + ".odt";
             if (generatedFileName != null) {
                 // Tell caller the name of the output file (wo/directories)
-                generatedFileName.write(xliffOriginalFileName.substring(0,extPos) + "."
+                generatedFileName.write(baseDir + File.separator + xliffOriginalFileName.substring(0,extPos) + "."
                     + language.toString() + ".odt");
             }
         }
