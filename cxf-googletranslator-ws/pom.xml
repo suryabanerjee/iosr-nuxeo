@@ -19,6 +19,9 @@
     <dependency>
 	   <groupId>com.google.api.translate</groupId>
 	   <artifactId>google-api-translate-java</artifactId>
+	   <version>0.91</version>
+	   <scope>system</scope>
+	   <systemPath>${basedir}/lib/google-api-translate-java-0.91.jar</systemPath>
     </dependency>	
 	
 		<dependency>

@@ -12,6 +12,7 @@
   <description>Nuxeo Translator - plugin for Nuxeo ECM which provides the functionality of documents translation.</description>
   
   <modules>
+	<module>xliffhandler</module>
 	<module>nuxeo-plugin</module>
     <module>cxf-googletranslator-ws</module>
 	<!--module>translator-client</module-->
@@ -66,11 +67,11 @@
              <type>jar</type>
           </dependency>
 		  
-		  <dependency>
+		  <!--dependency>
 			<groupId>com.google.api.translate</groupId>
 			<artifactId>google-api-translate-java</artifactId>
 			<version>0.91</version>
-		  </dependency>
+		  </dependency-->
 		  
 	  </dependencies>
   </dependencyManagement>
