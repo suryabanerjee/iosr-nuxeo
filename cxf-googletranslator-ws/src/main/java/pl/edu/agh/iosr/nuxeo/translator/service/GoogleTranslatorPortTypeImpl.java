@@ -377,9 +377,9 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
     
 	private void setTranslationResultEndpoint(String translationServiceEndpoint){
 		
-	//	BindingProvider bp=(BindingProvider)port;
-	//	bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, translationServiceEndpoint);
-    	
+		BindingProvider bp=(BindingProvider)port;
+		bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, translationServiceEndpoint);
+   	
 	}
 
 	
