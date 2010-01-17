@@ -38,18 +38,11 @@
 		</h:column>
 
 		<h:column>
-			<h:commandButton value="#{translation['ws.delete']}"
-				actionListener="#{configurationBean.deleteWS}">
-				<f:attribute name="czopson" value="#{ws.name}" />
-			</h:commandButton>
-		</h:column>
-
-		<h:column>
 			<f:facet name="header">
-				<h:outputText value="pokaz szczegoly" />
+				<h:outputText value="#{translation['ws.show.details']}" />
 			</f:facet>
 
-			<h:commandButton value="#{translation['ws.show.details']} #{ws.name}">
+			<h:commandButton value="#{translation['ws.show.details.short']}">
 				<f:setPropertyActionListener target="#{configurationBean.name}"
 					value="#{ws.name}" />
 				<a4j:support reRender="details" event="onclick" ajaxSingle="true" />
@@ -69,6 +62,17 @@
 
 		</h:column>
 
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="#{translation['ws.deletion']}" />
+			</f:facet>
+
+			<h:commandButton value="#{translation['ws.delete']}"
+				actionListener="#{configurationBean.deleteWS}">
+				<f:attribute name="czopson" value="#{ws.name}" />
+			</h:commandButton>
+		</h:column>
+
 	</h:dataTable></div>
 </h:form> <h:form>
 	<div id="div2"
@@ -76,61 +80,77 @@
 
 	<h:panelGrid columns="2" id="details">
 
-		<h:outputLabel value="wspierane przeklady:" />
+		<h:outputLabel value="#{translation['ws.details.supported.translations']}:" />
+
+		<h:outputLabel rendered="#{empty configurationBean.selectedWS}"
+			value="#{translation['ws.details.service.not.chosen']}"/>
 
 		<h:dataTable border="1" styleClass="table1"
 			rowClasses="table1rowEven table1rowOdd"
-			value="#{configurationBean.selectedWS.supportedLangPairs}" var="pair">
+			value="#{configurationBean.selectedWS.supportedLangPairs}" var="pair"
+			rendered="#{! empty configurationBean.selectedWS}">
 
 			<h:column>
 				<h:outputText value="#{pair.fromLang}" />
 				<f:facet name="header">
-					<h:outputText value="column1" />
+					<h:outputText value="#{translation['ws.details.source.lang']}" />
 				</f:facet>
 			</h:column>
 
 			<h:column>
 				<h:outputText value="#{pair.toLang}" />
 				<f:facet name="header">
-					<h:outputText value="column2" />
+					<h:outputText value="#{translation['ws.details.destination.lang']}" />
 				</f:facet>
 			</h:column>
 
 		</h:dataTable>
 
-		<h:outputLabel value="wykrywanie jezyka:" />
+		<h:outputLabel value="#{translation['ws.details.language.detection']}:" />
+
+		<h:outputLabel rendered="#{empty configurationBean.selectedWS}"
+			value="#{translation['ws.details.service.not.chosen']}"/>
 
 		<h:selectBooleanCheckbox
 			value="#{configurationBean.selectedWS.languageDetection}"
-			readonly="true" />
+			readonly="true" 
+			rendered="#{! empty configurationBean.selectedWS}"/>
 
-		<h:outputLabel value="wspierane jakosci:" />
+		<h:outputLabel value="#{translation['ws.details.supported.qualities']}:" />
+
+		<h:outputLabel rendered="#{empty configurationBean.selectedWS}"
+			value="#{translation['ws.details.service.not.chosen']}"/>
 
 		<h:dataTable border="1" styleClass="table1"
 			rowClasses="table1rowEven table1rowOdd"
 			value="#{configurationBean.selectedWS.supportedQualities}"
-			var="quality">
+			var="quality"
+			rendered="#{! empty configurationBean.selectedWS}">
 
 			<h:column>
 				<h:outputText value="#{quality.value}" />
 				<f:facet name="header">
-					<h:outputText value="column1" />
+					<h:outputText value="#{translation['ws.details.quality.level']}" />
 				</f:facet>
 			</h:column>
 
 		</h:dataTable>
 
-		<h:outputLabel value="wspierane typy dokumentow:" />
+		<h:outputLabel value="#{translation['ws.details.supported.document.types']}:" />
+
+		<h:outputLabel rendered="#{empty configurationBean.selectedWS}"
+			value="#{translation['ws.details.service.not.chosen']}"/>
 
 		<h:dataTable border="1" styleClass="table1"
 			rowClasses="table1rowEven table1rowOdd"
 			value="#{configurationBean.selectedWS.supportedDocumentTypes}"
-			var="dt">
+			var="dt"
+			rendered="#{! empty configurationBean.selectedWS}">
 
 			<h:column>
 				<h:outputText value="#{dt.value}" />
 				<f:facet name="header">
-					<h:outputText value="column1" />
+					<h:outputText value="#{translation['ws.details.document.type']}" />
 				</f:facet>
 			</h:column>
 
@@ -147,12 +167,12 @@
 		<h:outputLabel value="#{translation['ws.add.name']}" />
 		<h:inputText id="name" value="#{configurationBean.name}"
 			required="true" />
-		<h:message for="name" styleClass="errorMessage" />
+		<h:message for="name" styleClass="errorMessage" style="width: 200px;"/>
 
 		<h:outputLabel value="#{translation['ws.add.endpoint']}" />
 		<h:inputText id="endpoint" value="#{configurationBean.endpoint}"
 			required="true" />
-		<h:message for="endpoint" styleClass="errorMessage" />
+		<h:message for="endpoint" styleClass="errorMessage" style="width: 200px;" />
 
 		<h:outputLabel value="#{translation['ws.add.description']}" />
 		<h:inputText id="description" value="#{configurationBean.description}" />
@@ -160,6 +180,7 @@
 
 	</h:panelGrid> <h:commandButton value="#{translation['ws.add.register']}"
 		actionListener="#{configurationBean.addNewWS}" id="registerButton" />
-	<h:message style="color: red" styleClass="errorMessage"
-		for="registerButton" /></div>
+	</div>
+	<h:message style="font-color: red" styleClass="errorMessage"
+		for="registerButton" />
 </h:form></div>

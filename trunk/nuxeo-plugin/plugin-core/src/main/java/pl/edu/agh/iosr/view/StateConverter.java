@@ -5,6 +5,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
 import pl.edu.agh.iosr.model.TranslationOrder.RequestState;
+import pl.edu.agh.iosr.util.MessagesLocalizer;
 
 public class StateConverter implements Converter {
 
@@ -22,7 +23,7 @@ public class StateConverter implements Converter {
 			return "unknown";
 		}
 		else {
-			return ((RequestState)arg2).toString();
+			return MessagesLocalizer.getMessage(((RequestState)arg2).toString());
 		}
 	}
 
