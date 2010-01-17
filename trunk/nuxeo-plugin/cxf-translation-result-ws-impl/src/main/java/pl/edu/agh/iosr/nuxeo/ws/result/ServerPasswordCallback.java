@@ -9,6 +9,10 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.apache.ws.security.WSPasswordCallback;
 
+/**
+ * klasa sluzaca do obslugi autoryzacji przy wywolywaniu webserwisu
+ * 
+ */
 public class ServerPasswordCallback implements CallbackHandler {
 
     private static final String BUNDLE_LOCATION = "AuthServer";
