@@ -231,9 +231,6 @@ public class TranslationOrder implements java.io.Serializable {
 	 * */
 	
 	public File saveResultFile(DataHandler dh) throws IOException{
-		/*File xliff = new File(getXliff());
-		String name = xliff.getName();
-		name = name.replaceFirst(".old", "");*/
 		
 		File xliffResult = new File(getXliff() + ".transl");
 	    if(!xliffResult.exists())
