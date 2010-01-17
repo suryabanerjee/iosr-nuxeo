@@ -18,6 +18,12 @@
 			<base-name>pl.edu.agh.iosr.bundles.translation</base-name>
 			<var>translation</var>
 		</resource-bundle>
+		<locale-config>
+			<default-locale>en</default-locale>
+			<supported-locale>pl</supported-locale>
+			<supported-locale>hi</supported-locale>
+		</locale-config>
+		
 	</extension>
 
 	<extension target="faces-config#CONVERTER">

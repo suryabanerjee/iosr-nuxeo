@@ -41,13 +41,10 @@ import pl.edu.agh.iosr.util.MessagesLocalizer;
  * tworzy rządzanie tłumaczenia TranslationRequest i wysyła je do mediatora.
  * 
  * */
-@Scope(ScopeType.CONVERSATION)
+@Scope(ScopeType.EVENT)
 @Name("editionBean")
 public class EditionBean implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5218857682596144169L;
 
 	@In("#{mediator}")
