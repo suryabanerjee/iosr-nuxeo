@@ -150,6 +150,7 @@ public class XliffConverter extends AsynchronousConverter{
 			fos.close();	
 		} catch(Exception e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
+			e.printStackTrace();
 		}
 	}
 	
@@ -196,6 +197,7 @@ public class XliffConverter extends AsynchronousConverter{
 			
 		} catch (IOException e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
+			e.printStackTrace();
 		}
 		String format = fileName.substring(fileName.lastIndexOf(".") + 1);
 		Locale locale = new Locale(translationOrder.getLangPair().getFromLang(), 
@@ -211,6 +213,7 @@ public class XliffConverter extends AsynchronousConverter{
 			translationOrder.setXliff(sw.toString());
 		} catch (ConversionException e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
+			e.printStackTrace();
 		}
 	}
 	
