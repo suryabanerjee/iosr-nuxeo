@@ -1,8 +1,6 @@
 package pl.edu.agh.iosr.exceptions;
 
 /**
- * Coś się poważnie zepsuło.
- * </br>
  * Rzucane przez mechnizmy trwałości.
  * */
 public class DataInconsistencyException extends Exception {

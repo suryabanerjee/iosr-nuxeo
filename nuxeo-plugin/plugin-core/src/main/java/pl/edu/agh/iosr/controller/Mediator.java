@@ -30,18 +30,9 @@ import pl.edu.agh.iosr.services.ValidationService;
 import pl.edu.agh.iosr.ws.RemoteWSInvoker;
 
 /**
- * Mediator, koordynuje dzia�ania innych komponent�w, nale�y unika� dodawania tu
- * logiki za wyj�tkiem sterowania
- * 
- * Poniewaz se springiem jest kupa problemow prawdopodobnie wszystko co mozliwe
- * napiszemy w Seamie (to potem tez), narazie to jest Spring, patrz
- * ApplicationContext.xml
- * 
- * <br>
- * 1.12.2009 Trzeba będzie przemyśleć konieczność implementowania wszystkich
- * interfejsów, narazie daję wolną rękę
- * 
- * @author czopson
+ * Implementacja wzorca projektowego odpowiadającego za centralizację logiki
+ * sterowania pracą i koordynacją komponentów. Redukuje stopień sprzężenia.
+ * Zawiera głównie logikę przepływu zamówień przekładu.
  * */
 
 @Name("mediator")
@@ -63,13 +54,17 @@ public class Mediator {
 
 	@In(create = true, value = "#{translationServicesConfigService}")
 	private TranslationServicesConfigService translationServicesConfigService;
-	
-	@In(create = true, value="#{remoteWSInvoker}")
+
+	@In(create = true, value = "#{remoteWSInvoker}")
 	private RemoteWSInvoker remoteWSInvoker;
 
 	@In(create = true)
 	private PersistenceTest persistenceTest;
 
+	/**
+	 * Inicjalizacja mediatora. Zawiera testy intergracyjne DAO oraz inicjuje
+	 * bazę przykładową konfiguracją web serwisu tłumaczącego.
+	 * */
 	@Create
 	public void init() {
 		persistenceTest.testTranslationOrder();
@@ -86,7 +81,8 @@ public class Mediator {
 		wsd.getSupportedQualities().add(
 				new Quality("google translator quality"));
 
-		List<TranslationServiceDescription> list = translationServicesConfigService.getTranslationServices();
+		List<TranslationServiceDescription> list = translationServicesConfigService
+				.getTranslationServices();
 		for (TranslationServiceDescription t : list) {
 			if (t.getName().equals("Google")) {
 				return;
@@ -118,8 +114,13 @@ public class Mediator {
 	}
 
 	/**
-	 * zglasza ��danie translacji i przprowadza operacje konieczne by wyslac je
-	 * do tlumaczenia
+	 * Pierwszy element w przepływie zamówień na translacje. Obiekt
+	 * <code>order</code> jest persystowany oraz poddawany konwersji. Wołane
+	 * przez komponenty warstwy prezentacji, po złożeniu zamówienia przez
+	 * użytkownika.
+	 * 
+	 * @param order
+	 *            Zamówienie, które będzie przetwarzane.
 	 * */
 	public void beginTranslation(TranslationOrder order) {
 		try {
@@ -134,13 +135,14 @@ public class Mediator {
 			TranslationServiceDescription tsDescription = translationServicesConfigService
 					.getTranslationService(order.getWsId());
 			// testowe wywoalnie invokera google translatora
-			//log(this.getClass(), "before calling translate");
+			// log(this.getClass(), "before calling translate");
 
 			// remoteWSInvoker.testInvoke(tsDescription, order, null);
 
-			//log(this.getClass(), "after calling translate");
+			// log(this.getClass(), "after calling translate");
 
-			String fileExtension = "";//documentAccessService.getFileExtension(order.getSourceDocument().getDocumentModel().getRef());   - to powodowalo blad kompilacji
+			String fileExtension = "";// documentAccessService.getFileExtension(order.getSourceDocument().getDocumentModel().getRef());
+			// - to powodowalo blad kompilacji
 			if (validationService.isConversionNeeded(fileExtension,
 					tsDescription)) {
 				xliffConverter.convert(order);
@@ -158,7 +160,14 @@ public class Mediator {
 	}
 
 	/**
-	 * zleca wyslanie do tłumaczenia remoteWSinvokerowi
+	 * Zamówienie opisywane przez obiekt <code>order</code> jest persystowany
+	 * oraz zlecane jest jego właściwie tłumaczenie poprzez delegację do
+	 * <code>RemoteWsInvoker</code>.
+	 * 
+	 * Wołane przez mechanizmy konwersji, po zakończeniu tego procesu.
+	 * 
+	 * @param order
+	 *            Zamówienie, które będzie przetwarzane.
 	 * */
 	public void performExactTranslation(TranslationOrder order) {
 
@@ -173,9 +182,9 @@ public class Mediator {
 			order.nextState();
 			translationOrderService.saveOrUpdateTranslationOrder(order);
 
-			 remoteWSInvoker.traslateAsync(translationServicesConfigService
-			 .getTranslationService(order.getWsId()), order,
-			null); //??? documentAccessService.getFile(order.getSourceDocument())
+			remoteWSInvoker.traslateAsync(translationServicesConfigService
+					.getTranslationService(order.getWsId()), order, null); // ???
+			// documentAccessService.getFile(order.getSourceDocument())
 			// po co sourcedocument?
 
 		}
@@ -186,8 +195,16 @@ public class Mediator {
 	}
 
 	/**
-	 * zglasza rezultaty translacji i przeprowadza operacje konieczne by
-	 * przetlumaczenie zostalo zapisane
+	 * Zamówienie opisywane przez obiekt <code>order</code> zostało przetworzone
+	 * przez zewnętrzne serwisu tłumaczące. Jest persystowany oraz zlecana jest
+	 * rekonwersja treści z niego uzyskanej.
+	 * 
+	 * Wołane przez obsługę web service'u przyjmującego przetłumaczone treści.
+	 * 
+	 * @param id
+	 *            - identyfikator zamówienia
+	 * @param resultFileDh
+	 *            - przetłumaczona treść
 	 * */
 	public void deliverTranslationResult(Long id, DataHandler resultFileDh) {
 		TranslationOrder order = translationOrderService
@@ -229,6 +246,13 @@ public class Mediator {
 		}
 	}
 
+	/**
+	 * Finalizacja zamówienia opisywanego przez obiekt <code>order</code>.
+	 * Walidacja oraz ostateczne utrwalenie w bazie danych.
+	 * 
+	 * @param order
+	 *            Zamówienie, które będzie przetwarzane.
+	 * */
 	public void completeTranslation(TranslationOrder order) {
 
 		try {
@@ -247,13 +271,15 @@ public class Mediator {
 		}
 
 	}
-	
-	public void updateTranslationStatus(Long orderId, TranslationStatus status){
-		TranslationOrder order = translationOrderService.getTranslationOrder(orderId);
+
+	public void updateTranslationStatus(Long orderId, TranslationStatus status) {
+		TranslationOrder order = translationOrderService
+				.getTranslationOrder(orderId);
 		order.setStatus(status);
 		try {
 			translationOrderService.saveOrUpdateTranslationOrder(order);
-		} catch (DataInconsistencyException e) {
+		}
+		catch (DataInconsistencyException e) {
 			e.printStackTrace();
 		}
 	}

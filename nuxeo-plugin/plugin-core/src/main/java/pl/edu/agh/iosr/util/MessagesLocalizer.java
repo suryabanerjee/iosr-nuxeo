@@ -11,6 +11,9 @@ import java.util.ResourceBundle;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
+/**
+ * Klasa użytkowa, pozwala pobierać odpowiednie frazy z plików zasobów.
+ * */
 public class MessagesLocalizer {
 
 	// to be injected and overwritten

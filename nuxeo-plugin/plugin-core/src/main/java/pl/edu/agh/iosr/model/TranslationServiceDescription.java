@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import pl.edu.agh.iosr.util.IosrRandomGenerator;
 
 /**
- * Opisuje konfigurację pojedynczego serwisu tłumaczącego
+ * Opisuje konfigurację pojedynczego serwisu tłumaczącego.
  * */
 @Entity
 @Table(name = "TRANSLATION_SERVICE_DESCRIPTION")
@@ -77,6 +77,9 @@ public class TranslationServiceDescription implements java.io.Serializable {
 		return result.toString();
 	}
 
+	/**
+	 * @return nazwa serwisu.
+	 * */
 	public String getName() {
 		return name;
 	}
@@ -85,11 +88,18 @@ public class TranslationServiceDescription implements java.io.Serializable {
 		this.name = name;
 	}
 
+	/**
+	 * @return identyfikator serwisu.
+	 * */
 	@Id
 	public Long getWsId() {
 		return wsId;
 	}
 
+	/**
+	 * @return Endpoint charakterystyczny dla webservice'u wystawianego przez
+	 *         serwis tłumaczący.
+	 * */
 	public String getEndpoint() {
 		return endpoint;
 	}
@@ -98,6 +108,9 @@ public class TranslationServiceDescription implements java.io.Serializable {
 		this.endpoint = endpoint;
 	}
 
+	/**
+	 * @return czy serwis wspiera opcję wykrywania języka źródłowego dokumentów.
+	 * */
 	public Boolean getLanguageDetection() {
 		return languageDetection;
 	}
@@ -106,6 +119,9 @@ public class TranslationServiceDescription implements java.io.Serializable {
 		this.languageDetection = languageDetection;
 	}
 
+	/**
+	 * @return opis serwisu.
+	 * */
 	public String getDescription() {
 		return description;
 	}
@@ -118,6 +134,9 @@ public class TranslationServiceDescription implements java.io.Serializable {
 		this.wsId = wsId;
 	}
 
+	/**
+	 * @return wspierane pary języków.
+	 * */
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Collection<LangPair> getSupportedLangPairs() {
 		return supportedLangPairs;
@@ -126,7 +145,10 @@ public class TranslationServiceDescription implements java.io.Serializable {
 	public void setSupportedLangPairs(Collection<LangPair> supportedLangPairs) {
 		this.supportedLangPairs = supportedLangPairs;
 	}
-
+	
+	/**
+	 * @return wspierane jakości tłumaczenia.
+	 * */
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Collection<Quality> getSupportedQualities() {
 		return supportedQualities;
@@ -136,6 +158,9 @@ public class TranslationServiceDescription implements java.io.Serializable {
 		this.supportedQualities = supportedQualities;
 	}
 
+	/**
+	 * @return wspierane formaty dokumentów.
+	 * */
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	public Collection<DocumentType> getSupportedDocumentTypes() {
 		return supportedDocumentTypes;
@@ -146,5 +171,4 @@ public class TranslationServiceDescription implements java.io.Serializable {
 		this.supportedDocumentTypes = supportedDocumentTypes;
 	}
 
-	
 }

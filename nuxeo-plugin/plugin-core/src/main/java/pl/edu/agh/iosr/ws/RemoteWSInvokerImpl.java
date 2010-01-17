@@ -4,13 +4,9 @@ import static pl.edu.agh.iosr.util.IosrLogger.log;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 
@@ -19,7 +15,6 @@ import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.contexts.Contexts;
 
 import pl.edu.agh.iosr.controller.Mediator;
 import pl.edu.agh.iosr.model.LangPair;
@@ -27,7 +22,6 @@ import pl.edu.agh.iosr.model.Operation;
 import pl.edu.agh.iosr.model.TranslationOption;
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
-import pl.edu.agh.iosr.nuxeo.schema.translationresult.FileResultRequestWrapper;
 import pl.edu.agh.iosr.nuxeo.schema.translator.DetectionRequest;
 import pl.edu.agh.iosr.nuxeo.schema.translator.FileFormats;
 import pl.edu.agh.iosr.nuxeo.schema.translator.LanguagePairs;
@@ -36,7 +30,6 @@ import pl.edu.agh.iosr.nuxeo.schema.translator.Options;
 import pl.edu.agh.iosr.nuxeo.schema.translator.SourceTypes;
 import pl.edu.agh.iosr.nuxeo.schema.translator.TranslationQualities;
 import pl.edu.agh.iosr.nuxeo.schema.translator.TranslationRequest;
-import pl.edu.agh.iosr.nuxeo.wsdl.translationresult.TranslationResultPortType;
 import pl.edu.agh.iosr.nuxeo.wsdl.translator.ContentExtractionException;
 import pl.edu.agh.iosr.nuxeo.wsdl.translator.DetectionException;
 import pl.edu.agh.iosr.nuxeo.wsdl.translator.GoogleTranslatorService;

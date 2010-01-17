@@ -6,15 +6,12 @@ import java.io.File;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import javax.swing.SortOrder;
 
 import pl.edu.agh.iosr.model.TranslationOrder;
-import pl.edu.agh.iosr.nuxeo.schema.translationresult.FileResultRequestWrapper;
 import pl.edu.agh.iosr.nuxeo.schema.translator.CallbackEndpoint;
 import pl.edu.agh.iosr.nuxeo.schema.translator.FileContentSource;
 import pl.edu.agh.iosr.nuxeo.schema.translator.SourceType;
 import pl.edu.agh.iosr.nuxeo.schema.translator.TranslationRequest;
-import pl.edu.agh.iosr.nuxeo.wsdl.translationresult.TranslationResultPortType;
 
 /**
  * Klasa tlumaczace TranslationOrder uzywany wewnatrz aplikacji na TranslationRequest

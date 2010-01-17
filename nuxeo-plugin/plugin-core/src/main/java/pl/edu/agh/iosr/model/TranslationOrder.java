@@ -29,11 +29,9 @@ import pl.edu.agh.iosr.util.IosrRandomGenerator;
 import pl.edu.agh.iosr.util.IosrLogger.Level;
 
 /**
- * Obiekt używany do formułowania zamówień na przykład przez klientów
- * 
- * Przechowuje informacje o stanie tłumaczenia dokładnie jednego dokumentu
- * 
- * Przez cały czas powinien być utrwalany.
+ * Obiekt identyfikuje pojedyncze zamówienie na przekład, dotyczące jednego
+ * pliku. Posiada komplet informacji podczas całego czasu przetwarzania
+ * zamówienia.
  * */
 @Entity
 @Table(name = "TRANSLATION_ORDER")
@@ -41,32 +39,38 @@ public class TranslationOrder implements java.io.Serializable {
 
 	private static final long serialVersionUID = -6226478864052959723L;
 
+	/**
+	 * Status zamównienia w przepływie.
+	 * */
 	public enum RequestState {
 		/**
-		 * Tuż po utworzeniu, prawdopodobnie nikt nigdy nie zobaczy zamówienia w
-		 * takim stanie
+		 * Tuż po utworzeniu.
 		 * */
 		BEFORE_PROCESSING,
 
 		/**
-		 * Konwertowane
+		 * Konwersja do xliffa.
 		 * */
 		UNDER_CONVERSION,
 
 		/**
-		 * Nietrudno się domyśleć
+		 * Zamówienie wysłane do właściwiego tłumaczenia do serwisów
+		 * zewnętrznych.
 		 * */
 		UNDER_PROCESSING,
 
 		/**
-		 * Jeszcze łatwiej się domyśleć
+		 * Rekonwersja z xliffa na wyjściowy format.
 		 * */
 		UNDER_RECONVERSION,
 
+		/**
+		 * Zamówienie zostało przetworzone z sukcesem.
+		 * */
 		SUCCEEDED,
 
 		/**
-		 * cóż, kicha
+		 * Oznacza, że podczas przetwarzania wystąpiły błędy.
 		 * */
 		FAILED
 	}
@@ -136,15 +140,12 @@ public class TranslationOrder implements java.io.Serializable {
 	 * można odczytać tylko poprzez toString
 	 * */
 	private Date[] timeStamps = new Date[RequestState.values().length];
-	
+
 	/**
 	 * zawiera status okreslajacy postep translacji
 	 * */
 	private TranslationStatus status = TranslationStatus.NOT_STARTED;
 
-	/**
-	 * dla ulatwienia przeciazamy hehe
-	 * */
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		result.append("\tRequest no: " + requestId + "\n");
@@ -176,10 +177,12 @@ public class TranslationOrder implements java.io.Serializable {
 		timeStamps[0] = new Date();
 	}
 
-	// konstruktor
-	public TranslationOrder(DocumentRefWrapper sourceDocument, LangPair langPair,
-			String destinationDocumentName, String quality, Long wsId,
-			boolean languageDetection) {
+	/**
+	 * Rekomendowany konstruktor.
+	 * */
+	public TranslationOrder(DocumentRefWrapper sourceDocument,
+			LangPair langPair, String destinationDocumentName, String quality,
+			Long wsId, boolean languageDetection) {
 		super();
 		this.sourceDocument = sourceDocument;
 		this.langPair = langPair;
@@ -225,44 +228,60 @@ public class TranslationOrder implements java.io.Serializable {
 		IosrLogger.log(this.getClass(), "Failed to translate document: "
 				+ sourceDocument.getName(), Level.FATAL);
 	}
-	
+
 	/**
-	 * przy zwrocie wyniku translacji, zapisuje xliffa do pliku i zwraca go jako wynik
+	 * Przy zwrocie wyniku translacji, zapisuje xliffa do pliku i zwraca go jako
+	 * wynik.
+	 * 
+	 * @param dh
+	 *            - wrapper dla przetłumaczonej treści
 	 * */
-	
-	public File saveResultFile(DataHandler dh) throws IOException{
-		
+	public File saveResultFile(DataHandler dh) throws IOException {
+		/*
+		 * File xliff = new File(getXliff()); String name = xliff.getName();
+		 * name = name.replaceFirst(".old", "");
+		 */
+
 		File xliffResult = new File(getXliff() + ".transl");
-	    if(!xliffResult.exists())
-	    	xliffResult.createNewFile();
-	    
+		if (!xliffResult.exists())
+			xliffResult.createNewFile();
+
 		FileOutputStream out = new FileOutputStream(xliffResult);
-		
+
 		dh.writeTo(out);
-    	out.flush();
-    	out.close();
-    	
-    	return xliffResult;
+		out.flush();
+		out.close();
+
+		return xliffResult;
 	}
 
 	// gettery i setter
 
+	/**
+	 * Identyfikator zamówienia.
+	 * */
 	@Id
 	public Long getRequestId() {
 		return requestId;
 	}
-	
+
+	/**
+	 * Bieżący stan zamówienia.
+	 * */
 	@Enumerated(EnumType.STRING)
 	public RequestState getState() {
 		return state;
 	}
 
+	/**
+	 * @return Obiekt opisujący docelową lokalizację pliku z przetłumaczoną
+	 *         treścią.
+	 * */
 	@Embedded
-	@AttributeOverrides({
-		@AttributeOverride(name="name", column=@Column(name="distName")),
-		@AttributeOverride(name="path", column=@Column(name="distPath")),
-		@AttributeOverride(name="type", column=@Column(name="distType"))
-	})
+	@AttributeOverrides( {
+			@AttributeOverride(name = "name", column = @Column(name = "distName")),
+			@AttributeOverride(name = "path", column = @Column(name = "distPath")),
+			@AttributeOverride(name = "type", column = @Column(name = "distType")) })
 	public DocumentRefWrapper getDestinationDocument() {
 		return destinationDocument;
 	}
@@ -271,6 +290,9 @@ public class TranslationOrder implements java.io.Serializable {
 		this.destinationDocument = destinationDocument;
 	}
 
+	/**
+	 * @deprecated
+	 * */
 	@Transient
 	public Serializable getSkeleton() {
 		return skeleton;
@@ -280,6 +302,10 @@ public class TranslationOrder implements java.io.Serializable {
 		this.skeleton = skeleton;
 	}
 
+	/**
+	 * @return Dokument w formacie XLIFF (XML) charakterystyczny dla treści
+	 *         zamówienia.
+	 * */
 	public String getXliff() {
 		return xliff;
 	}
@@ -288,38 +314,57 @@ public class TranslationOrder implements java.io.Serializable {
 		this.xliff = xliff;
 	}
 
+	/**
+	 * @return Obiekt opisujący źródłowy plik z treścią do przetłumaczenia.
+	 * */
 	@Embedded
-	@AttributeOverrides({
-		@AttributeOverride(name="name", column=@Column(name="srcName")),
-		@AttributeOverride(name="path", column=@Column(name="srcPath")),
-		@AttributeOverride(name="type", column=@Column(name="srcType"))
-	})
+	@AttributeOverrides( {
+			@AttributeOverride(name = "name", column = @Column(name = "srcName")),
+			@AttributeOverride(name = "path", column = @Column(name = "srcPath")),
+			@AttributeOverride(name = "type", column = @Column(name = "srcType")) })
 	public DocumentRefWrapper getSourceDocument() {
 		return sourceDocument;
 	}
 
-	@OneToOne(cascade={CascadeType.ALL}, fetch=FetchType.EAGER, optional=true)
+	/**
+	 * @return Para języków - źródłowy oraz docelowy.
+	 * */
+	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, optional = true)
 	public LangPair getLangPair() {
 		return langPair;
 	}
 
+	/**
+	 * @return Nazwa dokumentu docelowego.
+	 * */
 	public String getDestinationDocumentName() {
 		return destinationDocumentName;
 	}
 
-	
+	/**
+	 * @return Docelowa jakość przekładu.
+	 * */
 	public String getQuality() {
 		return quality;
 	}
 
+	/**
+	 * @return identyfikator zewnętrznego web service'u tłumaczącego.
+	 * */
 	public Long getWsId() {
 		return wsId;
 	}
 
+	/**
+	 * @return wiadomość ze szczegółami błędu, o ile wystąpił.
+	 * */
 	public String getMessage() {
 		return message;
 	}
 
+	/**
+	 * @return czy użytkownik zarządał wykrycia języka źródłowego.
+	 * */
 	public boolean getLanguageDetection() {
 		return languageDetection;
 	}
@@ -328,6 +373,9 @@ public class TranslationOrder implements java.io.Serializable {
 		this.message = message;
 	}
 
+	/**
+	 * @return tablica dat opisujące momenty z cyklu przetwarzania zamówienia.
+	 * */
 	@Lob
 	public Date[] getTimeStamps() {
 		return timeStamps;
@@ -368,15 +416,46 @@ public class TranslationOrder implements java.io.Serializable {
 	public void setLanguageDetection(boolean languageDetection) {
 		this.languageDetection = languageDetection;
 	}
-	
-	/* na potrzeby wyswietlania */
-	@Transient public Date getBefore() {return timeStamps[0];}
-	@Transient public Date getConversion() {return timeStamps[1];}
-	@Transient public Date getProcessing() {return timeStamps[2];}
-	@Transient public Date getReconversion() {return timeStamps[3];}
-	@Transient public Date getSucceeded() {return timeStamps[4];}
-	@Transient public Date getFailed() {return timeStamps[5];}
 
+	/** na potrzeby wyswietlania */
+	@Transient
+	public Date getBefore() {
+		return timeStamps[0];
+	}
+
+	/** na potrzeby wyswietlania */
+	@Transient
+	public Date getConversion() {
+		return timeStamps[1];
+	}
+
+	/** na potrzeby wyswietlania */
+	@Transient
+	public Date getProcessing() {
+		return timeStamps[2];
+	}
+
+	/** na potrzeby wyswietlania */
+	@Transient
+	public Date getReconversion() {
+		return timeStamps[3];
+	}
+
+	/** na potrzeby wyswietlania */
+	@Transient
+	public Date getSucceeded() {
+		return timeStamps[4];
+	}
+
+	/** na potrzeby wyswietlania */
+	@Transient
+	public Date getFailed() {
+		return timeStamps[5];
+	}
+
+	/**
+	 * @return bieżący status zamówienia.
+	 * */
 	public TranslationStatus getStatus() {
 		return status;
 	}

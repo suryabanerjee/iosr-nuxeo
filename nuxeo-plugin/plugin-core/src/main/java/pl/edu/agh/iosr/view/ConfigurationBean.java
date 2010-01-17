@@ -1,14 +1,10 @@
 package pl.edu.agh.iosr.view;
 
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -23,8 +19,9 @@ import pl.edu.agh.iosr.util.IosrLogger;
 import pl.edu.agh.iosr.util.MessagesLocalizer;
 
 /**
- * backing bean dla widoku osoby administruj�cej WSami. wy�wietla tabelke z
- * zarejestrowanymi WSami oraz pozwala dodawac i usuwac owe.
+ * Backing bean dla widoku osoby administruj�cej WSami. wy�wietla tabelke z
+ * zarejestrowanymi WSami oraz pozwala dodawac i usuwac owe oraz odświeżać ich
+ * konfiguracje.
  * */
 @Scope(ScopeType.CONVERSATION)
 @Name("configurationBean")
@@ -32,7 +29,7 @@ public class ConfigurationBean {
 
 	@In("#{translationServicesConfigService}")
 	private TranslationServicesConfigService configService;
-	
+
 	private String description = "", endpoint = "", name = "";
 
 	private List<TranslationServiceDescription> translationServices;
@@ -47,12 +44,14 @@ public class ConfigurationBean {
 	}
 
 	/**
-	 * rejestruje nowy WS, validacja w xhtlmu
+	 * Rejestruje nowy WS, walidacja w xhtlmu
+	 * 
+	 * Wołane jako ActionListener.
 	 * */
 	public void addNewWS(ActionEvent ae) {
 
 		IosrLogger.log(this.getClass(), "addNewWs invoked");
-		
+
 		// troche walidacji nie zaszkodzi
 		for (TranslationServiceDescription r : translationServices) {
 			if (name.equals(r.getName())) {
@@ -67,13 +66,16 @@ public class ConfigurationBean {
 		r.setEndpoint(endpoint);
 		r.setName(name);
 		configService.saveOrUpdateTranslationService(r);
-		IosrLogger.log(this.getClass(), "Translation Service Desciption persisted: " + r);
+		IosrLogger.log(this.getClass(),
+				"Translation Service Desciption persisted: " + r);
 		init();
 	}
 
 	/**
-	 * usuwa wybrany WS. Przed tym wydarzeniem setPropertyActionListenery z
-	 * xhtmla ustawiaja wartosc name i endpoint
+	 * Usuwa wybrany WS. Przed tym wydarzeniem setPropertyActionListenery z
+	 * xhtmla ustawiaja wartosc name i endpoint.
+	 * 
+	 * Wołane jako ActionListener.
 	 * */
 	public void deleteWS(ActionEvent ae) {
 
@@ -141,7 +143,7 @@ public class ConfigurationBean {
 	}
 
 	/**
-	 * action do usuwanie jednej pary z obslugiwanych jezyków
+	 * Action do usuwania jednej pary z obslugiwanych jezyków
 	 * */
 	public String deletePair() {
 		int i = -1;
@@ -182,58 +184,14 @@ public class ConfigurationBean {
 		this.newLangTo = newLangTo;
 	}
 
-	public SelectItem[] getIso3Codes() {
-		List<SelectItem> list = new LinkedList<SelectItem>();
-		for (Locale l : Locale.getAvailableLocales()) {
-			if (l.getISO3Language() != null && l.getISO3Language() != "") {
-				list.add(new SelectItem(l.getISO3Language().toUpperCase()));
-			}
-		}
-		SelectItem[] items = new SelectItem[list.size()];
-		int i = 0;
-		for (SelectItem si : list) {
-			items[i++] = si;
-		}
-		return items;
-	}
-
-	/**
-	 * action, dodaje parke obslugiwanych jezykow
-	 * */
-	public String addPair() {
-		if (newLangFrom.equals(newLangTo)) {
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage("Languages must differ."));
-			return "";
-		}
-
-		if (getSelectedWS() == null) {
-			return "";
-		}
-
-		Collection<LangPair> ll = getSelectedWS().getSupportedLangPairs();
-		for (LangPair lp : ll) {
-			if (lp.getFromLang().equals(newLangFrom)
-					&& lp.getToLang().equals(newLangTo)) {
-				FacesContext.getCurrentInstance().addMessage(
-						null,
-						new FacesMessage(
-								"Selected languages set already supported."));
-				return "";
-			}
-		}
-
-		LangPair lp = new LangPair();
-		lp.setFromLang(newLangFrom);
-		lp.setToLang(newLangTo);
-
-		getSelectedWS().getSupportedLangPairs().add(lp);
-
-		return "";
-	}
-
 	/* odświeżanie wsa START */
 
+	/**
+	 * 
+	 * Odświeża wybrany opis serwisu.
+	 * Wybór poprzez aatrybut "ws".
+	 * Wołane jako ActionListener.
+	 * */
 	public void refreshWs(ActionEvent ae) {
 		TranslationServiceDescription t = (TranslationServiceDescription) ae
 				.getComponent().getAttributes().get("ws");
@@ -252,7 +210,5 @@ public class ConfigurationBean {
 	}
 
 	/* odświeżanie wsa END */
-
-
 
 }

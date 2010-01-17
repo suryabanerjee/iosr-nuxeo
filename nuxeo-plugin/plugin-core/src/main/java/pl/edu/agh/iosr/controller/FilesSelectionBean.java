@@ -21,20 +21,18 @@ import pl.edu.agh.iosr.persistence.CoreSessionProxy;
 import pl.edu.agh.iosr.util.IosrLogger.Level;
 
 /**
- * Pobiera liste plików z workspace'a
- * 
- * Teoretycznie wykonuje pewne funkcje warstwy prezentacji: validacje, ale w tym
- * pakiecie pasuje lepiej
+ * Komponent zarządza listą plików możliwych do tłumaczenia. Pobiera je z
+ * zasobów NUXEO. Ponadto przeprowadza walidację.
  * */
 @Scope(ScopeType.CONVERSATION)
 @Name("filesSelectionBean")
 public class FilesSelectionBean {
 
-    @In(create = true)
-    private CoreSessionProxy coreSessionProxy;
-	
-    private CoreSession coreSession;
-    
+	@In(create = true)
+	private CoreSessionProxy coreSessionProxy;
+
+	private CoreSession coreSession;
+
 	private List<EnrichedFile> files = new LinkedList<EnrichedFile>();
 
 	@Create
@@ -45,16 +43,17 @@ public class FilesSelectionBean {
 		if (coreSession == null) {
 			log(this.getClass(), "coreSession is null");
 		}
-		
+
 		if (coreSession != null) {
 			try {
 				DocumentModelList dml = coreSession
 						.query("SELECT * FROM Document");
-				
+
 				for (DocumentModel dm : dml) {
 					if (dm.hasFacet("Downloadable")) {
 						files.add(new EnrichedFile(dm));
-						log(this.getClass(), "coreService added: " + dm, Level.INFO);
+						log(this.getClass(), "coreService added: " + dm,
+								Level.INFO);
 					}
 				}
 			}
@@ -73,8 +72,10 @@ public class FilesSelectionBean {
 	}
 
 	/**
-	 * sprawdza, czy nazwy docelowe nowych plikow nie pokrywaja sie z
-	 * istniejacymi oraz czy w srod nich samych nie ma dubli
+	 * Sprawdza, czy nazwy docelowe nowych plikow nie pokrywaja sie z
+	 * istniejacymi oraz czy w srod nich samych nie ma dubli.
+	 * 
+	 * Wołane bezpośrednio przez mechanizmy obsługi akcji użtkownika.
 	 * */
 	public void validate() {
 		for (EnrichedFile ef : files) {

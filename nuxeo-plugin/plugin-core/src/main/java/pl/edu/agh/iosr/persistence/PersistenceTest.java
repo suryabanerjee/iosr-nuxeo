@@ -34,6 +34,9 @@ public class PersistenceTest implements Serializable {
 	@In(create = true, value = "#{translationServicesConfigService}")
 	private TranslationServicesConfigService translationServicesConfigService;
 
+	/**
+	 * Test na obsługę obiektów klasy {@link TranslationOrder}.
+	 * */
 	public void testTranslationOrder() {
 		LangPair lp = new LangPair("pl", "en");
 		TranslationOrder to = new TranslationOrder();
@@ -108,6 +111,9 @@ public class PersistenceTest implements Serializable {
 		}
 	}
 
+	/**
+	 * Test na obsługę obiektów klasy {@link TranslationServiceDescription}.
+	 * */
 	public void testServicesDescriptions() {
 		LangPair lp = new LangPair("pl", "en");
 		TranslationServiceDescription tsd = new TranslationServiceDescription();

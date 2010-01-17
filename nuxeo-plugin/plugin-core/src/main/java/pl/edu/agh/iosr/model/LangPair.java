@@ -1,6 +1,5 @@
 package pl.edu.agh.iosr.model;
 
-import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Para kodow jezykow
+ * Para kodow jezykow.
  * */
 @Entity
 @Table(name="LANG_PAIR")
