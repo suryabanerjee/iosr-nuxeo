@@ -36,10 +36,7 @@ public class TranslationResultServiceImpl implements TranslationResultService {
 
 	public void sendFileResult(FileResultRequestWrapper parameters) {
 		
-		//TODO
-		//Zmienic id na long
-		mediator.deliverTranslationResult(new Long(parameters.getTranslationRequestID()), parameters.getFile());
-		
+		mediator.deliverTranslationResult(new Long(parameters.getTranslationRequestID()), parameters.getFile());	
 		return;
 	}
 
