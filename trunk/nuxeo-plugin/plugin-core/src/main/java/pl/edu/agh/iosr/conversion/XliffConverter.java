@@ -44,7 +44,7 @@ import pl.edu.agh.xliffhandler.utils.ConversionMode;
 import pl.edu.agh.xliffhandler.utils.FileType;
 
 /**
- * Implementacja AsynchronousConvertera wykorzystuj�ca bibliotek� file2xliff4j
+ * Implementacja AsynchronousConvertera wykorzystująca bibliotekę pol.edu.agh.xliffhandler utworzoną na podstawie file2xliff4j
  * <br>
  *  
  * 
@@ -59,50 +59,40 @@ public class XliffConverter extends AsynchronousConverter{
     @In(create = true)
     private CoreSessionProxy coreSessionProxy;
 	
-    private CoreSession coreSession;
+	private CoreSession coreSession;
     
-    //@In(value="#{mediator}")
     private final Mediator mediator;
 
+	private static final Map<String, FileType> formats = new HashMap<String, FileType>() {{
+		put("html", FileType.HTML);
+        put("properties", FileType.JAVA_PROPERTIES);
+        put("doc", FileType.MSOFFICEDOC);
+        put("odt", FileType.ODT);
+        put("pdf", FileType.PDF);
+        put("txt", FileType.PLAINTEXT);
+        put("rtf", FileType.RTF);
+        put("word", FileType.WORD);
+        put("xlf", FileType.XLIFF);
+        put("xml", FileType.XML);
+	}};
 	
-	private static Map<String, FileType> formats = new HashMap<String, FileType>();
-	private String TMP_PATH;
+	private String basePath;
 	private Converter converter = null;
+	private static final int BLOCK_SIZE = 128;
 
+	/**
+     * Konstruktor XliffConvertera 
+     */
 	public XliffConverter() {
 		super();
 		mediator = (Mediator) Contexts.getApplicationContext().get("mediator");
     }
-    
-    private void prepare() {
-		formats.put("html", FileType.HTML);
-        formats.put("properties", FileType.JAVA_PROPERTIES);
-        formats.put("doc", FileType.MSOFFICEDOC);
-        formats.put("odt", FileType.ODT);
-        formats.put("pdf", FileType.PDF);
-        formats.put("txt", FileType.PLAINTEXT);
-        formats.put("rtf", FileType.RTF);
-        formats.put("word", FileType.WORD);
-        formats.put("xlf", FileType.XLIFF);
-        formats.put("xml", FileType.XML);
-        TMP_PATH = getPath();
-        log(this.getClass(), "TMP_PATH: " + TMP_PATH);
-    }
-	
-	private String getPath() {
-		try {
-			String tmp = (new File(".")).getCanonicalPath();
-			tmp = tmp.substring(0, tmp.lastIndexOf(File.separator) + 1);
-			return tmp + "xliff";
-		} catch (IOException e) {
-			log(this.getClass(), e.getMessage(), Level.FATAL);
-		}
-		return "";
-	}
 	
 	@Create
 	public void init() {
+	
 		super.init();
+		basePath = getPath();
 		
 		coreSession = coreSessionProxy.getCoreSession();
 
@@ -116,188 +106,242 @@ public class XliffConverter extends AsynchronousConverter{
 		super.shutdown();
 	}
 	
+	/**
+	 * Przeprowadza konwersję i rekonwersję o parametrach zadanych w <code>conversionTask</code>
+	 * i sygnalizuje zakończenie zadania
+	 *
+	 * @param conversionTask zlecenie tłumaczenia
+	 * */
 	@Override
 	public void proceed(ConversionTask conversionTask) {
 		
 		if(conversionTask.task == SupportedTasks.CONVERT) {
 			convertFile(conversionTask.translationOrder);
-			log(this.getClass(), "END OF CONVERSION");
-			if (mediator == null)
-				log(this.getClass(), "MEDIATOR TO NULL, PROCEED");
-			else {
-				log(this.getClass(), "MEDIATOR OK, PROCEED");
-				log(this.getClass(), mediator.toString());
-			}
 			mediator.performExactTranslation(conversionTask.translationOrder);
-		 } else
+		 } else {
 			reConvertFile(conversionTask.translationOrder);
-		
-	}
-	
-	private void copyFileContent(String path, DocumentRef ref) throws IOException {
-		try {
-			int size = 128;
-			byte[] buffer = new byte[size];
-			int data;
-			FileOutputStream fos = new FileOutputStream(path);
-			DocumentModel dm = coreSession.getDocument(ref);
-			Blob blob = (Blob) dm.getProperty("file", "content");
-			InputStream fis = blob.getStream();
-			while((data = fis.read(buffer)) > 0) {
-				fos.write(buffer, 0, data);
-			}
-			fis.close();
-			fos.close();	
-		} catch(Exception e) {
-			log(this.getClass(), e.getMessage(), Level.FATAL);
-			e.printStackTrace();
+			mediator.completeTranslation(conversionTask.translationOrder);
 		}
 	}
 	
-	private void createResultFile(DocumentModel source, String name, String generatedFile) {
-		try {
-			//DocumentModel source = coreSession.getDocument(sourceFile);
-			String path = source.getPathAsString();
-			path = path.substring(0, path.lastIndexOf("/"));
-			String type = source.getType();
-			DocumentModel dm = new DocumentModelImpl(path, name, type);
-			log(this.getClass(), "document created.");
-			FileBlob fb = new FileBlob(new File(generatedFile));
-			dm.setProperty("file", "content", fb);
-			System.out.println("title: " + dm.getTitle());
-			coreSession.createDocument(dm);
-			coreSession.save();
-			log(this.getClass(), "document saved.");
-		} catch (Exception e) {
-			log(this.getClass(), e.getMessage(), Level.FATAL);
-		}
-		
-	}
-	
+	/**
+	 * Główna metoda konwersji. <br>
+	 * Rozpoznaje format pliku po jego rozszerzeniu, przeprowadza konwersję,
+	 * tworzy tymczasowy folder, zawierający pliki pomocnicze konwersji.
+	 *
+	 * @param translationOrder zlecenie tłumaczenia
+	 * */
 	private void convertFile(TranslationOrder translationOrder) {
-		prepare();
-		log(this.getClass(), "Converting file: " + translationOrder.getSourceDocument().getDocumentModel().getRef().toString());
-		String fileName = translationOrder.getSourceDocument().getDocumentModel().getRef().toString();
-		fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
-		int i = fileName.lastIndexOf("-");
-		if(i == -1) {
-			i = fileName.lastIndexOf(".");
-		}
-		fileName = fileName.substring(0, i) + '.' + fileName.substring(i + 1);
+
+		DocumentRef doc = translationOrder.getSourceDocument().getDocumentModel().getRef();
+		String fileName = doc.toString();
 		
-		String filePath = TMP_PATH + File.separator + translationOrder.getRequestId().toString();
+		StringWriter sw = new StringWriter();
+		String format;
+		
+		log(this.getClass(), "Converting file: " + fileName);
+		
+		String filePath = basePath + File.separator + translationOrder.getRequestId().toString();
+		Locale locale = new Locale(translationOrder.getLangPair().getFromLang(), 
+									translationOrder.getLangPair().getFromLang().toUpperCase());
+		
+		fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+		
+		int lastDot = fileName.lastIndexOf(".");
+		if (lastDot == -1) {		// in case of name's changing in nuxeo
+			lastDot = fileName.lastIndexOf("-");
+			format = fileName.substring(lastDot + 1);
+		} else 
+			format = fileName.substring(lastDot + 1);
+		
+		// Creating temporary file and getting content form nuxeo repo
 		File file = null;
 		try {
 			(new File(filePath)).mkdirs();
 			file = new File(filePath + File.separator + fileName);
 			file.createNewFile();
-			
-			// TODO Tu czopyk zmienił, po zmianie documentRef na documentRefWrapper
-			copyFileContent(filePath + File.separator + fileName, translationOrder.getSourceDocument().getDocumentModel().getRef());
-			
+			copyFileContent(file.getCanonicalPath(), doc);
 		} catch (IOException e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
-			e.printStackTrace();
 		}
-		String format = fileName.substring(fileName.lastIndexOf(".") + 1);
-		Locale locale = new Locale(translationOrder.getLangPair().getFromLang(), 
-				translationOrder.getLangPair().getFromLang().toUpperCase());
-		StringWriter sw = new StringWriter();
+ 
+		// exact conversion
 		try {
 			converter = ConverterFactory
-				.createConverter(formats.get(format), formats.get("xlf"));
+							.createConverter(formats.get(format), formats.get("xlf"));
 			converter.convert(ConversionMode.TO_XLIFF, locale, null, 0,
-					Charset.forName("utf-8"), formats.get(format), fileName, 
-					filePath, null, null, sw);
+							Charset.forName("utf-8"), formats.get(format), fileName, 
+							filePath, null, null, sw);
+							
 			log(this.getClass(), "Generated file: " + sw.toString());
 			translationOrder.setXliff(sw.toString());
 		} catch (ConversionException e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
-			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Główna metoda rekonwersji. <br>
+	 * Rozpoznaje format pliku po jego rozszerzeniu, przeprowadza rekonwersję,
+	 * tworzy wynikowy plik o żądanej nazwie w repozytorium Nuxeo i usuwa pomocnicze pliki.
+	 * Utworzony plik znajduje się w tym samym folderze co plik bazowy.
+	 *
+	 * @param translationOrder zlecenie tłumaczenia
+	 * */
 	private void reConvertFile(TranslationOrder translationOrder) {
-		prepare();
-		log(this.getClass(), "ReConverting file: " + translationOrder.getSourceDocument().getDocumentModel().getRef().toString());
-		String fileName = translationOrder.getSourceDocument().getDocumentModel().getRef().toString();
-		String destPath =  fileName.substring(0, fileName.lastIndexOf("/"));
-		fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
-		int i = fileName.lastIndexOf("-");
-		if(i == -1) {
-			i = fileName.lastIndexOf(".");
-		}
-		fileName = fileName.substring(0, i) + '.' + fileName.substring(i + 1);
+	
+		DocumentRef doc = translationOrder.getSourceDocument().getDocumentModel().getRef();
+		String fileName = doc.toString();
 		
-		String filePath = TMP_PATH + File.separator + translationOrder.getRequestId().toString();
-		
-		//ONLY FOR TESTING!
-		/*
-		try {
-			File fl = new File(filePath + File.separator + fileName + ".xliff.transl");
-			fl.createNewFile();
-		} catch (IOException e) {
-			log(this.getClass(), e.getMessage(), Level.FATAL);
-		}*/
-		
-		String format = fileName.substring(fileName.lastIndexOf(".") + 1);
-		Locale locale = new Locale(translationOrder.getLangPair().getToLang(), 
-				translationOrder.getLangPair().getToLang().toUpperCase());
 		StringWriter sw = new StringWriter();
+		String format;
+		
+		String filePath = basePath + File.separator + translationOrder.getRequestId().toString();
+		Locale locale = new Locale(translationOrder.getLangPair().getToLang(), 
+								translationOrder.getLangPair().getToLang().toUpperCase());
+
+		log(this.getClass(), "ReConverting file: " + fileName);
+		
+		String destPath =  fileName.substring(0, fileName.lastIndexOf("/"));	// path in nuxeo repo
+		fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+		
+		int lastDot = fileName.lastIndexOf(".");
+		if (lastDot == -1) {		// in case of name's changing in nuxeo
+			lastDot = fileName.lastIndexOf("-");
+			format = fileName.substring(lastDot + 1);
+		} else 
+			format = fileName.substring(lastDot + 1);
+		
+		// exact reconversion
 		try {
 			converter = ConverterFactory
-				.createConverter(formats.get("xlf"), formats.get(format));
+						.createConverter(formats.get("xlf"), formats.get(format));
 			converter.convert(ConversionMode.FROM_XLIFF, locale, null, 0,
-					Charset.forName("utf-8"), null, fileName, 
-					filePath, null, null, sw);
+							Charset.forName("utf-8"), null, fileName, 
+							filePath, null, null, sw);
+							
 			log(this.getClass(), "Generated file: " + sw.toString());
-			String destName = sw.toString().substring(sw.toString().lastIndexOf(File.separator) + 1);
 			
+			String destName = translationOrder.getDestinationDocumentName();
+			if (destName == null) 		// default value
+				destName = sw.toString().substring(sw.toString().lastIndexOf(File.separator) + 1);
 			String destFile = destPath + File.separator + destName;
 			
-			// TODO Tu czopyk zmienił, po zmianie documentRef na documentRefWrapper
-			// nie wiem jak przerobić documentRef na te 3 rzeczy z których da się go zbudować, tzn:
-			// name, path i type!
+			// creating result file in nuxeo repo
 			try {
-				DocumentModel source = coreSession.getDocument(translationOrder.getSourceDocument().getDocumentModel().getRef());
+				DocumentModel source = coreSession.getDocument(doc);
 				String path = source.getPathAsString();
 				path = path.substring(0, path.lastIndexOf("/"));
-				String type = source.getType();
 				
 				DocumentRefWrapper drw = new DocumentRefWrapper();
 				drw.setName(destName);
 				drw.setPath(path);
-				drw.setType(type);
+				drw.setType(source.getType());
 				translationOrder.setDestinationDocument(drw);
 				
-				// TODO Tu czopyk zmienił, po zmianie documentRef na documentRefWrapper
-				createResultFile(source,
-					destName, sw.toString());
+				createResultFile(path, source.getType(), destName, sw.toString());
+				deleteDirectory(new File(filePath));			//deleting temporary directory
 			} catch(Exception ec) {
 				ec.printStackTrace();
 				log(this.getClass(), ec.getMessage(), Level.FATAL);
 			}
-			
 			
 		} catch(ConversionException e) {
 			log(this.getClass(), e.getMessage(), Level.FATAL);
 		}
 	}
 	
-	// method only for testing purposes
-	/*public static void main(String[] args) {
+	/**
+	 * Pomocnicza funkcja zwracająca ścieżkę bezwzględną do katalogu,
+	 * który będzie zawierał foldery z plikami tymczasowymi konwersji
+	 *
+	 * @return bazowa ścieżka bezwzględna dla tymczasowych folderów.
+	 * */
+	private String getPath() {
+	
+		try {
+			String tmp = (new File(".")).getCanonicalPath();
+			return tmp.substring(0, tmp.lastIndexOf(File.separator) + 1) + "xliff";
+		} catch (IOException e) {
+			log(this.getClass(), e.getMessage(), Level.FATAL);
+		}
+		return "";
+	}
+	
+	/**
+	 * Pomocnicza funkcja pobierająca zawartość dokumentu z repozytorium Nuxeo
+	 * i kopiująca go do wskazanego pliku.
+	 *
+	 * @param path Ścieżka do pliku, w którym zostanie zapisana skopiowana zawartość.
+	 * @param ref Referencja do dokumentu w repozytorium Nuxeo, którego zawartość będzie kopiowana.
+	 * */
+	private void copyFileContent(String path, DocumentRef ref) throws IOException {
+	
+		try {
+			int data;
+			byte[] buffer = new byte[BLOCK_SIZE];
+			
+			FileOutputStream fos = new FileOutputStream(path);
+			DocumentModel dm = coreSession.getDocument(ref);
+			Blob blob = (Blob) dm.getProperty("file", "content");
+			InputStream fis = blob.getStream();
+			
+			while((data = fis.read(buffer)) > 0) 
+				fos.write(buffer, 0, data);
+			
+			fis.close();
+			fos.close();	
+		} catch(Exception e) {
+			log(this.getClass(), e.getMessage(), Level.FATAL);
+		}
+	}
+	
+	/**
+	 * Pomocnicza funkcja tworząca wynikowy plik w repozytorium Nuxeo
+	 *
+	 * @param path Ścieżka do folderu w repozytorium Nuxeo.
+	 * @param type Typ dokumentu, który zostanie utworzony.
+	 * @param name Nazwa, pod którą dokument ma być widziany w Nuxeo.
+	 * @param generatedFile Ścieżka do pliku utworzonego podczas rekonwersji, który zostanie skopiowany do Nuxeo.
+	 * */
+	private void createResultFile(String path, String type, String name, String generatedFile) {
+	
+		try {
+			DocumentModel dm = new DocumentModelImpl(path, name, type);	
+			FileBlob fb = new FileBlob(new File(generatedFile));
+			dm.setProperty("file", "content", fb);
+			//System.out.println("title: " + dm.getTitle());
+			coreSession.createDocument(dm);
+			coreSession.save();
+			log(this.getClass(), "document created and saved.");
+		} catch (Exception e) {
+			log(this.getClass(), e.getMessage(), Level.FATAL);
+		}
+	}
+	
+	/**
+	 * Pomocnicza funkcja usuwająca tymczasowy folder z pomocniczymi plikami konwersji.
+	 *
+	 * @param dir Folder, który ma zostać skasowany wraz z zawartością.
+	 * */
+	private void deleteDirectory(File dir) {
 		
-		XliffConverter xliff = new XliffConverter();
-		xliff.init();
-
-		LangPair lp = new LangPair();
-		lp.setFromLang("pl");
-		lp.setToLang("en");
-		TranslationOrder to = new TranslationOrder(new PathRef("E:\\Dokumenty\\STUDIA\\IOSR\\projekt\\trunk\\nuxeo-plugin\\plugin-core\\mary.txt"), lp, 
-				"dest.xlf", "1", new Long(1), false);
-
-		xliff.convert(to);
-		xliff.reConvert(to);
-		
-	}*/
+		try {
+			if (dir.exists() && dir.isDirectory()) {
+				File[] files = dir.listFiles(); 
+				for (int i = 0; i < files.length; ++i) { 
+					if (files[i].isDirectory())
+						deleteDirectory(files[i]);
+					else {
+						log(this.getClass(), "Deleting: " + files[i].getCanonicalPath());
+						files[i].delete();
+					}
+				}
+				dir.delete();
+			}
+		} catch(IOException e) {
+			log(this.getClass(), e.getMessage(), Level.FATAL);
+		}
+	}
+	
 }
