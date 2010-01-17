@@ -319,6 +319,7 @@ public class PlaintextImporter implements Converter {
                         }
                     }   
                     sourceText.append(curInline);
+                    this.writeSkeleton(sourceText + "\n");
                 }
             }  // end while
 
