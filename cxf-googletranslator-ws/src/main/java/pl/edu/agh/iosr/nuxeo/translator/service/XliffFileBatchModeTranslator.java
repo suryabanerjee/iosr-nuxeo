@@ -17,7 +17,11 @@ import org.xml.sax.SAXException;
 import com.google.api.translate.Language;
 import com.google.api.translate.Translate;
 
-
+/**
+ * Klasa ktora sie zajmuje sie wysylaniem tresci do tlumaczenia zawartej w plikach xliffw  formie
+ * stringow o zdefiniowanych rozmiarach.Zoptymalizowana jest w ten sposob szybkosc tlumaczenia.
+ * @author lewickitom
+ * */
 public class XliffFileBatchModeTranslator {
 
 	public static final int CHUNK_SIZE_LIMIT=5000;			//renenber about google translator string length limits	
@@ -45,6 +49,10 @@ public class XliffFileBatchModeTranslator {
 		
 	}
 	
+	/**
+	 * Przekazujemy plik xliff ktory chcemy przetlumaczyc
+	 * @author lewickitom
+	 * */	
 	public File translateFile(File sourceFile,String sourceLanguage,String destinationLanguage) throws IOException,		
 		ParserConfigurationException, SAXException, Exception,
 		TransformerException, TransformerConfigurationException {

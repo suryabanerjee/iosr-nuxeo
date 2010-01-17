@@ -96,23 +96,24 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 		
 		service = new TranslationResultService();			
 	    port = service.getTranslationResultPort();
-	    Translate.setHttpReferrer(REFERRER);	
-		
-	//	setTranslationResultEndpoint(request.getCallbackEndpoint().getEndpointURI());	TODO!!!
-		
+	    Translate.setHttpReferrer(REFERRER);			
+	    setTranslationResultEndpoint(request.getCallbackEndpoint().getEndpointURI());
+
 		if(request.getContentSource().getSourceType()==SourceType.STRING){
 			try {
 				translateString(request);
 			} catch (Exception e) {
 				e.printStackTrace();
-				
+				sendStatus(TranslationStatus.FAILED,request.getTranslationRequestID());
 			}
 		}
 		if(request.getContentSource().getSourceType()==SourceType.FILE){			
 			try {
+				System.out.println("BEFORE TRANSLATE FILE");
 				translateFile(request);
 			} catch (Exception e) {
 				e.printStackTrace();
+				System.out.println("EXCEPTION!");
 				sendStatus(TranslationStatus.FAILED,request.getTranslationRequestID());
 			}
 				
@@ -120,17 +121,17 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 	
 		
 	}
-
+	
 	private void translateString(TranslationRequest request) throws Exception {
+		
 		System.out.println("translate string");
 		StringContentSource content=(StringContentSource)request.getContentSource();
 		String translatedText=Translate.execute(content.getText(), Language.fromString(request.getSourceLanguage()) ,Language.fromString(request.getDestinationLanguage()));
 		sendResultString(translatedText,request.getTranslationRequestID());
 		
-	
 	}
 
-	private void translateFile(TranslationRequest request) throws IOException,		//TODO optimization
+	private void translateFile(TranslationRequest request) throws IOException,	
 			ParserConfigurationException, SAXException, Exception,
 			TransformerException, TransformerConfigurationException {
 /*		System.out.println("translate file");
@@ -149,8 +150,12 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 		sendResultFile(resultFile,request.getTranslationRequestID());
 	*/
 		FileContentSource fileContentSource=(FileContentSource)request.getContentSource();
-		File sourceFile=createFileFromDataHandler(fileContentSource.getFile());					
+		File sourceFile=createFileFromDataHandler(fileContentSource.getFile());	
+		System.out.println("sourceFile length"+sourceFile.length());
+		System.out.println("FILE CREATED");
 		File resultFile=new XliffFileBatchModeTranslator().translateFile(sourceFile,request.getSourceLanguage(),request.getDestinationLanguage());
+		System.out.println("AFTER BATCH TRANSLATION");
+		System.out.println("SENDING RESULT FILE");
 		sendResultFile(resultFile,request.getTranslationRequestID());
 	//	sourceFile.delete();
 		
@@ -298,10 +303,11 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 		
 	}
 
-	
+//TODO kandydat na helpera	
 
 	private File createFileFromDataHandler(DataHandler dataHandler) throws IOException {
-		
+		if(dataHandler==null)
+			System.out.println("DH NULL!");
 		String fileName=generateFileName();
 		(new File(fileName)).createNewFile();
 		File file=new File(fileName);
@@ -318,27 +324,15 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
     	
     }
 
+    
+    
     private void sendResultFile( File file, String translationRequestId) {
     	
     	DataHandler dh = new DataHandler(new FileDataSource(file));
     	FileResultRequestWrapper fileResult = new FileResultRequestWrapper();
     	fileResult.setFile(dh);
     	fileResult.setTranslationRequestID(translationRequestId);
-    	
-    	Client client = ClientProxy.getClient(port);
-        Endpoint cxfEndpoint = client.getEndpoint();
-    	
-    	Map<String,Object> outProps= new HashMap<String,Object>();
-		
-		outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
-		outProps.put(WSHandlerConstants.USER, "nuxeo");
-		outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
-		//properties.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_DIGEST);
-		outProps.put(WSHandlerConstants.PW_CALLBACK_CLASS, ClientPasswordHandler.class.getName());
-		
-		WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
-		cxfEndpoint.getOutInterceptors().add(wssOut);
-    	
+    	authenticate();
     	port.sendFileResult(fileResult);
     	
     }
@@ -357,8 +351,27 @@ public class GoogleTranslatorPortTypeImpl implements TranslatorPortType{
 		StatusRequestWrapper statusRequestWrapper=new StatusRequestWrapper();
 		statusRequestWrapper.setStatus(status);
 		statusRequestWrapper.setTranslationRequestID(requestId);
+		authenticate();
 		port.sendStatus(statusRequestWrapper);
 
+	}
+	
+	private void authenticate(){
+	
+		Client client = ClientProxy.getClient(port);
+        Endpoint cxfEndpoint = client.getEndpoint();
+    	
+    	Map<String,Object> outProps= new HashMap<String,Object>();
+		
+		outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
+		outProps.put(WSHandlerConstants.USER, "nuxeo");
+		outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
+		//properties.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_DIGEST);
+		outProps.put(WSHandlerConstants.PW_CALLBACK_CLASS, ClientPasswordHandler.class.getName());
+		
+		WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
+		cxfEndpoint.getOutInterceptors().add(wssOut);
+		
 	}
 
     
