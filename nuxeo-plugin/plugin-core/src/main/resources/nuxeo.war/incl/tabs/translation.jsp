@@ -143,10 +143,6 @@
 
 		</div>
 
-		<div id="div7"
-			style="background: #FFFF99; margin: 10px; position: relative; width: 350px; display: block;">
-		<h:messages layout="table" globalOnly="true" /> <h:outputText
-			value="#{editionBean.report}" rendered="#{editionBean.hasReport}" /></div>
 	</a4j:region>
 
 	<a4j:region>
