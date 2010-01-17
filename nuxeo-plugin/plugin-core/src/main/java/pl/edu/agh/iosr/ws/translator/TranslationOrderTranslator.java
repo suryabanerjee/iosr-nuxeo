@@ -10,6 +10,7 @@ import javax.swing.SortOrder;
 
 import pl.edu.agh.iosr.model.TranslationOrder;
 import pl.edu.agh.iosr.nuxeo.schema.translationresult.FileResultRequestWrapper;
+import pl.edu.agh.iosr.nuxeo.schema.translator.CallbackEndpoint;
 import pl.edu.agh.iosr.nuxeo.schema.translator.FileContentSource;
 import pl.edu.agh.iosr.nuxeo.schema.translator.SourceType;
 import pl.edu.agh.iosr.nuxeo.schema.translator.TranslationRequest;
@@ -45,6 +46,9 @@ public class TranslationOrderTranslator {
 	
 		translationRequest.setTranslationRequestID(translationOrder.getRequestId().toString());
 		
+		CallbackEndpoint ce=new CallbackEndpoint();
+    	ce.setEndpointURI("http://localhost:8080/cxf-translation-result-ws/services/result");
+    	translationRequest.setCallbackEndpoint(ce);
 		
 		return translationRequest;
 	

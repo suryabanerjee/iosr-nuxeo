@@ -73,15 +73,14 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 	
 	private void setTranslationServiceEndpoint(String translationServiceEndpoint){
 		
-	//	BindingProvider bp=(BindingProvider)port;
-	//	bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, translationServiceEndpoint);
+		BindingProvider bp=(BindingProvider)port;
+		bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, translationServiceEndpoint);
     	
-	
 	}
 	
 	public List<String> getSuppportedFileFormats(
 			TranslationServiceDescription webservice) {
-		System.out.println("\n\n\nENDPOINT IS"+webservice.getEndpoint());
+		
 		setTranslationServiceEndpoint(webservice.getEndpoint());
 		FileFormats fileFormats=port.getSupportedFileFormats("whatever");
 		return fileFormats.getMimeTypes();
@@ -149,6 +148,8 @@ public class RemoteWSInvokerImpl implements RemoteWSInvoker {
 	public void traslateAsync(TranslationServiceDescription webservice,
 			TranslationOrder request, File content) {
 		
+		System.out.println("\n\n\nENDPOINT IS"+webservice.getEndpoint());
+		setTranslationServiceEndpoint(webservice.getEndpoint());
 	    TranslationRequest translationRequest=translationOrderTranslator.translate(request);
 		log(this.getClass(), "\n\n invoking translate...\n\n");
 		port.translate(translationRequest);

@@ -81,7 +81,7 @@ public class Mediator {
 		wsd.getSupportedLangPairs().add(new LangPair("en", "pl"));
 		wsd.setDescription("google translator");
 		wsd
-				.setEndpoint("http://localhost:9080/cxf-translation-result-ws/services/result");
+				.setEndpoint("http://localhost:8090/cxf-googletranslator-ws/services/translator");
 		wsd.setName("Google");
 		wsd.getSupportedQualities().add(
 				new Quality("google translator quality"));
