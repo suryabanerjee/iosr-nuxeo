@@ -79,12 +79,7 @@ public class EditionBean implements Serializable {
 				return;
 			}
 
-			List<String> names = new LinkedList<String>();
-			for (EnrichedFile ef : filesSelectionBean.getFiles()) {
-				names.add(ef.getName());
-			}
-			orders = translationOrderService.getTranslationOrders(names
-					.toArray(new String[0]));
+			refreshHistory(null);
 
 			translationServiceDescription = translationServices.get(0);
 
@@ -281,11 +276,15 @@ public class EditionBean implements Serializable {
 						.getTargetName(), "", translationServiceDescription
 						.getWsId(), languageDetection);
 				mediator.beginTranslation(translationOrder);
+				FacesContext.getCurrentInstance().addMessage(
+						null,
+						new FacesMessage(MessagesLocalizer
+								.getMessage("order.submit")));
 			}
 		}
 		log(this.getClass(), "end of buildTranslationRequest!");
 
-		return "#";
+		return null;
 	}
 
 	public TranslationServiceDescription getTranslationServiceDescription() {
@@ -319,17 +318,26 @@ public class EditionBean implements Serializable {
 	public void setQuality(String quality) {
 		this.quality = quality;
 	}
-	
+
 	/* zabawa z wyświetlaniem raportów START */
-	
+
 	private List<TranslationOrder> toHistory;
+
+	public void refreshHistory(ActionEvent ae) {
+		List<String> names = new LinkedList<String>();
+		for (EnrichedFile ef : filesSelectionBean.getFiles()) {
+			names.add(ef.getName());
+		}
+		orders = translationOrderService.getTranslationOrders(names
+				.toArray(new String[0]));
+	}
 	
 	public void showHistory(ActionEvent ae) {
-		EnrichedFile ef = (EnrichedFile) ae
-				.getComponent().getAttributes().get("file");
+		EnrichedFile ef = (EnrichedFile) ae.getComponent().getAttributes().get(
+				"file");
 		String name = ef.getName();
 		toHistory = new LinkedList<TranslationOrder>();
-		for(TranslationOrder to : orders) {
+		for (TranslationOrder to : orders) {
 			if (to.getSourceDocument().getName().equals(name)) {
 				toHistory.add(to);
 			}
@@ -339,7 +347,8 @@ public class EditionBean implements Serializable {
 			if (message == null) {
 				message = "No translations pertaining this file has been ordered yet.";
 			}
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(message));
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(message));
 		}
 	}
 

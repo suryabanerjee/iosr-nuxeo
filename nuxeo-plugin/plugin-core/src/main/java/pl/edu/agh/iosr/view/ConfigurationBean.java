@@ -19,6 +19,7 @@ import org.jboss.seam.annotations.Scope;
 import pl.edu.agh.iosr.model.LangPair;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 import pl.edu.agh.iosr.services.TranslationServicesConfigService;
+import pl.edu.agh.iosr.util.IosrLogger;
 import pl.edu.agh.iosr.util.MessagesLocalizer;
 
 /**
@@ -50,6 +51,8 @@ public class ConfigurationBean {
 	 * */
 	public void addNewWS(ActionEvent ae) {
 
+		IosrLogger.log(this.getClass(), "addNewWs invoked");
+		
 		// troche walidacji nie zaszkodzi
 		for (TranslationServiceDescription r : translationServices) {
 			if (name.equals(r.getName())) {
@@ -64,6 +67,7 @@ public class ConfigurationBean {
 		r.setEndpoint(endpoint);
 		r.setName(name);
 		configService.saveOrUpdateTranslationService(r);
+		IosrLogger.log(this.getClass(), "Translation Service Desciption persisted: " + r);
 		init();
 	}
 

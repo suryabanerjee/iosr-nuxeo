@@ -54,9 +54,15 @@ public class TranslationOrderServiceImpl implements TranslationOrderService,
 		}
 		tabEx = tabEx.substring(0, tabEx.length() - 1) + ")";
 		
-		return em.createQuery(
+		
+		
+		List result = em.createQuery(
 				"from TranslationOrder to where to.sourceDocument.name in "
 						+ tabEx).getResultList();
+		
+		IosrLogger.log(this.getClass(), "getting orders: " + result);
+		
+		return result;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -95,6 +101,7 @@ public class TranslationOrderServiceImpl implements TranslationOrderService,
 					.getRequestId());
 			if (to == null) {
 				em.persist(translationOrder);
+				IosrLogger.log(this.getClass(), "translationOrder persisted: " + translationOrder);
 			}
 			else {
 				return em.merge(translationOrder);
