@@ -34,12 +34,8 @@ import pl.edu.agh.iosr.services.TranslationServicesConfigService;
 import pl.edu.agh.iosr.util.MessagesLocalizer;
 
 /**
- * Backing bean dla widoku wyboru tłumaczenia
- * 
- * 'wyświetla' tabelke z plikami oraz opcje tłumaczenie
- * 
- * tworzy rządzanie tłumaczenia TranslationRequest i wysyła je do mediatora.
- * 
+ * Backing bean dla widoku wyboru tłumaczenia, zasila go danymi. Tworzy żądzanie
+ * tłumaczenia {@link TranslationOrder} i wysyła je do mediatora.
  * */
 @Scope(ScopeType.EVENT)
 @Name("editionBean")
@@ -244,11 +240,11 @@ public class EditionBean implements Serializable {
 	}
 
 	/**
-	 * buduje i wysyła zlecenie do kontrolera
+	 * Buduje i wysyła zlecenie do kontrolera.
 	 * 
-	 * nie zawiera validacji - validacja w listenerze
+	 * Nie zawiera walidacji - walidacja w listenerze.
 	 * 
-	 * odpalane po nacisnieciu guziora
+	 * Wołane jako Action.
 	 * */
 	public String buildTranslationRequest() {
 
@@ -288,26 +284,6 @@ public class EditionBean implements Serializable {
 		return translationServiceDescription;
 	}
 
-	// raporty ze zleconych tłumaczeń
-	private String report;
-	private boolean hasReport = false;
-
-	public String getReport() {
-		return report;
-	}
-
-	public boolean getHasReport() {
-		return hasReport;
-	}
-
-	public Mediator getMediator() {
-		return mediator;
-	}
-
-	public void setMediator(Mediator mediator) {
-		this.mediator = mediator;
-	}
-
 	public String getQuality() {
 		return quality;
 	}
@@ -320,6 +296,12 @@ public class EditionBean implements Serializable {
 
 	private List<TranslationOrder> toHistory;
 
+	/**
+	 * Odświeża zbiór zamówień o przeszłych tłumaczeniach. Zapisane z bazy
+	 * danych.
+	 * 
+	 * Wołane jako ActionListener.
+	 * */
 	public void refreshHistory(ActionEvent ae) {
 		List<String> names = new LinkedList<String>();
 		for (EnrichedFile ef : filesSelectionBean.getFiles()) {
@@ -328,7 +310,13 @@ public class EditionBean implements Serializable {
 		orders = translationOrderService.getTranslationOrders(names
 				.toArray(new String[0]));
 	}
-	
+
+	/**
+	 * Zasila fragment widoku ze historią zamówień dotyczących pliku wskazanego
+	 * za pomocą atrybutu "file".
+	 * 
+	 * Wołane jako ActionListener.
+	 * */
 	public void showHistory(ActionEvent ae) {
 		EnrichedFile ef = (EnrichedFile) ae.getComponent().getAttributes().get(
 				"file");

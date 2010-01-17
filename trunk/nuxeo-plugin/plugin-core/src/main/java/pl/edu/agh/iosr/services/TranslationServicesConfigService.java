@@ -5,36 +5,43 @@ import java.util.List;
 import pl.edu.agh.iosr.model.TranslationServiceDescription;
 
 /**
- * Podobna historia jak z TranslationOrderService, koniecznie patrz komentarz
- * do niego!!!
+ * DAO dla obiektów {@link TranslationServiceDescription}.
  * */
 public interface TranslationServicesConfigService {
 
 	/**
-	 * Lista wszystkich
+	 * @return Lista wszytkich zarejestrowanych serwisów.
 	 * */
 	public List<TranslationServiceDescription> getTranslationServices();
-	
-	
-	public TranslationServiceDescription getTranslationService(Long wsId);
-	
-	
+
 	/**
-	 * aktualizacja informacji o serwisie
+	 * @param identyfikator
+	 *            serwisu
+	 * @return obiekt reprezentujący serwis o zadanym identyfikatorze.
 	 * */
-	public TranslationServiceDescription saveOrUpdateTranslationService(TranslationServiceDescription translationService);
-	
+	public TranslationServiceDescription getTranslationService(Long wsId);
+
 	/**
-	 * wiadomo
+	 * @param translationService
+	 *            - opis serwisu do utrwalenia bądź zaktualizowania.
+	 * @return zaktualizowany opis serwisu
+	 * */
+	public TranslationServiceDescription saveOrUpdateTranslationService(
+			TranslationServiceDescription translationService);
+
+	/**
+	 * Usuwa opis serwisu o zadanym identyfikatorze
+	 * 
+	 * @param id
+	 *            identyfikator serwisu do usunięcia.
 	 * */
 	public void delete(Long id);
-	
-	
+
 	/**
 	 * Synchronicznie odświeża informacje o wybranym web servicie.
 	 * 
 	 * @Throws {@link InterruptedException} kiedy stracimy cierpliwość.
 	 * */
-	public void refreshWs(Long id) throws InterruptedException; 
-	
+	public void refreshWs(Long id) throws InterruptedException;
+
 }

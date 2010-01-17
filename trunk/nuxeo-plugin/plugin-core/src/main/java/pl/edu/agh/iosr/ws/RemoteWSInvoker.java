@@ -33,7 +33,7 @@ public interface RemoteWSInvoker {
 	List<String> getSuppportedFileFormats(TranslationServiceDescription webservice);
 	
 	List<String> getSuppportedSourceTypes(TranslationServiceDescription webservice);
-	
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       	
 	void testInvoke(TranslationServiceDescription webservice,
 			TranslationOrder request, File content);
 	

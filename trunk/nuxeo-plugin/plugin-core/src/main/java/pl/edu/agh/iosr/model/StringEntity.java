@@ -7,6 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
+/**
+ * Wrapper dla typu String.
+ * */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
 public class StringEntity {

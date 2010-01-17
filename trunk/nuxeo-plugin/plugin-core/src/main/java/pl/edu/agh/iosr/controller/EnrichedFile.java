@@ -3,10 +3,9 @@ package pl.edu.agh.iosr.controller;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
 /**
- * Potrzebna przy wyborze zbioru plikow do zamowienia (GUI)
- * 
  * Wrapper dla dokumentow, przechowuje informacje pod jaka nazwa ma zaistniec
- * przetlumaczny dokument oraz czy zostal zaznaczony do tlumaczenia z menu :]
+ * przetlumaczny dokument oraz czy zostal zaznaczony do tlumaczenia z listy
+ * widoczne w graficznym interfejsie użytkownika.
  * */
 public class EnrichedFile {
 
@@ -42,17 +41,6 @@ public class EnrichedFile {
 
 	public void setDocumentModel(DocumentModel documentModel) {
 		this.documentModel = documentModel;
-	}
-
-	/**
-	 * Z powodu roznic w zasigach komponentow konieczne jest CHYBA!! klonowanie
-	 * tych obiektow
-	 * */
-	public EnrichedFile clone() {
-		EnrichedFile ef = new EnrichedFile(documentModel);
-		ef.setSelected(selected);
-		ef.setTargetName(targetName);
-		return ef;
 	}
 
 	public String getName() {

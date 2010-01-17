@@ -11,33 +11,36 @@ import org.nuxeo.ecm.platform.ui.web.api.NavigationContext;
 import pl.edu.agh.iosr.util.IosrLogger;
 
 /**
- * Kolejna próba utrzymania coreSession.
+ * Próba utrzymania referencji do obiektu <code>coreSession</code>.
  * */
 @Name("coreSessionProxy")
 @Scope(ScopeType.STATELESS)
 public class CoreSessionProxy {
 
 	private CoreSession coreSession;
-	
-    @In(create = true)
-    protected transient NavigationContext navigationContext;
+
+	@In(create = true)
+	protected transient NavigationContext navigationContext;
 
 	@Create
 	public void init() throws Exception {
-		
-		coreSession = navigationContext.getOrCreateDocumentManager();	
-		
+
+		coreSession = navigationContext.getOrCreateDocumentManager();
+
 		if (coreSession == null) {
 			IosrLogger.log(this.getClass(), "coreSession is null");
 		}
 		else {
 			IosrLogger.log(this.getClass(), "coreSession properly initialized");
 		}
-		
+
 	}
-	
+
+	/**
+	 * @return {@link CoreSession} - możliwe najbardziej działającą referencję.
+	 * */
 	public CoreSession getCoreSession() {
-		
+
 		if (coreSession == null) {
 			try {
 				init();
@@ -46,11 +49,11 @@ public class CoreSessionProxy {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if (coreSession == null) {
 			IosrLogger.log(this.getClass(), "coreSession is null");
 		}
-		
+
 		return coreSession;
 	}
 

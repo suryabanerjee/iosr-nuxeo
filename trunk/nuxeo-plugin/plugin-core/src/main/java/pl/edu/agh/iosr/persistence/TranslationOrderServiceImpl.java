@@ -13,9 +13,9 @@ import org.jboss.seam.annotations.Name;
 
 import pl.edu.agh.iosr.exceptions.DataInconsistencyException;
 import pl.edu.agh.iosr.model.TranslationOrder;
-import pl.edu.agh.iosr.model.TranslationOrder.RequestState;
 import pl.edu.agh.iosr.services.TranslationOrderService;
 import pl.edu.agh.iosr.util.IosrLogger;
+
 
 @Stateless
 @Name("translationOrderService")
@@ -27,6 +27,7 @@ public class TranslationOrderServiceImpl implements TranslationOrderService,
 	@PersistenceContext(name = "iosr")
 	private EntityManager em;
 
+	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void delete(Long id) {
 
@@ -41,30 +42,30 @@ public class TranslationOrderServiceImpl implements TranslationOrderService,
 		}
 	}
 
+	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@SuppressWarnings("unchecked")
 	public List<TranslationOrder> getTranslationOrders(String[] names) {
 		if (names == null || names.length == 0) {
 			return null;
 		}
-		
+
 		String tabEx = "(";
 		for (String name : names) {
 			tabEx += "'" + name + "',";
 		}
 		tabEx = tabEx.substring(0, tabEx.length() - 1) + ")";
-		
-		
-		
+
 		List result = em.createQuery(
 				"from TranslationOrder to where to.sourceDocument.name in "
 						+ tabEx).getResultList();
-		
+
 		IosrLogger.log(this.getClass(), "getting orders: " + result);
-		
+
 		return result;
 	}
 
+	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public TranslationOrder getTranslationOrder(Long id) {
 		if (id == null) {
@@ -75,15 +76,7 @@ public class TranslationOrderServiceImpl implements TranslationOrderService,
 		return em.find(TranslationOrder.class, id);
 	}
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	@SuppressWarnings("unchecked")
-	public List<TranslationOrder> getTranslationOrders(RequestState state) {
-		return em.createQuery(
-				"from TranslationOrder to where to.reguestState = '"
-						+ state.name() + "'").getResultList();
-
-	}
-
+	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public TranslationOrder saveOrUpdateTranslationOrder(
 			TranslationOrder translationOrder)
@@ -101,7 +94,8 @@ public class TranslationOrderServiceImpl implements TranslationOrderService,
 					.getRequestId());
 			if (to == null) {
 				em.persist(translationOrder);
-				IosrLogger.log(this.getClass(), "translationOrder persisted: " + translationOrder);
+				IosrLogger.log(this.getClass(), "translationOrder persisted: "
+						+ translationOrder);
 			}
 			else {
 				return em.merge(translationOrder);

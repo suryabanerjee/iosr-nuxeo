@@ -6,17 +6,16 @@ import java.util.logging.Logger;
 
 
 /**
- * Używamy takiego zajebistego loggera,
- * 
- * Powód: 2 linijki, żeby zmienić całe logowanie aplikacji.
- * 
- * 
+ * Wrapper dla loggerów.
+ * Pozwala poprzez 2 linijki kodu zmienić całe logowanie aplikacji.
  * 
  * używa się tak:
  * import static pl.edu.agh.iosr.util.IosrLogger.log;
  * 
- * a potem gdziekolwiek:
- * log(this.getClass(), "coscoscos");
+ * A potem gdziekolwiek:
+ * log(this.getClass(), "ten tekst pojawi się w logach");
+ * 
+ * Posiada cache loggerów.
  * */
 public class IosrLogger {
 
