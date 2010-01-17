@@ -25,8 +25,8 @@ import com.google.api.translate.Translate;
 public class XliffFileBatchModeTranslator {
 
 	public static final int CHUNK_SIZE_LIMIT=5000;			//renenber about google translator string length limits	
-	public static final String SEGMENTS_DELIMITER=". %%%";  //be careful when choosing delmiter, Google translator removes some blank spaces in returned string a
-	public static final Pattern SEGMENTS_DELIMITER_PATTERN = Pattern.compile(SEGMENTS_DELIMITER);
+	public static final String SEGMENTS_DELIMITER=". %%% .";  //be careful when choosing delmiter, Google translator removes some blank spaces in returned string a
+	public static final String SEGMENTS_DELIMITER_EXT="\\.{0,1}\\s*%\\s*%\\s*%\\s*\\.{0,1}+";	//delimiter in a form that can be returned by google translator	
 	public static final Pattern END_FRAGMENT_PATTERN = Pattern.compile(".");
 	
 	private Map<String, String> sourceText;
@@ -51,7 +51,6 @@ public class XliffFileBatchModeTranslator {
 	
 	/**
 	 * Przekazujemy plik xliff ktory chcemy przetlumaczyc
-	 * @author lewickitom
 	 * */	
 	public File translateFile(File sourceFile,String sourceLanguage,String destinationLanguage) throws IOException,		
 		ParserConfigurationException, SAXException, Exception,
@@ -113,6 +112,8 @@ public class XliffFileBatchModeTranslator {
 			int limit=findSplitIndex(restOfSplittedSegment,CHUNK_SIZE_LIMIT);
 			String chunk=restOfSplittedSegment.substring(0,limit);
 			String translated=Translate.execute(chunk, Language.fromString(sourceLanguage),Language.fromString(destinationLanguage));	
+			System.out.println("TRANSLATED REST:(LENGTH: "+translated.length()+" \n\n"+translated);
+			System.out.println("ENDO OF ....");
 			restOfSplittedSegment=restOfSplittedSegment.substring(limit);
 			String existing2=translatedText.get(unit.getKey());
 			translatedText.put(unit.getKey(), existing2+translated);
@@ -160,9 +161,11 @@ public class XliffFileBatchModeTranslator {
 		}
 		System.out.println("CHUNK\n\n"+sb);
 		String translatedChunk=Translate.execute(sb.toString(), Language.fromString(sourceLanguage),Language.fromString(destinationLanguage));	
-		System.out.println("TRANSLATED CHUNK\n\n"+translatedChunk);
+		System.out.println("TRANSLATED CHUNK START (LENGTH: "+translatedChunk.length()+" \n\n"+translatedChunk);
+		System.out.println("END OF TRANSLATED CHUNK");
+		
 		int segmentCounter=0;
-		String[] translatedSegments=translatedChunk.split(SEGMENTS_DELIMITER);		
+		String[] translatedSegments=translatedChunk.split(SEGMENTS_DELIMITER_EXT);		
 		for(String segmentTranslation:translatedSegments){
 			resultMap.put(idsInChunk.get(segmentCounter),segmentTranslation);
 			segmentCounter++;
