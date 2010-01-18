@@ -163,7 +163,7 @@
 					<f:facet name="header">
 						<h:outputText value="#{translation['history.destination.document']}" style="width: 150px;"/>
 					</f:facet>
-					<h:outputText value="#{order.destinationDocument.name}" />
+					<h:outputText value="#{order.destinationDocumentName}" />
 				</h:column>
 
 				<h:column id="column12">
