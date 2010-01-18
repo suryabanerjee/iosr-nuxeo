@@ -309,7 +309,7 @@ public class XliffConverter extends AsynchronousConverter{
 		try {
 			DocumentModel dm = new DocumentModelImpl(path, name, type);	
 			//FileBlob fb = new FileBlob(new File(generatedFile), format);
-			FileBlob fb = new FileBlob(new File(generatedFile), format);
+			FileBlob fb = new FileBlob(new File(generatedFile));
 			fb.setFilename(name);
 			dm.setProperty("file", "content", fb);
 			dm.setProperty("file", "filename", name);
