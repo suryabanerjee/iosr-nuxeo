@@ -37,6 +37,14 @@
   </repositories>
 
   <dependencies>
+  <dependency>
+    <groupId>file2xliff4j</groupId>
+    <artifactId>file2xliff4j</artifactId>
+    <version>20070711</version>
+    <scope>system</scope>
+    <systemPath>${basedir}/src/main/lib/file2xliff4j-20070711.jar</systemPath>
+</dependency>
+  
     <dependency>
       <groupId>org.nuxeo.ecm.core</groupId>
       <artifactId>nuxeo-core</artifactId>
@@ -141,7 +149,29 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
+  
+  <build>
+  <plugins>
+ <plugin>
+    <artifactId>maven-antrun-plugin</artifactId>
+    <executions>
+      <execution>
+        <phase>process-resources</phase>
+        <configuration>
+          <tasks>
+            <copy todir="${project.build.directory}/classes/">
+              <fileset dir="src/main/lib"/>
+            </copy>
+          </tasks>
+        </configuration>
+        <goals>
+          <goal>run</goal>
+        </goals>
+      </execution>
+    </executions>
+  </plugin>
+        </plugins>
+       </build>
 <!--  <scm>-->
 <!--    <connection>scm:svn:http://svn.nuxeo.org/nuxeo/org.nuxeo.project.sample/trunk</connection>-->
 <!--    <developerConnection>scm:svn:https://svn.nuxeo.org/nuxeo/org.nuxeo.project.sample/trunk</developerConnection>-->
