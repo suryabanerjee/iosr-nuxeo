@@ -239,7 +239,7 @@ public class XliffConverter extends AsynchronousConverter{
 				drw.setType(source.getType());
 				translationOrder.setDestinationDocument(drw);
 				
-				createResultFile(path, source.getType(), destName, sw.toString());
+				createResultFile(path, source.getType(), destName, sw.toString(), format);
 				deleteDirectory(new File(filePath));			//deleting temporary directory
 			} catch(Exception ec) {
 				ec.printStackTrace();
@@ -304,13 +304,15 @@ public class XliffConverter extends AsynchronousConverter{
 	 * @param name Nazwa, pod którą dokument ma być widziany w Nuxeo.
 	 * @param generatedFile Ścieżka do pliku utworzonego podczas rekonwersji, który zostanie skopiowany do Nuxeo.
 	 * */
-	private void createResultFile(String path, String type, String name, String generatedFile) {
+	private void createResultFile(String path, String type, String name, String generatedFile, String format) {
 	
 		try {
 			DocumentModel dm = new DocumentModelImpl(path, name, type);	
-			FileBlob fb = new FileBlob(new File(generatedFile));
+			//FileBlob fb = new FileBlob(new File(generatedFile), format);
+			FileBlob fb = new FileBlob(new File(generatedFile), format);
 			fb.setFilename(name);
 			dm.setProperty("file", "content", fb);
+			dm.setProperty("file", "filename", name);
 			//System.out.println("title: " + dm.getTitle());
 			coreSession.createDocument(dm);
 			coreSession.save();
