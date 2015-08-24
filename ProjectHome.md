@@ -1,0 +1,1 @@
+Integration of google translate service with nuxeo CMS.
